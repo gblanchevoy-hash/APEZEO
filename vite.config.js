@@ -1,0 +1,52 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      includeAssets: ["icon.svg"],
+      manifest: {
+        name: "Apézeo — Version Pro",
+        short_name: "Apézeo",
+        description: "Bibliothèque d'aides non médicamenteuses pour les professionnels accompagnant des personnes atteintes d'Alzheimer et maladies apparentées.",
+        theme_color: "#065f46",
+        background_color: "#F4F6F2",
+        display: "standalone",
+        orientation: "portrait-primary",
+        start_url: "/",
+        scope: "/",
+        lang: "fr",
+        icons: [
+          { src: "icon-192.png", sizes: "192x192", type: "image/png" },
+          { src: "icon-512.png", sizes: "512x512", type: "image/png" },
+          { src: "icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.includes("/rest/v1/interventions"),
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "apezeo-fiches-cache",
+              expiration: { maxEntries: 5, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: ({ url }) => url.origin === "https://fonts.googleapis.com" || url.origin === "https://fonts.gstatic.com",
+            handler: "CacheFirst",
+            options: {
+              cacheName: "apezeo-fonts-cache",
+              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
+        ],
+      },
+    }),
+  ],
+});

@@ -1,0 +1,377 @@
+-- ============================================================
+-- APÉZEO — schéma Supabase
+-- À exécuter une fois dans : Supabase > SQL Editor > New query
+-- ============================================================
+
+create table if not exists interventions (
+  id bigint generated always as identity primary key,
+  titre text not null,
+  categorie text,
+  sous_categorie text,
+  description text,
+  objectifs text,
+  troubles text[] default '{}',
+  stades text[] default '{}',
+  contextes text[] default '{}',
+  duree text,
+  duree_minutes int default 0,
+  materiel text[] default '{}',
+  protocole text,
+  etapes text[] default '{}',
+  conseils text[] default '{}',
+  erreurs text[] default '{}',
+  contre_indications text[] default '{}',
+  niveau_preuve int default 3,
+  difficulte text default 'Facile',
+  sources text[] default '{}',
+  mots_cles text[] default '{}',
+  date_maj text,
+  created_at timestamptz default now()
+);
+
+-- Sécurité : lecture publique (tout le monde, y compris les visiteurs non
+-- connectés, via la clé "anon"), mais AUCUNE policy d'écriture pour cette
+-- clé. Résultat : l'app peut afficher les fiches à tout le monde, mais
+-- seul vous (connecté au tableau de bord Supabase, qui contourne les
+-- policies RLS) pouvez ajouter, modifier ou supprimer des lignes.
+alter table interventions enable row level security;
+
+create policy "Lecture publique des interventions"
+  on interventions for select
+  using (true);
+
+-- ============================================================
+-- COMPTES UTILISATEURS (Version Pro)
+-- Table de profil liée à l'authentification Supabase (auth.users),
+-- avec la profession déclarée à l'inscription. Chaque utilisateur ne
+-- voit et ne modifie que sa propre ligne.
+-- ============================================================
+
+create table if not exists profiles (
+  id uuid references auth.users on delete cascade primary key,
+  email text,
+  profession text,
+  created_at timestamptz default now()
+);
+
+alter table profiles enable row level security;
+
+create policy "Un utilisateur voit son propre profil"
+  on profiles for select
+  using (auth.uid() = id);
+
+create policy "Un utilisateur modifie son propre profil"
+  on profiles for update
+  using (auth.uid() = id);
+
+-- Crée automatiquement la ligne de profil à chaque inscription, en
+-- récupérant la profession envoyée par l'app au moment du signUp.
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email, profession)
+  values (new.id, new.email, new.raw_user_meta_data->>'profession');
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
+-- ============================================================
+-- DONNÉES PERSONNELLES LIÉES AU COMPTE
+-- Favoris, historique d'utilisation et fiches personnelles : chaque
+-- utilisateur ne voit et ne modifie que ses propres lignes (RLS sur
+-- auth.uid()). Résultat : ces données suivent le professionnel d'un
+-- appareil à l'autre dès qu'il se reconnecte, sans jamais être visibles
+-- par les autres utilisateurs.
+-- ============================================================
+
+create table if not exists favoris (
+  id bigint generated always as identity primary key,
+  user_id uuid references auth.users on delete cascade not null,
+  fiche_id text not null,
+  type text not null check (type in ('liked', 'disliked')),
+  created_at timestamptz default now(),
+  unique (user_id, fiche_id)
+);
+alter table favoris enable row level security;
+create policy "Un utilisateur gère ses favoris"
+  on favoris for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create table if not exists historique (
+  id bigint generated always as identity primary key,
+  user_id uuid references auth.users on delete cascade not null,
+  fiche_id text not null,
+  avant int,
+  apres int,
+  commentaire text,
+  created_at timestamptz default now()
+);
+alter table historique enable row level security;
+create policy "Un utilisateur gère son historique"
+  on historique for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create table if not exists fiches_personnelles (
+  id bigint generated always as identity primary key,
+  user_id uuid references auth.users on delete cascade not null,
+  titre text not null,
+  categorie text,
+  sous_categorie text,
+  description text,
+  objectifs text,
+  quand_utiliser text,
+  troubles text[] default '{}',
+  stades text[] default '{}',
+  contextes text[] default '{}',
+  duree text,
+  duree_minutes int default 0,
+  materiel text[] default '{}',
+  etapes text[] default '{}',
+  conseils text[] default '{}',
+  erreurs text[] default '{}',
+  contre_indications text[] default '{}',
+  niveau_preuve int default 3,
+  difficulte text default 'Facile',
+  sources text[] default '{}',
+  mots_cles text[] default '{}',
+  date_maj text,
+  created_at timestamptz default now()
+);
+alter table fiches_personnelles enable row level security;
+create policy "Un utilisateur gère ses fiches personnelles"
+  on fiches_personnelles for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+-- ============================================================
+-- IMPORT EN LOT
+-- Chaque fois que vous recevez un lot de fiches au format JSON
+-- (ex. généré par ChatGPT), collez-le à la place de PASTE_JSON_HERE
+-- ci-dessous et exécutez la requête dans le SQL Editor. Les nouvelles
+-- fiches apparaissent instantanément pour tous les utilisateurs de
+-- l'app, sans redéploiement.
+--
+-- Champs acceptés par fiche (tous optionnels sauf "titre") :
+-- titre, categorie, sous_categorie, description, objectifs,
+-- troubles (tableau), stades (tableau), contextes (tableau),
+-- duree (texte libre, ex "10 min"), materiel (tableau),
+-- protocole (texte, ou etapes en tableau), erreurs (tableau),
+-- contre_indications (tableau), niveau_preuve (1 à 5),
+-- sources (tableau), mots_cles (tableau), date_maj (texte)
+-- ============================================================
+
+-- Modèle réutilisable (mis en commentaire — ne s'exécute PAS avec le
+-- reste du schéma). Copiez ce bloc à part dans une nouvelle requête
+-- SQL Editor, remplacez PASTE_JSON_HERE par le JSON reçu, puis exécutez.
+--
+-- insert into interventions
+--   (titre, categorie, sous_categorie, description, objectifs, troubles, stades,
+--    contextes, duree, materiel, protocole, etapes, erreurs, contre_indications,
+--    niveau_preuve, sources, mots_cles, date_maj)
+-- select
+--   titre, categorie, sous_categorie, description, objectifs, troubles, stades,
+--   contextes, duree, materiel, protocole, etapes, erreurs, contre_indications,
+--   niveau_preuve, sources, mots_cles, date_maj
+-- from json_to_recordset($$
+-- PASTE_JSON_HERE
+-- $$::json)
+-- as x(
+--   titre text, categorie text, sous_categorie text, description text, objectifs text,
+--   troubles text[], stades text[], contextes text[], duree text, materiel text[],
+--   protocole text, etapes text[], erreurs text[], contre_indications text[],
+--   niveau_preuve int, sources text[], mots_cles text[], date_maj text
+-- );
+
+-- Exemple concret à tester en premier (remplace PASTE_JSON_HERE) :
+--
+-- [
+--   {
+--     "titre": "Massage des mains",
+--     "categorie": "Toucher / Massage",
+--     "description": "Massage doux des mains et avant-bras avec une crème hydratante.",
+--     "troubles": ["Agitation", "Anxiété"],
+--     "stades": ["Léger", "Modéré", "Sévère"],
+--     "duree": "8 min",
+--     "materiel": ["Crème hydratante"],
+--     "etapes": ["Observer le consentement", "S'installer au calme", "Masser doucement", "Arrêter si inconfort"],
+--     "niveau_preuve": 5,
+--     "sources": ["HAS"]
+--   }
+-- ]
+
+-- ============================================================
+-- NIVEAU 1 — STRUCTURES, QUOTAS DE COMPTES, ADMIN D'ÉQUIPE
+-- ============================================================
+-- Chaque compte (profiles) peut être rattaché à une structure via un
+-- code d'invitation transmis à l'inscription. Le quota est vérifié et
+-- bloqué au niveau de la base de données (pas juste côté app), donc
+-- infranchissable même en contournant l'interface.
+--
+-- Sans code d'invitation valide : le compte reste "gratuit" (plan =
+-- 'gratuit'), sans structure, et l'app ne lui donne accès qu'à un
+-- échantillon de la bibliothèque.
+-- ============================================================
+
+create table if not exists structures (
+  id bigint generated always as identity primary key,
+  nom text not null,
+  code_invitation text not null unique,
+  quota int not null default 10,
+  created_at timestamptz default now()
+);
+alter table structures enable row level security;
+
+-- Ajout des colonnes de rattachement sur profiles (idempotent)
+alter table profiles add column if not exists structure_id bigint references structures(id);
+alter table profiles add column if not exists role text default 'membre' check (role in ('admin','membre'));
+alter table profiles add column if not exists actif boolean default true;
+alter table profiles add column if not exists plan text default 'gratuit' check (plan in ('gratuit','payant_manuel','structure'));
+-- super_admin = vous (l'éditeur d'Apézeo) : peut créer des structures et
+-- promouvoir n'importe quel compte, depuis l'écran "Créer une structure".
+alter table profiles add column if not exists super_admin boolean default false;
+
+-- Fonctions "security definer" : elles contournent volontairement la RLS
+-- UNIQUEMENT pour cette vérification précise, ce qui évite le piège classique
+-- des policies sur `profiles` qui s'auto-référencent (boucle infinie /
+-- "infinite recursion detected in policy" — une erreur Postgres bien connue
+-- quand une policy sur une table interroge cette même table directement).
+create or replace function public.is_admin_of(uid uuid, sid bigint)
+returns boolean language sql security definer stable as $$
+  select exists (select 1 from profiles where id = uid and role = 'admin' and structure_id = sid);
+$$;
+
+create or replace function public.my_structure_id(uid uuid)
+returns bigint language sql security definer stable as $$
+  select structure_id from profiles where id = uid and role = 'admin';
+$$;
+
+create or replace function public.is_super_admin(uid uuid)
+returns boolean language sql security definer stable as $$
+  select coalesce((select super_admin from profiles where id = uid), false);
+$$;
+
+-- STRUCTURES : un admin voit sa structure, un super-admin voit et crée tout.
+create policy "Admin voit sa structure, super-admin voit tout"
+  on structures for select
+  using (id = public.my_structure_id(auth.uid()) or public.is_super_admin(auth.uid()));
+
+create policy "Super-admin crée des structures"
+  on structures for insert
+  with check (public.is_super_admin(auth.uid()));
+
+create policy "Super-admin modifie les structures"
+  on structures for update
+  using (public.is_super_admin(auth.uid()));
+
+-- PROFILES : chacun voit/modifie le sien ; un admin voit/gère son équipe ;
+-- un super-admin voit et modifie tous les comptes (pour les rattacher à
+-- une structure et promouvoir un premier admin).
+drop policy if exists "Un utilisateur voit son propre profil" on profiles;
+drop policy if exists "Un utilisateur modifie son propre profil" on profiles;
+drop policy if exists "Voir son profil ou ceux de son équipe si admin" on profiles;
+drop policy if exists "Modifier son profil ou ceux de son équipe si admin" on profiles;
+
+create policy "Voir son profil, son équipe si admin, ou tout si super-admin"
+  on profiles for select
+  using (
+    auth.uid() = id
+    or structure_id = public.my_structure_id(auth.uid())
+    or public.is_super_admin(auth.uid())
+  );
+
+create policy "Modifier son profil, son équipe si admin, ou tout si super-admin"
+  on profiles for update
+  using (
+    auth.uid() = id
+    or (structure_id = public.my_structure_id(auth.uid()) and role <> 'admin')
+    or public.is_super_admin(auth.uid())
+  );
+
+-- Fonction publique (sans exposer la table structures) permettant à
+-- l'écran d'inscription de vérifier un code AVANT de créer le compte,
+-- pour un message d'erreur immédiat côté utilisateur.
+create or replace function public.check_invitation_code(p_code text)
+returns table(valid boolean, structure_nom text, places_restantes int)
+language plpgsql security definer
+as $$
+declare
+  v_structure structures;
+  v_count int;
+begin
+  select * into v_structure from structures where code_invitation = p_code;
+  if not found then
+    return query select false, null::text, null::int;
+    return;
+  end if;
+  select count(*) into v_count from profiles where structure_id = v_structure.id and actif = true;
+  return query select true, v_structure.nom, greatest(v_structure.quota - v_count, 0);
+end;
+$$;
+grant execute on function public.check_invitation_code(text) to anon, authenticated;
+
+-- Le vrai verrou : ce trigger remplace la création automatique du profil.
+-- S'il y a un code d'invitation invalide ou un quota dépassé, il lève une
+-- exception qui annule TOUTE la création de compte (y compris côté auth) —
+-- c'est le blocage réel, pas une simple vérification d'interface.
+create or replace function public.handle_new_user()
+returns trigger as $$
+declare
+  v_code text;
+  v_structure structures;
+  v_count int;
+begin
+  v_code := nullif(trim(new.raw_user_meta_data->>'code_invitation'), '');
+
+  if v_code is not null then
+    select * into v_structure from structures where code_invitation = v_code;
+    if not found then
+      raise exception 'Code d''invitation invalide.';
+    end if;
+
+    select count(*) into v_count from profiles where structure_id = v_structure.id and actif = true;
+    if v_count >= v_structure.quota then
+      raise exception 'Cette structure a atteint son quota de comptes. Contactez votre administrateur.';
+    end if;
+
+    insert into public.profiles (id, email, profession, structure_id, role, plan)
+    values (new.id, new.email, new.raw_user_meta_data->>'profession', v_structure.id, 'membre', 'structure');
+  else
+    insert into public.profiles (id, email, profession, plan)
+    values (new.id, new.email, new.raw_user_meta_data->>'profession', 'gratuit');
+  end if;
+
+  return new;
+end;
+$$ language plpgsql security definer;
+-- (le trigger on_auth_user_created existant réutilise automatiquement
+-- cette fonction, pas besoin de le recréer)
+
+-- ============================================================
+-- CRÉER UNE STRUCTURE + PROMOUVOIR SON PREMIER COMPTE ADMIN
+-- Modèle à copier/adapter à chaque nouveau client B2B.
+-- ============================================================
+--
+-- insert into structures (nom, code_invitation, quota)
+--   values ('EHPAD Les Tilleuls', 'TILLEULS-4X9K', 30);
+--
+-- update profiles set role = 'admin', plan = 'structure',
+--   structure_id = (select id from structures where code_invitation = 'TILLEULS-4X9K')
+--   where email = 'directeur@example.com';
+
+-- ============================================================
+-- VOUS PROMOUVOIR SUPER-ADMIN (à exécuter une seule fois, sur votre
+-- propre compte, une fois inscrit dans l'app)
+-- ============================================================
+--
+-- update profiles set super_admin = true where email = 'votre@email.fr';
+--
+-- Une fois fait, l'écran "Créer une structure" apparaît dans l'app pour
+-- votre compte, et remplace le besoin de taper le bloc SQL ci-dessus à
+-- chaque nouveau client.
