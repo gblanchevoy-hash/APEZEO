@@ -1245,7 +1245,13 @@ function LogView({ fiche, onBack, onSave }) {
         </div>
         <Field label={`Intensité du trouble avant : ${avant}/10`}><input type="range" min={0} max={10} value={avant} onChange={(e) => setAvant(Number(e.target.value))} className="w-full accent-rose-500" /></Field>
         <Field label={`Intensité du trouble après : ${apres}/10`}><input type="range" min={0} max={10} value={apres} onChange={(e) => setApres(Number(e.target.value))} className="w-full accent-emerald-600" /></Field>
-        <Field label="Commentaire (optionnel)"><textarea rows={3} className={inputCls} value={commentaire} onChange={(e) => setCommentaire(e.target.value)} /></Field>
+        <Field label="Commentaire (optionnel)">
+          <textarea rows={3} className={inputCls} value={commentaire} onChange={(e) => setCommentaire(e.target.value)} placeholder="Ex. : plus efficace en fin d'après-midi, à retenter avec une musique différente…" />
+        </Field>
+        <div className="flex gap-2 bg-amber-50 border border-amber-200 rounded-lg p-2.5 mb-4 -mt-2">
+          <AlertTriangle size={14} className="shrink-0 mt-0.5 text-amber-700" />
+          <p className="text-xs text-amber-800">Ne mentionnez jamais le nom du résident ou toute information permettant de l'identifier — décrivez uniquement la technique et son effet.</p>
+        </div>
         <button onClick={() => onSave({ ficheId: fiche.id, avant, apres, commentaire })} className="w-full mt-2 bg-emerald-700 text-white font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2">
           <Save size={17} /> Enregistrer
         </button>
