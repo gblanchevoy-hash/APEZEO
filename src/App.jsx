@@ -79,7 +79,7 @@ function Badge({ children, tone = "stone" }) {
 }
 function TopBar({ title, onBack, right }) {
   return (
-    <div className="sticky top-0 z-10 bg-[#F4F6F2]/95 backdrop-blur border-b border-emerald-900/10 px-4 py-3 flex items-center gap-2">
+    <div className="sticky top-0 z-10 bg-[#F4F6F2]/60 backdrop-blur-xl backdrop-saturate-150 border-b border-emerald-900/10 shadow-[0_1px_0_0_rgba(255,255,255,0.4)] px-4 py-3 lg:px-8 flex items-center gap-2">
       {onBack ? (
         <button onClick={onBack} className="p-1.5 -ml-1.5 rounded-full hover:bg-emerald-900/5" aria-label="Retour">
           <ArrowLeft size={20} className="text-emerald-900" />
@@ -530,8 +530,8 @@ function AuthenticatedApp({ session, onChangeMode }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F6F2] md:bg-stone-200 md:flex md:justify-center md:py-8">
-    <div className="w-full md:max-w-2xl md:bg-[#F4F6F2] md:rounded-3xl md:shadow-2xl md:overflow-hidden md:border md:border-stone-300/60">
+    <div className="min-h-screen bg-[#F4F6F2] md:bg-stone-200 md:flex md:justify-center md:py-8 lg:bg-[#F4F6F2] lg:block lg:py-0">
+    <div className="w-full md:max-w-2xl md:bg-[#F4F6F2] md:rounded-3xl md:shadow-2xl md:overflow-hidden md:border md:border-stone-300/60 lg:max-w-none lg:rounded-none lg:shadow-none lg:border-none lg:overflow-visible">
       {dbError && (
         <div className="bg-rose-50 border-b border-rose-200 text-rose-700 text-xs px-4 py-2 flex items-center gap-2">
           <AlertTriangle size={13} /> Bibliothèque partagée indisponible ({dbError}) — seules vos fiches personnelles sont affichées.
@@ -543,6 +543,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         </div>
       )}
 
+      <div className="lg:max-w-5xl xl:max-w-6xl lg:mx-auto">
       {current.view === "home" && (
         <Home_
           fiches={fiches} dbCount={visibleDbFiches.length} profession={session?.user?.user_metadata?.profession}
@@ -625,6 +626,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
       {current.view === "legal" && (
         <LegalView doc={current.doc} onBack={pop} />
       )}
+      </div>
 
       {toast && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-950 text-white text-sm px-4 py-2 rounded-full shadow-lg z-50">{toast}</div>
@@ -658,7 +660,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroub
           <Sparkles size={19} /> Trouver la meilleure technique maintenant
         </button>
       </div>
-      <div className="px-5 mt-5 flex flex-col gap-3">
+      <div className="px-5 lg:px-8 mt-5 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
         <NavCard icon={AlertTriangle} label="Choisir un trouble" sub="Agitation, cris, refus de soins…" onClick={onOpenTroubles} accent="emerald" />
         <NavCard icon={Filter} label="Rechercher par besoin" sub="Communication, musique, toucher…" onClick={onOpenBesoins} accent="stone" />
         <NavCard icon={Search} label="Recherche libre" onClick={onOpenSearch} accent="stone" />
@@ -688,7 +690,7 @@ function TroublesView({ fiches, onBack, onOpenTrouble }) {
   return (
     <div className="pb-10">
       <TopBar title="Choisir un trouble" onBack={onBack} />
-      <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+      <div className="p-4 lg:px-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
         {TROUBLES.map((t) => {
           const n = fiches.filter((f) => f.troubles.includes(t)).length;
           return (
@@ -706,7 +708,7 @@ function FamillesView({ fiches, onBack, onOpenFamille }) {
   return (
     <div className="pb-10">
       <TopBar title="Rechercher par besoin" onBack={onBack} />
-      <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+      <div className="p-4 lg:px-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
         {FAMILLES.map((c) => {
           const n = fiches.filter((f) => f.categorie === c).length;
           return (
@@ -1431,8 +1433,9 @@ function AidantApp({ onChangeMode }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F6F2] md:bg-stone-200 md:flex md:justify-center md:py-8">
-    <div className="w-full md:max-w-2xl md:bg-[#F4F6F2] md:rounded-3xl md:shadow-2xl md:overflow-hidden md:border md:border-stone-300/60">
+    <div className="min-h-screen bg-[#F4F6F2] md:bg-stone-200 md:flex md:justify-center md:py-8 lg:bg-[#F4F6F2] lg:block lg:py-0">
+    <div className="w-full md:max-w-2xl md:bg-[#F4F6F2] md:rounded-3xl md:shadow-2xl md:overflow-hidden md:border md:border-stone-300/60 lg:max-w-none lg:rounded-none lg:shadow-none lg:border-none lg:overflow-visible">
+      <div className="lg:max-w-5xl xl:max-w-6xl lg:mx-auto">
       {current.view === "home" && (
         <div className="pb-10">
           <div className="px-5 pt-8 pb-6 bg-gradient-to-b from-emerald-800 to-emerald-700 text-white rounded-b-[2rem]">
@@ -1446,7 +1449,7 @@ function AidantApp({ onChangeMode }) {
               <Sparkles size={19} /> Que faire maintenant ?
             </button>
           </div>
-          <div className="px-5 mt-5 flex flex-col gap-3">
+          <div className="px-5 lg:px-8 mt-5 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
             <NavCard icon={AlertTriangle} label="Choisir une situation" sub="Agitation, cris, refus de soins…" onClick={() => push({ view: "troubles" })} accent="emerald" />
             <NavCard icon={Search} label="Recherche libre" onClick={() => push({ view: "search" })} accent="stone" />
             <NavCard icon={Heart} label="Mes favoris" sub={`${favoris.length} idée${favoris.length !== 1 ? "s" : ""} qui fonctionne${favoris.length !== 1 ? "nt" : ""} pour vous`} onClick={() => push({ view: "favoris" })} accent="amber" />
@@ -1510,6 +1513,7 @@ function AidantApp({ onChangeMode }) {
       {current.view === "form" && (
         <FicheFormView initial={current.fiche} onBack={pop} onSave={(f) => { addLocalFiche(f); pop(); }} />
       )}
+      </div>
 
       {toast && <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-950 text-white text-sm px-4 py-2 rounded-full shadow-lg z-50">{toast}</div>}
     </div>
