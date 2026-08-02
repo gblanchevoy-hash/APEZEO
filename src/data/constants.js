@@ -6,6 +6,7 @@ export const TROUBLES = [
   "Comportements sexuels inadaptés", "Refus alimentaire",
   "Troubles pendant la toilette", "Troubles pendant les repas",
   "Troubles pendant l'habillage", "Troubles nocturnes", "Stress de l'aidant",
+  "Autre",
 ];
 
 export const FAMILLES = [
@@ -16,7 +17,7 @@ export const FAMILLES = [
   "Hydratation", "Gestion des besoins", "Environnement", "Sommeil", "Routine",
   "Sécurité", "Techniques d'urgence", "Compréhension des comportements",
   "Activités cognitives adaptées", "Soutien aux aidants",
-  "Activités favorisant l'autonomie", "Recettes maison", "Autres",
+  "Activités favorisant l'autonomie", "Technique personnelle", "Autres",
 ];
 
 export const STADES = ["Léger", "Modéré", "Sévère"];

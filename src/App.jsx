@@ -15,41 +15,6 @@ const uid = () => `local-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
 const linesToArray = (s) => (s || "").split("\n").map((x) => x.trim()).filter(Boolean);
 const arrayToLines = (a) => (a || []).join("\n");
 
-function buildSubmissionMailto(f) {
-  const subject = `Soumission de fiche Apézeo : ${f.titre}`;
-  const lines = [
-    `Titre : ${f.titre}`,
-    `Catégorie proposée : ${f.categorie}`,
-    `Troubles ciblés : ${(f.troubles || []).join(", ") || "—"}`,
-    `Stades : ${(f.stades || []).join(", ") || "—"}`,
-    "",
-    "Description :",
-    f.description || "—",
-    "",
-    "Pourquoi ça fonctionne :",
-    f.pourquoi || "—",
-    "",
-    "Quand l'utiliser :",
-    f.quandUtiliser || "—",
-    "",
-    "Matériel :",
-    (f.materiel || []).join(", ") || "Aucun",
-    "",
-    "Étapes :",
-    ...(f.etapes && f.etapes.length ? f.etapes.map((e, i) => `${i + 1}. ${e}`) : ["—"]),
-    "",
-    "Conseils :",
-    ...(f.conseils && f.conseils.length ? f.conseils.map((c) => `- ${c}`) : ["—"]),
-    "",
-    "Erreurs à éviter :",
-    ...(f.erreurs && f.erreurs.length ? f.erreurs.map((e) => `- ${e}`) : ["—"]),
-    "",
-    "— Envoyé depuis Apézeo (fiche personnelle soumise pour intégration à la bibliothèque partagée)",
-  ];
-  const body = lines.join("\n");
-  return `mailto:contact@apezeo.fr?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
-
 const emptyLocalFiche = () => ({
   id: null, isLocal: true, titre: "", categorie: FAMILLES[0], sousCategorie: "",
   troubles: [], stades: [], contextes: [], niveauPreuve: 3, description: "",
@@ -74,6 +39,7 @@ function Badge({ children, tone = "stone" }) {
     emerald: "bg-emerald-100 text-emerald-800",
     amber: "bg-amber-100 text-amber-800",
     rose: "bg-rose-100 text-rose-700",
+    orangeDark: "bg-orange-800 text-white",
   };
   return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${tones[tone]}`}>{children}</span>;
 }
@@ -106,12 +72,12 @@ function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald" }) {
   );
 }
 function FicheCard({ f, onClick, favState }) {
-  const nonSourcee = f.categorie === "Recettes maison";
+  const nonSourcee = f.categorie === "Technique personnelle";
   return (
     <button onClick={onClick} className="w-full text-left bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm active:scale-[0.99] transition flex items-start gap-3">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1">
-          <Badge tone={nonSourcee ? "rose" : "emerald"}>{f.categorie}</Badge>
+          <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
           {f.dureeMinutes > 0 ? <Badge>{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {f.isLocal && <Badge tone="amber">Personnelle</Badge>}
@@ -1194,11 +1160,9 @@ function RecommandationsView({ title, results, favoris, onBack, onOpenFiche }) {
 }
 function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [confirmSubmit, setConfirmSubmit] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const liked = favoris.liked.includes(f.id);
   const disliked = favoris.disliked.includes(f.id);
-  const nonSourcee = f.categorie === "Recettes maison";
+  const nonSourcee = f.categorie === "Technique personnelle";
   return (
     <div className="pb-24">
       <TopBar title={f.categorie} onBack={onBack} />
@@ -1229,34 +1193,6 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           <Section title="Contre-indications"><div className="bg-rose-50 border border-rose-200 rounded-lg p-3"><BulletList items={f.contreIndications} /></div></Section>
         )}
         {!simple && f.sources && f.sources.length > 0 && <div className="text-xs text-stone-400 mt-1">Sources : {f.sources.join(", ")}{f.dateMaj ? ` · maj ${f.dateMaj}` : ""}</div>}
-
-        {f.isLocal && (
-          <div className="mt-6">
-            {submitted ? (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 text-sm text-emerald-800 flex gap-2.5">
-                <Mail size={16} className="shrink-0 mt-0.5" />
-                <span>Fiche envoyée pour étude. Elle sera examinée selon sa pertinence (cohérence entre réalisation, objectifs attendus et moyens à mettre en œuvre) avant une éventuelle intégration à la bibliothèque partagée.</span>
-              </div>
-            ) : confirmSubmit ? (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-sm">
-                <p className="text-amber-900 mb-2.5">Cette fiche sera étudiée par notre équipe selon sa pertinence — cohérence entre la réalisation proposée, les objectifs attendus et les moyens à mettre en œuvre. Elle n'est pas intégrée automatiquement à la bibliothèque partagée.</p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => { window.location.href = buildSubmissionMailto(f); setSubmitted(true); setConfirmSubmit(false); }}
-                    className="flex-1 bg-amber-500 text-emerald-950 rounded-lg py-2 font-semibold"
-                  >
-                    Confirmer l'envoi
-                  </button>
-                  <button onClick={() => setConfirmSubmit(false)} className="flex-1 bg-white border border-stone-300 rounded-lg py-2">Annuler</button>
-                </div>
-              </div>
-            ) : (
-              <button onClick={() => setConfirmSubmit(true)} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-amber-500/50 text-amber-800 rounded-xl py-2.5 text-sm font-medium">
-                <Mail size={15} /> Soumettre publiquement
-              </button>
-            )}
-          </div>
-        )}
 
         {onDelete && (confirmDelete ? (
           <div className="mt-6 bg-rose-50 border border-rose-200 rounded-xl p-3.5 text-sm">
