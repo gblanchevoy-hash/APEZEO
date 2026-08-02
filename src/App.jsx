@@ -832,6 +832,10 @@ function CreateStructureView({ onBack }) {
   const [created, setCreated] = useState(null);
   const [structures, setStructures] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
+  const [copiedId, setCopiedId] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [rowBusyId, setRowBusyId] = useState(null);
+  const [rowMsg, setRowMsg] = useState(null); // {id, ok, text}
 
   const loadStructures = useCallback(async () => {
     setLoadingList(true);
@@ -867,6 +871,40 @@ function CreateStructureView({ onBack }) {
     setCreated(newStructure);
     setNom(""); setQuota(30); setCode(""); setAdminEmail("");
     setBusy(false);
+    loadStructures();
+  };
+
+  const copyRowCode = (s) => {
+    navigator.clipboard.writeText(s.code_invitation);
+    setCopiedId(s.id);
+    setTimeout(() => setCopiedId(null), 1800);
+  };
+
+  const toggleSuspend = async (s) => {
+    setRowBusyId(s.id);
+    setRowMsg(null);
+    const { data, error } = await supabase.rpc("set_structure_suspended", { p_structure_id: s.id, p_suspend: !s.suspended });
+    setRowBusyId(null);
+    const result = data && data[0];
+    if (error || !result?.success) {
+      setRowMsg({ id: s.id, ok: false, text: error?.message || result?.message || "Échec." });
+      return;
+    }
+    setRowMsg({ id: s.id, ok: true, text: result.message });
+    loadStructures();
+  };
+
+  const deleteStructure = async (s) => {
+    setRowBusyId(s.id);
+    setRowMsg(null);
+    const { data, error } = await supabase.rpc("delete_structure", { p_structure_id: s.id });
+    setRowBusyId(null);
+    setConfirmDeleteId(null);
+    const result = data && data[0];
+    if (error || !result?.success) {
+      setRowMsg({ id: s.id, ok: false, text: error?.message || result?.message || "Échec." });
+      return;
+    }
     loadStructures();
   };
 
@@ -912,9 +950,47 @@ function CreateStructureView({ onBack }) {
         ) : (
           <div className="flex flex-col gap-2">
             {structures.map((s) => (
-              <div key={s.id} className="bg-white rounded-xl p-3 border border-emerald-900/5 shadow-sm">
-                <div className="font-medium text-emerald-950 text-sm">{s.nom}</div>
-                <div className="text-xs text-stone-500 font-mono">{s.code_invitation} · quota {s.quota}</div>
+              <div key={s.id} className={`bg-white rounded-xl p-3 border shadow-sm ${s.suspended ? "border-rose-300" : "border-emerald-900/5"}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="font-medium text-emerald-950 text-sm flex-1">{s.nom}</div>
+                  {s.suspended && <Badge tone="rose">Suspendue</Badge>}
+                </div>
+                <div className="flex items-center justify-between bg-stone-50 rounded-lg px-2.5 py-1.5 mb-2">
+                  <span className="text-xs text-stone-600 font-mono">{s.code_invitation} · quota {s.quota}</span>
+                  <button onClick={() => copyRowCode(s)} className="flex items-center gap-1 text-xs text-emerald-700 font-medium shrink-0 ml-2">
+                    <Copy size={12} /> {copiedId === s.id ? "Copié !" : "Copier"}
+                  </button>
+                </div>
+
+                {confirmDeleteId === s.id ? (
+                  <div className="bg-rose-50 border border-rose-200 rounded-lg p-2.5">
+                    <p className="text-xs text-rose-800 mb-2">Supprimer "{s.nom}" ? Ses membres repasseront en accès découverte (aucun compte n'est supprimé). Irréversible.</p>
+                    <div className="flex gap-2">
+                      <button onClick={() => deleteStructure(s)} disabled={rowBusyId === s.id} className="flex-1 bg-rose-600 disabled:bg-stone-300 text-white text-xs font-semibold rounded-lg py-1.5">
+                        Confirmer la suppression
+                      </button>
+                      <button onClick={() => setConfirmDeleteId(null)} className="flex-1 bg-white border border-stone-300 text-xs rounded-lg py-1.5">Annuler</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => toggleSuspend(s)} disabled={rowBusyId === s.id}
+                      className={`flex-1 text-xs font-medium rounded-lg py-1.5 border ${s.suspended ? "border-emerald-300 text-emerald-700 bg-emerald-50" : "border-amber-300 text-amber-700 bg-amber-50"}`}
+                    >
+                      {s.suspended ? "Réactiver" : "Suspendre"}
+                    </button>
+                    <button
+                      onClick={() => setConfirmDeleteId(s.id)}
+                      className="flex-1 text-xs font-medium rounded-lg py-1.5 border border-rose-300 text-rose-600 bg-rose-50"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                )}
+                {rowMsg && rowMsg.id === s.id && (
+                  <p className={`text-xs mt-1.5 ${rowMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{rowMsg.text}</p>
+                )}
               </div>
             ))}
           </div>

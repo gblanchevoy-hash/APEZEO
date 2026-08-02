@@ -447,3 +447,95 @@ end;
 $$;
 
 grant execute on function public.attach_existing_account(text) to authenticated;
+
+-- ============================================================
+-- SUSPENSION ET SUPPRESSION D'UNE STRUCTURE (super-admin uniquement)
+-- ============================================================
+
+alter table structures add column if not exists suspended boolean not null default false;
+
+-- Une structure suspendue ne peut plus accueillir de nouvelles inscriptions.
+create or replace function public.handle_new_user()
+returns trigger as $$
+declare
+  v_code text;
+  v_structure public.structures;
+  v_count int;
+begin
+  v_code := nullif(trim(new.raw_user_meta_data->>'code_invitation'), '');
+
+  if v_code is not null then
+    select * into v_structure from public.structures where code_invitation = v_code;
+    if not found then
+      raise exception 'Code d''invitation invalide.';
+    end if;
+
+    if v_structure.suspended then
+      raise exception 'Cette structure est actuellement suspendue. Contactez votre administrateur.';
+    end if;
+
+    select count(*) into v_count from public.profiles where structure_id = v_structure.id and actif = true;
+    if v_count >= v_structure.quota then
+      raise exception 'Cette structure a atteint son quota de comptes. Contactez votre administrateur.';
+    end if;
+
+    insert into public.profiles (id, email, profession, structure_id, role, plan)
+    values (new.id, new.email, new.raw_user_meta_data->>'profession', v_structure.id, 'membre', 'structure');
+  else
+    insert into public.profiles (id, email, profession, plan)
+    values (new.id, new.email, new.raw_user_meta_data->>'profession', 'gratuit');
+  end if;
+
+  return new;
+end;
+$$ language plpgsql security definer set search_path = public, pg_temp;
+
+-- Suspendre ou réactiver une structure entière : bascule le statut de
+-- TOUS les comptes de la structure en même temps (actif <-> inactif),
+-- en plus de bloquer/débloquer les nouvelles inscriptions via le code.
+create or replace function public.set_structure_suspended(p_structure_id bigint, p_suspend boolean)
+returns table(success boolean, message text)
+language plpgsql security definer
+set search_path = public, pg_temp
+as $$
+begin
+  if not public.is_super_admin(auth.uid()) then
+    return query select false, 'Action réservée au super-administrateur.';
+    return;
+  end if;
+
+  update public.structures set suspended = p_suspend where id = p_structure_id;
+  update public.profiles set actif = not p_suspend where structure_id = p_structure_id and role <> 'admin';
+
+  return query select true, case when p_suspend then 'Structure suspendue.' else 'Structure réactivée.' end;
+end;
+$$;
+
+grant execute on function public.set_structure_suspended(bigint, boolean) to authenticated;
+
+-- Supprimer une structure : détache proprement tous ses comptes (ils
+-- redeviennent des comptes "gratuit", ne sont jamais supprimés eux-mêmes)
+-- avant de supprimer la structure, pour éviter toute erreur de
+-- contrainte de clé étrangère.
+create or replace function public.delete_structure(p_structure_id bigint)
+returns table(success boolean, message text)
+language plpgsql security definer
+set search_path = public, pg_temp
+as $$
+begin
+  if not public.is_super_admin(auth.uid()) then
+    return query select false, 'Action réservée au super-administrateur.';
+    return;
+  end if;
+
+  update public.profiles
+    set structure_id = null, role = 'membre', plan = 'gratuit'
+    where structure_id = p_structure_id;
+
+  delete from public.structures where id = p_structure_id;
+
+  return query select true, 'Structure supprimée. Les comptes rattachés repassent en accès découverte.';
+end;
+$$;
+
+grant execute on function public.delete_structure(bigint) to authenticated;
