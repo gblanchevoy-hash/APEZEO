@@ -3,7 +3,7 @@ import {
   Search, Heart, HeartOff, History, Plus, ArrowLeft, Star, ChevronRight,
   Sparkles, Clock, AlertTriangle, Filter, Leaf, Save, Info, RefreshCw,
   Trash2, DatabaseZap, LogOut, UserCircle, Mail, Lock, Stethoscope, Users,
-  ArrowLeftRight, CheckCircle2, ShieldCheck, UserX, UserCheck, Copy,
+  ArrowLeftRight, CheckCircle2, ShieldCheck, UserX, UserCheck, Copy, BookOpen,
 } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES, PROFESSIONS } from "./data/constants.js";
 import { MENTIONS_LEGALES, CGU, CONFIDENTIALITE, NON_RESPONSABILITE } from "./data/legalTexts.js";
@@ -606,23 +606,31 @@ function AuthenticatedApp({ session, onChangeMode }) {
 function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenHistorique, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenLegal, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
-      <div className="px-5 pt-8 pb-6 bg-gradient-to-b from-emerald-800 to-emerald-700 text-white rounded-b-[2rem]">
-        <div className="flex items-center justify-between mb-1">
+      <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-7 lg:px-9 lg:pt-9 bg-gradient-to-br from-emerald-800 to-emerald-700 text-white rounded-3xl">
+        {/* décoration feuille, discrète, en fond */}
+        <Leaf size={190} className="absolute -bottom-8 -right-6 text-white/[0.07] rotate-[-12deg] pointer-events-none" strokeWidth={1} />
+
+        <div className="relative flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <Leaf size={20} />
-            <span className="uppercase tracking-widest text-xs text-emerald-200">Apézeo</span>
-            <span className="italic text-emerald-200/80 text-xs">— Version Pro</span>
+            <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
+            <span className="text-[11px] bg-white/15 rounded-full px-2 py-0.5">Version Pro</span>
           </div>
-          <div className="flex items-center gap-1">
-            <button onClick={onChangeMode} className="p-1.5 rounded-full hover:bg-white/10" aria-label="Changer de mode"><ArrowLeftRight size={16} /></button>
-            <button onClick={onRefresh} className="p-1.5 rounded-full hover:bg-white/10" aria-label="Actualiser"><RefreshCw size={16} /></button>
-            <button onClick={onLogout} className="p-1.5 rounded-full hover:bg-white/10" aria-label="Se déconnecter"><LogOut size={16} /></button>
+          <div className="flex items-center gap-1.5">
+            <button onClick={onChangeMode} className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition" aria-label="Changer de mode"><ArrowLeftRight size={15} /></button>
+            <button onClick={onRefresh} className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition" aria-label="Actualiser"><RefreshCw size={15} /></button>
+            <button onClick={onLogout} className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition" aria-label="Se déconnecter"><LogOut size={15} /></button>
           </div>
         </div>
-        <h1 className="text-2xl font-semibold mb-1" style={{ fontFamily: "'Fraunces', serif" }}>Un geste apaisant, tout de suite.</h1>
-        {profession && <p className="text-emerald-200 text-xs mb-1">Connecté en tant que {profession}</p>}
-        <p className="text-emerald-100 text-sm mb-5">{fiches.length} techniques · {dbCount} partagées par l'équipe</p>
-        <button onClick={onOpenQuiz} className="w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] transition">
+
+        <h1 className="relative text-2xl lg:text-3xl font-semibold mb-1.5" style={{ fontFamily: "'Fraunces', serif" }}>Un geste apaisant, tout de suite.</h1>
+        {profession && <p className="relative text-emerald-200 text-xs mb-2.5">Connecté en tant que {profession}</p>}
+        <div className="relative flex items-center gap-3 text-emerald-100 text-sm mb-6">
+          <span className="flex items-center gap-1.5"><BookOpen size={15} className="text-emerald-300" /> {fiches.length} techniques</span>
+          <span className="text-emerald-400/50">|</span>
+          <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> {dbCount} partagées par l'équipe</span>
+        </div>
+        <button onClick={onOpenQuiz} className="relative w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] transition">
           <Sparkles size={19} /> Trouver la meilleure technique maintenant
         </button>
       </div>
@@ -630,18 +638,19 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroub
         <NavCard icon={AlertTriangle} label="Choisir un trouble" sub="Agitation, cris, refus de soins…" onClick={onOpenTroubles} accent="emerald" />
         <NavCard icon={Filter} label="Rechercher par besoin" sub="Communication, musique, toucher…" onClick={onOpenBesoins} accent="stone" />
         <NavCard icon={Search} label="Recherche libre" onClick={onOpenSearch} accent="stone" />
-        <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre proche" onClick={onOpenFavoris} accent="amber" />
-        <NavCard icon={History} label="Historique" sub="Suivi des utilisations" onClick={onOpenHistorique} accent="stone" />
-        {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes de votre structure" onClick={onOpenTeam} accent="emerald" />}
+        <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="amber" />
+        <NavCard icon={History} label="Historique" sub="Suivi de vos consultations" onClick={onOpenHistorique} accent="stone" />
+        {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="emerald" />}
         {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="stone" />}
       </div>
-      <div className="px-5 mt-5">
-        <button onClick={onOpenAdd} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-emerald-700/30 text-emerald-800 rounded-2xl py-3 font-medium">
+      <div className="px-5 lg:px-8 mt-5">
+        <button onClick={onOpenAdd} className="relative overflow-hidden w-full flex items-center justify-center gap-2 border-2 border-dashed border-emerald-700/30 text-emerald-800 rounded-2xl py-4 font-medium">
+          <Leaf size={70} className="absolute -right-2 -bottom-3 text-emerald-700/10 pointer-events-none" strokeWidth={1} />
           <Plus size={18} /> Ajouter une fiche personnelle
         </button>
         <p className="text-xs text-stone-400 text-center mt-2">Visible uniquement sur cet appareil. Pour enrichir la bibliothèque partagée, ajoutez la fiche dans Supabase.</p>
       </div>
-      <div className="px-5 mt-5">
+      <div className="px-5 lg:px-8 mt-5">
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2.5 text-sm text-amber-900">
           <Info size={16} className="shrink-0 mt-0.5" />
           <span>En cas de danger immédiat, ou si les troubles deviennent fréquents et intenses, consultez un médecin ou un gériatre.</span>
