@@ -648,7 +648,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroub
           <Leaf size={70} className="absolute -right-2 -bottom-3 text-emerald-700/10 pointer-events-none" strokeWidth={1} />
           <Plus size={18} /> Ajouter une fiche personnelle
         </button>
-        <p className="text-xs text-stone-400 text-center mt-2">Visible uniquement sur cet appareil. Pour enrichir la bibliothèque partagée, ajoutez la fiche dans Supabase.</p>
+        <p className="text-xs text-stone-400 text-center mt-2">Fiche personnelle, privée — vous seul(e) y avez accès, elle n'est pas partagée avec le reste de votre équipe.</p>
       </div>
       <div className="px-5 lg:px-8 mt-5">
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2.5 text-sm text-amber-900">
