@@ -53,21 +53,21 @@ function TopBar({ title, onBack, right }) {
       ) : (
         <Leaf size={20} className="text-emerald-700" />
       )}
-      <h1 className="flex-1 text-lg text-emerald-950 truncate" style={{ fontFamily: "'Fraunces', serif" }}>{title}</h1>
+      <h1 className="flex-1 text-lg text-emerald-950 truncate">{title}</h1>
       {right}
     </div>
   );
 }
 function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald" }) {
-  const accents = { emerald: "bg-emerald-700 text-white", amber: "bg-amber-500 text-white", stone: "bg-stone-700 text-white" };
+  const accents = { emerald: "bg-emerald-700 text-white", amber: "bg-amber-400 text-emerald-950", stone: "bg-stone-700 text-white" };
   return (
-    <button onClick={onClick} className="w-full flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border border-emerald-900/5 active:scale-[0.99] transition text-left">
-      <div className={`rounded-xl p-3 ${accents[accent]}`}><Icon size={22} /></div>
+    <button onClick={onClick} className="w-full flex items-center gap-4 bg-white rounded-3xl p-5 shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] hover:shadow-[0_8px_28px_-6px_rgba(6,78,59,0.18)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200 text-left">
+      <div className={`rounded-2xl p-3 ${accents[accent]}`}><Icon size={22} /></div>
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-emerald-950">{label}</div>
         {sub && <div className="text-sm text-stone-500 truncate">{sub}</div>}
       </div>
-      <ChevronRight size={18} className="text-stone-400" />
+      <ChevronRight size={18} className="text-stone-300" />
     </button>
   );
 }
@@ -234,11 +234,11 @@ function AuthView({ onChangeMode }) {
         {/* Vitrine commerciale */}
         <div className="text-center mb-5">
           <Leaf className="mx-auto mb-2 text-emerald-700" size={30} />
-          <h1 className="text-2xl font-semibold text-emerald-950" style={{ fontFamily: "'Fraunces', serif" }}>Apézeo</h1>
+          <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
           <p className="text-sm italic text-stone-500 mt-0.5">Version Pro</p>
         </div>
         <div className="bg-emerald-800 text-white rounded-2xl p-5 mb-5">
-          <p className="text-2xl font-semibold mb-1" style={{ fontFamily: "'Fraunces', serif" }}>800+ fiches</p>
+          <p className="text-3xl font-bold mb-1 tracking-tight">800+ fiches</p>
           <p className="text-sm text-emerald-100 mb-3">d'aides non médicamenteuses pour les professionnels accompagnant des personnes atteintes d'Alzheimer et maladies apparentées.</p>
           <ul className="space-y-1.5 text-sm text-emerald-50">
             <li className="flex gap-2"><CheckCircle2 size={16} className="shrink-0 mt-0.5 text-amber-300" /> Recherche instantanée par symptôme</li>
@@ -606,46 +606,49 @@ function AuthenticatedApp({ session, onChangeMode }) {
 function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenHistorique, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenLegal, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
-      <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-7 lg:px-9 lg:pt-9 bg-gradient-to-br from-emerald-800 to-emerald-700 text-white rounded-3xl">
-        {/* décoration feuille, discrète, en fond */}
-        <Leaf size={190} className="absolute -bottom-8 -right-6 text-white/[0.07] rotate-[-12deg] pointer-events-none" strokeWidth={1} />
+      <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
+        {/* Motif de vague — plusieurs profondeurs, très discret, jamais agité */}
+        <svg className="absolute inset-x-0 bottom-0 w-full h-24 lg:h-32 pointer-events-none" viewBox="0 0 400 100" preserveAspectRatio="none">
+          <path d="M0,55 C80,80 140,30 220,50 C290,68 340,40 400,58 L400,100 L0,100 Z" fill="rgba(255,255,255,0.05)" />
+          <path d="M0,68 C90,45 160,85 240,65 C310,48 350,75 400,62 L400,100 L0,100 Z" fill="rgba(255,255,255,0.07)" />
+        </svg>
+        <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/[0.04] pointer-events-none" />
 
-        <div className="relative flex items-center justify-between mb-5">
+        <div className="relative flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Leaf size={20} />
             <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
             <span className="text-[11px] bg-white/15 rounded-full px-2 py-0.5">Version Pro</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <button onClick={onChangeMode} className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition" aria-label="Changer de mode"><ArrowLeftRight size={15} /></button>
-            <button onClick={onRefresh} className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition" aria-label="Actualiser"><RefreshCw size={15} /></button>
-            <button onClick={onLogout} className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition" aria-label="Se déconnecter"><LogOut size={15} /></button>
+            <button onClick={onChangeMode} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Changer de mode"><ArrowLeftRight size={15} /></button>
+            <button onClick={onRefresh} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Actualiser"><RefreshCw size={15} /></button>
+            <button onClick={onLogout} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Se déconnecter"><LogOut size={15} /></button>
           </div>
         </div>
 
-        <h1 className="relative text-2xl lg:text-3xl font-semibold mb-1.5" style={{ fontFamily: "'Fraunces', serif" }}>Un geste apaisant, tout de suite.</h1>
+        <h1 className="relative text-2xl lg:text-3xl font-bold mb-1.5 tracking-tight">Un geste apaisant, tout de suite.</h1>
         {profession && <p className="relative text-emerald-200 text-xs mb-2.5">Connecté en tant que {profession}</p>}
-        <div className="relative flex items-center gap-3 text-emerald-100 text-sm mb-6">
+        <div className="relative flex items-center gap-3 text-emerald-100 text-sm mb-7">
           <span className="flex items-center gap-1.5"><BookOpen size={15} className="text-emerald-300" /> {fiches.length} techniques</span>
           <span className="text-emerald-400/50">|</span>
           <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> {dbCount} partagées par l'équipe</span>
         </div>
-        <button onClick={onOpenQuiz} className="relative w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] transition">
+        <button onClick={onOpenQuiz} className="relative w-full bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all duration-200">
           <Sparkles size={19} /> Trouver la meilleure technique maintenant
         </button>
       </div>
-      <div className="px-5 lg:px-8 mt-5 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
+      <div className="px-5 lg:px-8 mt-6 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
         <NavCard icon={AlertTriangle} label="Choisir un trouble" sub="Agitation, cris, refus de soins…" onClick={onOpenTroubles} accent="emerald" />
         <NavCard icon={Filter} label="Rechercher par besoin" sub="Communication, musique, toucher…" onClick={onOpenBesoins} accent="stone" />
         <NavCard icon={Search} label="Recherche libre" onClick={onOpenSearch} accent="stone" />
-        <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="amber" />
+        <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="emerald" />
         <NavCard icon={History} label="Historique" sub="Suivi de vos consultations" onClick={onOpenHistorique} accent="stone" />
         {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="emerald" />}
         {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="stone" />}
       </div>
       <div className="px-5 lg:px-8 mt-5">
-        <button onClick={onOpenAdd} className="relative overflow-hidden w-full flex items-center justify-center gap-2 border-2 border-dashed border-emerald-700/30 text-emerald-800 rounded-2xl py-4 font-medium">
-          <Leaf size={70} className="absolute -right-2 -bottom-3 text-emerald-700/10 pointer-events-none" strokeWidth={1} />
+        <button onClick={onOpenAdd} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-stone-300 hover:border-emerald-700/40 hover:bg-emerald-50/50 text-stone-500 hover:text-emerald-800 rounded-2xl py-4 font-medium transition-colors">
           <Plus size={18} /> Ajouter une fiche personnelle
         </button>
         <p className="text-xs text-stone-400 text-center mt-2">Fiche personnelle, privée — vous seul(e) y avez accès, elle n'est pas partagée avec le reste de votre équipe.</p>
@@ -1176,7 +1179,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
     <div className="pb-24">
       <TopBar title={f.categorie} onBack={onBack} />
       <div className="p-4">
-        <h2 className="text-xl font-semibold text-emerald-950 mb-2" style={{ fontFamily: "'Fraunces', serif" }}>{f.titre}</h2>
+        <h2 className="text-xl font-bold text-emerald-950 mb-2 tracking-tight">{f.titre}</h2>
         {nonSourcee && (
           <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 flex gap-2.5 text-sm text-rose-800 mb-4">
             <AlertTriangle size={16} className="shrink-0 mt-0.5" />
@@ -1302,7 +1305,7 @@ function Gate({ onChoose }) {
     <div className="min-h-screen bg-[#F4F6F2] flex items-center justify-center p-5">
       <div className="w-full max-w-sm text-center">
         <Leaf className="mx-auto mb-2 text-emerald-700" size={30} />
-        <h1 className="text-2xl font-semibold text-emerald-950" style={{ fontFamily: "'Fraunces', serif" }}>Apézeo</h1>
+        <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
         <p className="text-sm text-stone-500 mt-2 mb-7">Des idées concrètes pour apaiser une personne atteinte d'Alzheimer ou maladie apparentée.</p>
 
         <button onClick={() => onChoose("pro")} className="w-full bg-white rounded-2xl p-4 border border-emerald-900/5 shadow-sm flex items-center gap-4 text-left mb-3 active:scale-[0.99] transition">
@@ -1394,7 +1397,7 @@ function AidantApp({ onChangeMode }) {
               <div className="flex items-center gap-2"><Leaf size={20} /><span className="uppercase tracking-widest text-xs text-emerald-200">Apézeo</span></div>
               <button onClick={onChangeMode} className="p-1.5 rounded-full hover:bg-white/10" aria-label="Changer de mode"><ArrowLeftRight size={16} /></button>
             </div>
-            <h1 className="text-2xl font-semibold mb-1" style={{ fontFamily: "'Fraunces', serif" }}>Un geste apaisant, tout de suite.</h1>
+            <h1 className="text-2xl lg:text-3xl font-bold mb-1 tracking-tight">Un geste apaisant, tout de suite.</h1>
             <p className="text-emerald-100 text-sm mb-5">Des idées simples à essayer, pas à pas.</p>
             <button onClick={() => push({ view: "quiz" })} className="w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] transition">
               <Sparkles size={19} /> Que faire maintenant ?
