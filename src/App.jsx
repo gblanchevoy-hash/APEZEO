@@ -931,6 +931,9 @@ function AdminTeamView({ structureId, onBack }) {
   const [members, setMembers] = useState([]);
   const [toast, setToast] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [attachEmail, setAttachEmail] = useState("");
+  const [attaching, setAttaching] = useState(false);
+  const [attachMsg, setAttachMsg] = useState(null); // {ok: bool, text: string}
 
   const load = useCallback(async () => {
     if (!structureId) { setLoading(false); return; }
@@ -952,6 +955,20 @@ function AdminTeamView({ structureId, onBack }) {
     setToast(!current ? "Compte réactivé" : "Compte désactivé");
     setTimeout(() => setToast(null), 2000);
     load();
+  };
+
+  const attachAccount = async (e) => {
+    e.preventDefault();
+    setAttaching(true);
+    setAttachMsg(null);
+    const { data, error } = await supabase.rpc("attach_existing_account", { p_email: attachEmail.trim() });
+    setAttaching(false);
+    if (error) { setAttachMsg({ ok: false, text: error.message }); return; }
+    const result = data && data[0];
+    if (result) {
+      setAttachMsg({ ok: result.success, text: result.message });
+      if (result.success) { setAttachEmail(""); load(); }
+    }
   };
 
   const copyCode = () => {
@@ -995,6 +1012,24 @@ function AdminTeamView({ structureId, onBack }) {
             </button>
           </div>
           <p className="text-xs text-stone-400 mt-2">Transmettez ce code à vos collègues pour qu'ils créent leur compte rattaché à votre structure.</p>
+        </div>
+
+        <div className="bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm mb-4">
+          <div className="font-semibold text-emerald-950 text-sm mb-1">Rattacher un compte déjà créé</div>
+          <p className="text-xs text-stone-400 mb-3">Pour quelqu'un qui s'est inscrit avant d'avoir reçu le code — pas besoin de recréer son compte.</p>
+          <form onSubmit={attachAccount} className="flex gap-2">
+            <input
+              type="email" required placeholder="email@exemple.fr"
+              value={attachEmail} onChange={(e) => setAttachEmail(e.target.value)}
+              className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm"
+            />
+            <button type="submit" disabled={attaching} className="bg-emerald-700 disabled:bg-stone-300 text-white text-sm font-medium rounded-lg px-4">
+              {attaching ? "…" : "Rattacher"}
+            </button>
+          </form>
+          {attachMsg && (
+            <p className={`text-xs mt-2 ${attachMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{attachMsg.text}</p>
+          )}
         </div>
 
         <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">Membres de l'équipe</div>
@@ -1197,8 +1232,18 @@ function LogView({ fiche, onBack, onSave }) {
 }
 function FicheFormView({ initial, onBack, onSave }) {
   const [f, setF] = useState(initial);
+  // Champs "une ligne = un élément" : on garde le texte brut tel quel
+  // pendant la frappe (aucun trim/filtre), et on ne le transforme en
+  // tableau qu'au moment d'enregistrer. Avant ce changement, chaque
+  // frappe nettoyait immédiatement la ligne en cours de saisie, ce qui
+  // supprimait les espaces au moment même où on les tapait.
+  const [etapesText, setEtapesText] = useState(arrayToLines(initial.etapes));
+  const [materielText, setMaterielText] = useState(arrayToLines(initial.materiel));
   const set = (k, v) => setF((s) => ({ ...s, [k]: v }));
   const toggleIn = (k, v) => setF((s) => ({ ...s, [k]: s[k].includes(v) ? s[k].filter((x) => x !== v) : [...s[k], v] }));
+  const handleSave = () => {
+    onSave({ ...f, etapes: linesToArray(etapesText), materiel: linesToArray(materielText) });
+  };
   return (
     <div className="pb-16">
       <TopBar title={initial.titre ? "Modifier la fiche" : "Nouvelle fiche personnelle"} onBack={onBack} />
@@ -1212,9 +1257,9 @@ function FicheFormView({ initial, onBack, onSave }) {
         <Field label="Pourquoi cela fonctionne"><textarea rows={2} className={inputCls} value={f.pourquoi} onChange={(e) => set("pourquoi", e.target.value)} /></Field>
         <Field label="Quand l'utiliser"><textarea rows={2} className={inputCls} value={f.quandUtiliser} onChange={(e) => set("quandUtiliser", e.target.value)} /></Field>
         <Field label="Durée (minutes)"><input type="number" min={0} className={inputCls} value={f.dureeMinutes} onChange={(e) => set("dureeMinutes", Number(e.target.value))} /></Field>
-        <Field label="Étapes (une par ligne)"><textarea rows={3} className={inputCls} value={arrayToLines(f.etapes)} onChange={(e) => set("etapes", linesToArray(e.target.value))} /></Field>
-        <Field label="Matériel (un par ligne)"><textarea rows={2} className={inputCls} value={arrayToLines(f.materiel)} onChange={(e) => set("materiel", linesToArray(e.target.value))} /></Field>
-        <button disabled={!f.titre.trim()} onClick={() => onSave(f)} className="w-full mt-3 bg-emerald-700 disabled:bg-stone-300 text-white font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2">
+        <Field label="Étapes (une par ligne)"><textarea rows={3} className={inputCls} value={etapesText} onChange={(e) => setEtapesText(e.target.value)} /></Field>
+        <Field label="Matériel (un par ligne)"><textarea rows={2} className={inputCls} value={materielText} onChange={(e) => setMaterielText(e.target.value)} /></Field>
+        <button disabled={!f.titre.trim()} onClick={handleSave} className="w-full mt-3 bg-emerald-700 disabled:bg-stone-300 text-white font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2">
           <Save size={17} /> Enregistrer la fiche
         </button>
       </div>

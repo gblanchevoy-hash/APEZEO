@@ -36,6 +36,7 @@ create table if not exists interventions (
 -- policies RLS) pouvez ajouter, modifier ou supprimer des lignes.
 alter table interventions enable row level security;
 
+drop policy if exists "Lecture publique des interventions" on interventions;
 create policy "Lecture publique des interventions"
   on interventions for select
   using (true);
@@ -56,10 +57,12 @@ create table if not exists profiles (
 
 alter table profiles enable row level security;
 
+drop policy if exists "Un utilisateur voit son propre profil" on profiles;
 create policy "Un utilisateur voit son propre profil"
   on profiles for select
   using (auth.uid() = id);
 
+drop policy if exists "Un utilisateur modifie son propre profil" on profiles;
 create policy "Un utilisateur modifie son propre profil"
   on profiles for update
   using (auth.uid() = id);
@@ -98,6 +101,7 @@ create table if not exists favoris (
   unique (user_id, fiche_id)
 );
 alter table favoris enable row level security;
+drop policy if exists "Un utilisateur gère ses favoris" on favoris;
 create policy "Un utilisateur gère ses favoris"
   on favoris for all
   using (auth.uid() = user_id)
@@ -113,6 +117,7 @@ create table if not exists historique (
   created_at timestamptz default now()
 );
 alter table historique enable row level security;
+drop policy if exists "Un utilisateur gère son historique" on historique;
 create policy "Un utilisateur gère son historique"
   on historique for all
   using (auth.uid() = user_id)
@@ -145,6 +150,7 @@ create table if not exists fiches_personnelles (
   created_at timestamptz default now()
 );
 alter table fiches_personnelles enable row level security;
+drop policy if exists "Un utilisateur gère ses fiches personnelles" on fiches_personnelles;
 create policy "Un utilisateur gère ses fiches personnelles"
   on fiches_personnelles for all
   using (auth.uid() = user_id)
@@ -243,29 +249,35 @@ alter table profiles add column if not exists super_admin boolean default false;
 -- "infinite recursion detected in policy" — une erreur Postgres bien connue
 -- quand une policy sur une table interroge cette même table directement).
 create or replace function public.is_admin_of(uid uuid, sid bigint)
-returns boolean language sql security definer stable as $$
-  select exists (select 1 from profiles where id = uid and role = 'admin' and structure_id = sid);
+returns boolean language sql security definer stable
+set search_path = public, pg_temp as $$
+  select exists (select 1 from public.profiles where id = uid and role = 'admin' and structure_id = sid);
 $$;
 
 create or replace function public.my_structure_id(uid uuid)
-returns bigint language sql security definer stable as $$
-  select structure_id from profiles where id = uid and role = 'admin';
+returns bigint language sql security definer stable
+set search_path = public, pg_temp as $$
+  select structure_id from public.profiles where id = uid and role = 'admin';
 $$;
 
 create or replace function public.is_super_admin(uid uuid)
-returns boolean language sql security definer stable as $$
-  select coalesce((select super_admin from profiles where id = uid), false);
+returns boolean language sql security definer stable
+set search_path = public, pg_temp as $$
+  select coalesce((select super_admin from public.profiles where id = uid), false);
 $$;
 
 -- STRUCTURES : un admin voit sa structure, un super-admin voit et crée tout.
+drop policy if exists "Admin voit sa structure, super-admin voit tout" on structures;
 create policy "Admin voit sa structure, super-admin voit tout"
   on structures for select
   using (id = public.my_structure_id(auth.uid()) or public.is_super_admin(auth.uid()));
 
+drop policy if exists "Super-admin crée des structures" on structures;
 create policy "Super-admin crée des structures"
   on structures for insert
   with check (public.is_super_admin(auth.uid()));
 
+drop policy if exists "Super-admin modifie les structures" on structures;
 create policy "Super-admin modifie les structures"
   on structures for update
   using (public.is_super_admin(auth.uid()));
@@ -278,6 +290,7 @@ drop policy if exists "Un utilisateur modifie son propre profil" on profiles;
 drop policy if exists "Voir son profil ou ceux de son équipe si admin" on profiles;
 drop policy if exists "Modifier son profil ou ceux de son équipe si admin" on profiles;
 
+drop policy if exists "Voir son profil, son équipe si admin, ou tout si super-admin" on profiles;
 create policy "Voir son profil, son équipe si admin, ou tout si super-admin"
   on profiles for select
   using (
@@ -286,6 +299,7 @@ create policy "Voir son profil, son équipe si admin, ou tout si super-admin"
     or public.is_super_admin(auth.uid())
   );
 
+drop policy if exists "Modifier son profil, son équipe si admin, ou tout si super-admin" on profiles;
 create policy "Modifier son profil, son équipe si admin, ou tout si super-admin"
   on profiles for update
   using (
@@ -300,17 +314,18 @@ create policy "Modifier son profil, son équipe si admin, ou tout si super-admin
 create or replace function public.check_invitation_code(p_code text)
 returns table(valid boolean, structure_nom text, places_restantes int)
 language plpgsql security definer
+set search_path = public, pg_temp
 as $$
 declare
-  v_structure structures;
+  v_structure public.structures;
   v_count int;
 begin
-  select * into v_structure from structures where code_invitation = p_code;
+  select * into v_structure from public.structures where code_invitation = p_code;
   if not found then
     return query select false, null::text, null::int;
     return;
   end if;
-  select count(*) into v_count from profiles where structure_id = v_structure.id and actif = true;
+  select count(*) into v_count from public.profiles where structure_id = v_structure.id and actif = true;
   return query select true, v_structure.nom, greatest(v_structure.quota - v_count, 0);
 end;
 $$;
@@ -324,18 +339,18 @@ create or replace function public.handle_new_user()
 returns trigger as $$
 declare
   v_code text;
-  v_structure structures;
+  v_structure public.structures;
   v_count int;
 begin
   v_code := nullif(trim(new.raw_user_meta_data->>'code_invitation'), '');
 
   if v_code is not null then
-    select * into v_structure from structures where code_invitation = v_code;
+    select * into v_structure from public.structures where code_invitation = v_code;
     if not found then
       raise exception 'Code d''invitation invalide.';
     end if;
 
-    select count(*) into v_count from profiles where structure_id = v_structure.id and actif = true;
+    select count(*) into v_count from public.profiles where structure_id = v_structure.id and actif = true;
     if v_count >= v_structure.quota then
       raise exception 'Cette structure a atteint son quota de comptes. Contactez votre administrateur.';
     end if;
@@ -349,9 +364,7 @@ begin
 
   return new;
 end;
-$$ language plpgsql security definer;
--- (le trigger on_auth_user_created existant réutilise automatiquement
--- cette fonction, pas besoin de le recréer)
+$$ language plpgsql security definer set search_path = public, pg_temp;
 
 -- ============================================================
 -- CRÉER UNE STRUCTURE + PROMOUVOIR SON PREMIER COMPTE ADMIN
@@ -375,3 +388,62 @@ $$ language plpgsql security definer;
 -- Une fois fait, l'écran "Créer une structure" apparaît dans l'app pour
 -- votre compte, et remplace le besoin de taper le bloc SQL ci-dessus à
 -- chaque nouveau client.
+
+-- ============================================================
+-- RATTACHER UN COMPTE EXISTANT À UNE STRUCTURE (auto-service admin)
+-- ============================================================
+-- Permet à l'admin d'une structure de rattacher, depuis l'app, un
+-- compte déjà créé (inscrit sans code d'invitation) — sans repasser
+-- par le SQL Editor. Le vrai verrou (quota, appartenance déjà
+-- existante à une autre structure) est fait ICI, côté base de
+-- données, pas seulement côté interface.
+
+create or replace function public.attach_existing_account(p_email text)
+returns table(success boolean, message text)
+language plpgsql security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_caller_structure_id bigint;
+  v_structure public.structures;
+  v_target public.profiles;
+  v_count int;
+begin
+  -- Le compte qui appelle doit être admin d'une structure
+  select structure_id into v_caller_structure_id
+  from public.profiles where id = auth.uid() and role = 'admin';
+
+  if v_caller_structure_id is null then
+    return query select false, 'Seul un administrateur de structure peut rattacher un compte.';
+    return;
+  end if;
+
+  select * into v_structure from public.structures where id = v_caller_structure_id;
+
+  select * into v_target from public.profiles where email = p_email;
+  if not found then
+    return query select false, 'Aucun compte trouvé avec cet e-mail. La personne doit d''abord créer son compte dans l''app.';
+    return;
+  end if;
+
+  if v_target.structure_id is not null then
+    return query select false, 'Ce compte est déjà rattaché à une structure. Détachez-le d''abord si besoin.';
+    return;
+  end if;
+
+  select count(*) into v_count from public.profiles
+    where structure_id = v_structure.id and actif = true;
+  if v_count >= v_structure.quota then
+    return query select false, 'Quota de comptes atteint pour votre structure.';
+    return;
+  end if;
+
+  update public.profiles
+    set structure_id = v_structure.id, role = 'membre', plan = 'structure'
+    where id = v_target.id;
+
+  return query select true, 'Compte rattaché avec succès.';
+end;
+$$;
+
+grant execute on function public.attach_existing_account(text) to authenticated;

@@ -16,7 +16,7 @@ export const FAMILLES = [
   "Hydratation", "Gestion des besoins", "Environnement", "Sommeil", "Routine",
   "Sécurité", "Techniques d'urgence", "Compréhension des comportements",
   "Activités cognitives adaptées", "Soutien aux aidants",
-  "Activités favorisant l'autonomie", "Recettes maison",
+  "Activités favorisant l'autonomie", "Recettes maison", "Autres",
 ];
 
 export const STADES = ["Léger", "Modéré", "Sévère"];
