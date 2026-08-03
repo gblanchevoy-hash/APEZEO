@@ -711,13 +711,17 @@ function TroublesView({ fiches, onBack, onOpenTrouble }) {
   return (
     <div className="pb-10">
       <TopBar title="Choisir un trouble" onBack={onBack} />
-      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5">
         {TROUBLES.map((t) => {
           const n = fiches.filter((f) => f.troubles.includes(t)).length;
           return (
-            <button key={t} onClick={() => onOpenTrouble(t)} className="bg-white rounded-2xl p-4 text-left shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+            <button key={t} onClick={() => onOpenTrouble(t)} className="group bg-white rounded-3xl p-4 text-left shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_8px_24px_-6px_rgba(6,78,59,0.16)] hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+              <div className="relative overflow-hidden w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white mb-3">
+                <div className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-white/30 blur-md pointer-events-none" />
+                <AlertTriangle size={17} className="relative" />
+              </div>
               <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight">{t}</div>
-              <div className="text-xs text-stone-400 mt-1.5 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
+              <div className="text-xs text-stone-400 mt-2 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
             </button>
           );
         })}
@@ -729,13 +733,17 @@ function FamillesView({ fiches, onBack, onOpenFamille }) {
   return (
     <div className="pb-10">
       <TopBar title="Rechercher par besoin" onBack={onBack} />
-      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5">
         {FAMILLES.map((c) => {
           const n = fiches.filter((f) => f.categorie === c).length;
           return (
-            <button key={c} onClick={() => onOpenFamille(c)} className="bg-white rounded-2xl p-4 text-left shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+            <button key={c} onClick={() => onOpenFamille(c)} className="group bg-white rounded-3xl p-4 text-left shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_8px_24px_-6px_rgba(6,78,59,0.16)] hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+              <div className="relative overflow-hidden w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white mb-3">
+                <div className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-white/30 blur-md pointer-events-none" />
+                <Sparkles size={16} className="relative" />
+              </div>
               <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight">{c}</div>
-              <div className="text-xs text-stone-400 mt-1.5 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
+              <div className="text-xs text-stone-400 mt-2 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
             </button>
           );
         })}
