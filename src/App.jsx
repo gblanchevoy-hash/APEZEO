@@ -4,6 +4,7 @@ import {
   Sparkles, Clock, AlertTriangle, Filter, Leaf, Save, Info, RefreshCw,
   Trash2, DatabaseZap, LogOut, UserCircle, Mail, Lock, Stethoscope, Users,
   ArrowLeftRight, CheckCircle2, ShieldCheck, UserX, UserCheck, Copy, BookOpen,
+  Eye, EyeOff, FileText,
 } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES, PROFESSIONS } from "./data/constants.js";
 import { MENTIONS_LEGALES, CGU, CONFIDENTIALITE, NON_RESPONSABILITE } from "./data/legalTexts.js";
@@ -183,6 +184,8 @@ function AuthView({ onChangeMode }) {
   const [mode, setMode] = useState("login"); // "login" | "signup"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [profession, setProfession] = useState(PROFESSIONS[0]);
   const [codeInvitation, setCodeInvitation] = useState("");
   const [codeCheck, setCodeCheck] = useState(null); // null | {valid, structure_nom, places_restantes}
@@ -203,9 +206,13 @@ function AuthView({ onChangeMode }) {
 
   const submit = async (e) => {
     e.preventDefault();
-    setBusy(true);
     setError("");
     setInfo("");
+    if (mode === "signup" && password !== confirmPassword) {
+      setError("Les deux mots de passe ne correspondent pas.");
+      return;
+    }
+    setBusy(true);
     if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
         email, password,
@@ -277,9 +284,23 @@ function AuthView({ onChangeMode }) {
             <Field label="Mot de passe">
               <div className="relative">
                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
-                <input required type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className={inputCls + " pl-9"} />
+                <input required type={showPassword ? "text" : "password"} minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className={inputCls + " pl-9 pr-9"} />
+                <button type="button" onClick={() => setShowPassword((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400" aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}>
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
               </div>
             </Field>
+            {mode === "signup" && (
+              <Field label="Confirmer le mot de passe">
+                <div className="relative">
+                  <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                  <input required type={showPassword ? "text" : "password"} minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={inputCls + " pl-9 pr-9"} />
+                </div>
+                {confirmPassword && password !== confirmPassword && (
+                  <p className="text-xs text-rose-600 mt-1">Les mots de passe ne correspondent pas.</p>
+                )}
+              </Field>
+            )}
             {mode === "signup" && (
               <>
                 <Field label="Votre profession">
@@ -318,7 +339,7 @@ function AuthView({ onChangeMode }) {
             {error && <div className="bg-rose-50 border border-rose-200 rounded-lg p-2.5 text-sm text-rose-700 mb-3">{error}</div>}
             {info && <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 text-sm text-emerald-800 mb-3">{info}</div>}
 
-            <button type="submit" disabled={busy || (mode === "signup" && !accepted)} className="w-full bg-emerald-700 disabled:bg-stone-300 text-white font-semibold rounded-2xl py-3 flex items-center justify-center gap-2">
+            <button type="submit" disabled={busy || (mode === "signup" && (!accepted || password !== confirmPassword))} className="w-full bg-emerald-700 disabled:bg-stone-300 text-white font-semibold rounded-2xl py-3 flex items-center justify-center gap-2">
               <UserCircle size={17} /> {mode === "signup" ? "Créer mon compte" : "Se connecter"}
             </button>
           </form>
@@ -516,6 +537,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           isAdmin={profile?.role === "admin"}
           isSuperAdmin={profile?.super_admin === true}
           onOpenCreateStructure={() => push({ view: "create-structure" })}
+          onOpenMesFiches={() => push({ view: "mes-fiches" })}
           onOpenLegal={(doc) => push({ view: "legal", doc })}
           onOpenTeam={() => push({ view: "team" })}
           onOpenTroubles={() => push({ view: "troubles" })}
@@ -583,6 +605,9 @@ function AuthenticatedApp({ session, onChangeMode }) {
       {current.view === "form" && (
         <FicheFormView initial={current.fiche} onBack={pop} onSave={async (f) => { await addLocalFiche(f); pop(); }} />
       )}
+      {current.view === "mes-fiches" && (
+        <MesFichesView fiches={fiches} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+      )}
       {current.view === "team" && (
         <AdminTeamView structureId={profile?.structure_id} onBack={pop} />
       )}
@@ -603,7 +628,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
 }
 
 /* ---------- HOME ---------- */
-function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenHistorique, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenLegal, onRefresh, onLogout, onChangeMode }) {
+function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenHistorique, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
@@ -644,6 +669,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroub
         <NavCard icon={Search} label="Recherche libre" onClick={onOpenSearch} accent="stone" />
         <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="emerald" />
         <NavCard icon={History} label="Historique" sub="Suivi de vos consultations" onClick={onOpenHistorique} accent="stone" />
+        <NavCard icon={FileText} label="Mes fiches" sub="Toutes vos créations personnelles" onClick={onOpenMesFiches} accent="stone" />
         {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="emerald" />}
         {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="stone" />}
       </div>
@@ -757,6 +783,23 @@ function FavorisView({ fiches, favoris, onBack, onOpenFiche }) {
         <div className="flex flex-col gap-2.5">
           {disliked.length === 0 && <div className="text-stone-400 text-sm">Aucune technique écartée.</div>}
           {disliked.map((f) => <FicheCard key={f.id} f={f} favState="disliked" onClick={() => onOpenFiche(f)} />)}
+        </div>
+      </div>
+    </div>
+  );
+}
+function MesFichesView({ fiches, favoris, onBack, onOpenFiche }) {
+  const mine = fiches.filter((f) => f.isLocal);
+  return (
+    <div className="pb-10">
+      <TopBar title="Mes fiches" onBack={onBack} />
+      <div className="p-4">
+        <p className="text-sm text-stone-500 mb-4">Toutes les fiches que vous avez créées vous-même, au même endroit.</p>
+        <div className="flex flex-col gap-2.5">
+          {mine.length === 0 && <div className="text-stone-400 text-sm py-8 text-center">Vous n'avez encore créé aucune fiche personnelle.</div>}
+          {mine.map((f) => (
+            <FicheCard key={f.id} f={f} favState={favoris.liked.includes(f.id) ? "liked" : undefined} onClick={() => onOpenFiche(f)} />
+          ))}
         </div>
       </div>
     </div>
