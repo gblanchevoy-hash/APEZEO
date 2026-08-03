@@ -46,15 +46,15 @@ function Badge({ children, tone = "stone" }) {
 }
 function TopBar({ title, onBack, right }) {
   return (
-    <div className="sticky top-0 z-10 bg-[#F4F6F2]/60 backdrop-blur-xl backdrop-saturate-150 border-b border-emerald-900/10 shadow-[0_1px_0_0_rgba(255,255,255,0.4)] px-4 py-3 lg:px-8 flex items-center gap-2">
+    <div className="sticky top-0 z-10 bg-[#F4F6F2]/65 backdrop-blur-xl backdrop-saturate-150 px-5 py-4 lg:px-9 lg:py-5 flex items-center gap-3">
       {onBack ? (
-        <button onClick={onBack} className="p-1.5 -ml-1.5 rounded-full hover:bg-emerald-900/5" aria-label="Retour">
-          <ArrowLeft size={20} className="text-emerald-900" />
+        <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-emerald-900/8 active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200" aria-label="Retour">
+          <ArrowLeft size={19} className="text-emerald-900" />
         </button>
       ) : (
-        <Leaf size={20} className="text-emerald-700" />
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white"><Leaf size={17} /></div>
       )}
-      <h1 className="flex-1 text-lg text-emerald-950 truncate">{title}</h1>
+      <h1 className="flex-1 text-lg font-bold text-emerald-950 truncate tracking-tight">{title}</h1>
       {right}
     </div>
   );
@@ -126,7 +126,7 @@ function CheckGroup({ options, selected, onToggle }) {
 }
 function Section({ title, children }) {
   if (!children || (Array.isArray(children) && children.length === 0)) return null;
-  return <div className="mb-4"><div className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-1.5">{title}</div>{children}</div>;
+  return <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">{title}</div>{children}</div>;
 }
 function BulletList({ items }) {
   if (!items || items.length === 0) return null;
@@ -252,21 +252,25 @@ function AuthView({ onChangeMode }) {
     <div className="min-h-screen bg-[#F4F6F2] flex items-center justify-center p-5">
       <div className="w-full max-w-sm">
         {/* Vitrine commerciale */}
-        <div className="text-center mb-5">
-          <Leaf className="mx-auto mb-2 text-emerald-700" size={30} />
+        <div className="text-center mb-6">
+          <div className="w-11 h-11 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white"><Leaf size={20} /></div>
           <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
-          <p className="text-sm italic text-stone-500 mt-0.5">Version Pro</p>
+          <p className="text-sm text-stone-500 mt-0.5">Version Pro</p>
         </div>
-        <div className="bg-emerald-800 text-white rounded-2xl p-5 mb-5">
-          <p className="text-3xl font-bold mb-1 tracking-tight">800+ fiches</p>
-          <p className="text-sm text-emerald-100 mb-3">d'aides non médicamenteuses pour les professionnels accompagnant des personnes atteintes d'Alzheimer et maladies apparentées.</p>
-          <ul className="space-y-1.5 text-sm text-emerald-50">
+        <div className="relative overflow-hidden bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px] p-6 mb-6">
+          <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/[0.05] pointer-events-none" />
+          <svg className="absolute inset-x-0 bottom-0 w-full h-14 pointer-events-none" viewBox="0 0 400 60" preserveAspectRatio="none">
+            <path d="M0,35 C90,55 160,15 240,32 C310,47 350,25 400,38 L400,60 L0,60 Z" fill="rgba(255,255,255,0.05)" />
+          </svg>
+          <p className="relative text-3xl font-bold mb-1 tracking-tight">800+ fiches</p>
+          <p className="relative text-sm text-emerald-100 mb-4">d'aides non médicamenteuses pour les professionnels accompagnant des personnes atteintes d'Alzheimer et maladies apparentées.</p>
+          <ul className="relative space-y-2 text-sm text-emerald-50">
             <li className="flex gap-2"><CheckCircle2 size={16} className="shrink-0 mt-0.5 text-amber-300" /> Recherche instantanée par symptôme</li>
             <li className="flex gap-2"><CheckCircle2 size={16} className="shrink-0 mt-0.5 text-amber-300" /> Outils référencés (HAS, littérature gériatrique)</li>
             <li className="flex gap-2"><CheckCircle2 size={16} className="shrink-0 mt-0.5 text-amber-300" /> Bibliothèque enrichie en continu</li>
             <li className="flex gap-2"><CheckCircle2 size={16} className="shrink-0 mt-0.5 text-amber-300" /> Suivi d'usage par technique testée</li>
           </ul>
-          <div className="mt-4 pt-3 border-t border-emerald-600/40 text-xs text-emerald-100">
+          <div className="relative mt-5 pt-4 border-t border-white/15 text-xs text-emerald-100">
             Accès structure (EHPAD, SSIAD, accueil de jour…) — <strong className="text-white">tarif sur devis</strong>, adapté à votre organisation. <a href="mailto:contact@apezeo.fr" className="underline text-amber-300">Demander un devis</a>
           </div>
         </div>
@@ -275,14 +279,14 @@ function AuthView({ onChangeMode }) {
           <button onClick={onChangeMode} className="text-xs text-emerald-700 underline">Vous êtes un aidant familial ?</button>
         </div>
 
-        <div className="bg-white rounded-2xl border border-emerald-900/5 shadow-sm p-5">
-          <div className="flex gap-2 mb-5">
+        <div className="bg-white rounded-3xl shadow-[0_4px_24px_-6px_rgba(6,78,59,0.12)] p-6">
+          <div className="flex gap-1.5 mb-6 bg-stone-100 rounded-2xl p-1">
             <button onClick={() => { setMode("login"); setError(""); setInfo(""); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold ${mode === "login" ? "bg-emerald-700 text-white" : "bg-stone-100 text-stone-600"}`}>
+              className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${mode === "login" ? "bg-white text-emerald-800 shadow-sm" : "text-stone-500"}`}>
               Connexion
             </button>
             <button onClick={() => { setMode("signup"); setError(""); setInfo(""); }}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold ${mode === "signup" ? "bg-emerald-700 text-white" : "bg-stone-100 text-stone-600"}`}>
+              className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${mode === "signup" ? "bg-white text-emerald-800 shadow-sm" : "text-stone-500"}`}>
               Créer un compte
             </button>
           </div>
@@ -707,13 +711,13 @@ function TroublesView({ fiches, onBack, onOpenTrouble }) {
   return (
     <div className="pb-10">
       <TopBar title="Choisir un trouble" onBack={onBack} />
-      <div className="p-4 lg:px-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
+      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {TROUBLES.map((t) => {
           const n = fiches.filter((f) => f.troubles.includes(t)).length;
           return (
-            <button key={t} onClick={() => onOpenTrouble(t)} className="bg-white rounded-xl p-3 text-left border border-emerald-900/5 shadow-sm active:scale-[0.98] transition">
-              <div className="font-medium text-emerald-950 text-sm leading-snug">{t}</div>
-              <div className="text-xs text-stone-400 mt-1">{n} fiche{n !== 1 ? "s" : ""}</div>
+            <button key={t} onClick={() => onOpenTrouble(t)} className="bg-white rounded-2xl p-4 text-left shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+              <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight">{t}</div>
+              <div className="text-xs text-stone-400 mt-1.5 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
             </button>
           );
         })}
@@ -725,13 +729,13 @@ function FamillesView({ fiches, onBack, onOpenFamille }) {
   return (
     <div className="pb-10">
       <TopBar title="Rechercher par besoin" onBack={onBack} />
-      <div className="p-4 lg:px-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
+      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {FAMILLES.map((c) => {
           const n = fiches.filter((f) => f.categorie === c).length;
           return (
-            <button key={c} onClick={() => onOpenFamille(c)} className="bg-white rounded-xl p-3 text-left border border-emerald-900/5 shadow-sm active:scale-[0.98] transition">
-              <div className="font-medium text-emerald-950 text-sm leading-snug">{c}</div>
-              <div className="text-xs text-stone-400 mt-1">{n} fiche{n !== 1 ? "s" : ""}</div>
+            <button key={c} onClick={() => onOpenFamille(c)} className="bg-white rounded-2xl p-4 text-left shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+              <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight">{c}</div>
+              <div className="text-xs text-stone-400 mt-1.5 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
             </button>
           );
         })}
@@ -1232,23 +1236,23 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
   const disliked = favoris.disliked.includes(f.id);
   const nonSourcee = f.categorie === "Technique personnelle";
   return (
-    <div className="pb-24">
+    <div className="pb-28">
       <TopBar title={f.categorie} onBack={onBack} />
-      <div className="p-4">
-        <h2 className="text-xl font-bold text-emerald-950 mb-2 tracking-tight">{f.titre}</h2>
+      <div className="p-5 lg:p-9 lg:max-w-2xl">
+        <h2 className="text-2xl font-bold text-emerald-950 mb-3 tracking-tight leading-tight">{f.titre}</h2>
         {nonSourcee && (
-          <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 flex gap-2.5 text-sm text-rose-800 mb-4">
+          <div className="bg-rose-50 rounded-2xl p-4 flex gap-2.5 text-sm text-rose-800 mb-5">
             <AlertTriangle size={16} className="shrink-0 mt-0.5" />
             <span><strong>Fiche non sourcée</strong> — partage d'expérience terrain, non validée scientifiquement. À utiliser avec discernement professionnel, jamais comme référence de bonne pratique lors d'un audit ou d'une évaluation qualité.</span>
           </div>
         )}
-        <div className="flex items-center gap-2 flex-wrap mb-4">
+        <div className="flex items-center gap-2 flex-wrap mb-3">
           {!simple && <Stars n={f.niveauPreuve} />}
           {f.dureeMinutes > 0 ? <Badge><Clock size={11} className="inline mr-1" />{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {!simple && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
         </div>
-        <div className="flex gap-2 flex-wrap mb-4">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
+        <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
         <Section title="Description"><p className="text-sm text-stone-700 leading-relaxed">{f.description}</p></Section>
         <Section title={simple ? "Pourquoi ça aide" : "Pourquoi ça fonctionne"}><p className="text-sm text-stone-700 leading-relaxed">{f.pourquoi}</p></Section>
         <Section title="Quand l'utiliser"><p className="text-sm text-stone-700 leading-relaxed">{f.quandUtiliser}</p></Section>
@@ -1258,32 +1262,32 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
         <Section title="Conseils"><BulletList items={f.conseils} /></Section>
         <Section title="Erreurs à éviter"><BulletList items={f.erreurs} /></Section>
         {f.contreIndications && f.contreIndications.length > 0 && (
-          <Section title="Contre-indications"><div className="bg-rose-50 border border-rose-200 rounded-lg p-3"><BulletList items={f.contreIndications} /></div></Section>
+          <Section title="Contre-indications"><div className="bg-rose-50 rounded-2xl p-4"><BulletList items={f.contreIndications} /></div></Section>
         )}
         {!simple && f.sources && f.sources.length > 0 && <div className="text-xs text-stone-400 mt-1">Sources : {f.sources.join(", ")}{f.dateMaj ? ` · maj ${f.dateMaj}` : ""}</div>}
 
         {onDelete && (confirmDelete ? (
-          <div className="mt-6 bg-rose-50 border border-rose-200 rounded-xl p-3.5 text-sm">
+          <div className="mt-6 bg-rose-50 rounded-2xl p-4 text-sm">
             <p className="text-rose-800 mb-2.5">Supprimer définitivement cette fiche personnelle ?</p>
             <div className="flex gap-2">
-              <button onClick={onDelete} className="flex-1 bg-rose-600 text-white rounded-lg py-2 font-medium">Supprimer</button>
-              <button onClick={() => setConfirmDelete(false)} className="flex-1 bg-white border border-stone-300 rounded-lg py-2">Annuler</button>
+              <button onClick={onDelete} className="flex-1 bg-rose-600 hover:bg-rose-700 text-white rounded-xl py-2 font-medium transition-colors">Supprimer</button>
+              <button onClick={() => setConfirmDelete(false)} className="flex-1 bg-white border border-stone-200 rounded-xl py-2 hover:bg-stone-50 transition-colors">Annuler</button>
             </div>
           </div>
         ) : (
           <button onClick={() => setConfirmDelete(true)} className="mt-6 text-xs text-stone-400 flex items-center gap-1"><Trash2 size={13} /> Supprimer cette fiche</button>
         ))}
       </div>
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-emerald-900/10 p-3 flex gap-2">
-        <button onClick={onToggleLike} className={`flex items-center justify-center gap-1.5 rounded-xl py-2.5 ${onlyLike ? "px-4" : "flex-1"} text-sm font-medium border ${liked ? "bg-rose-500 text-white border-rose-500" : "bg-white text-stone-600 border-stone-300"}`}>
+      <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 lg:px-9 flex gap-2.5 shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+        <button onClick={onToggleLike} className={`flex items-center justify-center gap-1.5 rounded-2xl py-3 ${onlyLike ? "px-5" : "flex-1"} text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
           <Heart size={16} className={liked ? "fill-white" : ""} /> {onlyLike ? "" : "Efficace"}
         </button>
         {!onlyLike && (
-          <button onClick={onToggleDislike} className={`flex items-center justify-center gap-1.5 rounded-xl py-2.5 px-3 text-sm font-medium border ${disliked ? "bg-stone-600 text-white border-stone-600" : "bg-white text-stone-600 border-stone-300"}`}>
+          <button onClick={onToggleDislike} className={`flex items-center justify-center gap-1.5 rounded-2xl py-3 px-4 text-sm font-semibold transition-all duration-200 active:scale-95 ${disliked ? "bg-stone-700 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
             <HeartOff size={16} />
           </button>
         )}
-        <button onClick={onLog} className="flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold bg-emerald-700 text-white">
+        <button onClick={onLog} className="flex-1 flex items-center justify-center gap-1.5 rounded-2xl py-3 text-sm font-semibold bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] text-white transition-all duration-200">
           <History size={16} /> Enregistrer un essai
         </button>
       </div>
