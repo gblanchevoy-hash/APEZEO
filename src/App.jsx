@@ -88,27 +88,27 @@ function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge })
 function FicheCard({ f, onClick, favState }) {
   const nonSourcee = f.categorie === "Technique personnelle";
   return (
-    <button onClick={onClick} className="w-full text-left bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm active:scale-[0.99] transition flex items-start gap-3">
+    <button onClick={onClick} className="w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200 flex items-start gap-3">
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 flex-wrap mb-1">
+        <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
           <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
           {f.dureeMinutes > 0 ? <Badge>{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {f.isLocal && <Badge tone="amber">Personnelle</Badge>}
           {favState === "liked" && <Heart size={14} className="fill-rose-500 text-rose-500" />}
         </div>
-        <div className="font-semibold text-emerald-950 truncate">{f.titre}</div>
+        <div className="font-semibold text-emerald-950 truncate tracking-tight">{f.titre}</div>
         <div className="text-sm text-stone-500 line-clamp-2 mt-0.5">{f.description}</div>
         <div className="mt-1.5"><Stars n={f.niveauPreuve} /></div>
       </div>
-      <ChevronRight size={18} className="text-stone-400 mt-1 shrink-0" />
+      <ChevronRight size={18} className="text-stone-300 mt-1 shrink-0" />
     </button>
   );
 }
 function Field({ label, children }) {
   return <label className="block mb-3"><span className="block text-sm font-medium text-stone-600 mb-1">{label}</span>{children}</label>;
 }
-const inputCls = "w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600";
+const inputCls = "w-full rounded-2xl border border-stone-200 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 outline-none transition-all duration-200 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/10";
 function CheckGroup({ options, selected, onToggle }) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -352,7 +352,7 @@ function AuthView({ onChangeMode }) {
             {error && <div className="bg-rose-50 border border-rose-200 rounded-lg p-2.5 text-sm text-rose-700 mb-3">{error}</div>}
             {info && <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 text-sm text-emerald-800 mb-3">{info}</div>}
 
-            <button type="submit" disabled={busy || (mode === "signup" && (!accepted || password !== confirmPassword))} className="w-full bg-emerald-700 disabled:bg-stone-300 text-white font-semibold rounded-2xl py-3 flex items-center justify-center gap-2">
+            <button type="submit" disabled={busy || (mode === "signup" && (!accepted || password !== confirmPassword))} className="w-full bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3 flex items-center justify-center gap-2">
               <UserCircle size={17} /> {mode === "signup" ? "Créer mon compte" : "Se connecter"}
             </button>
           </form>
@@ -973,7 +973,7 @@ function CreateStructureView({ onBack }) {
             </div>
           )}
 
-          <button type="submit" disabled={busy} className="w-full bg-emerald-700 disabled:bg-stone-300 text-white font-semibold rounded-2xl py-3 flex items-center justify-center gap-2">
+          <button type="submit" disabled={busy} className="w-full bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3 flex items-center justify-center gap-2">
             <Plus size={17} /> Créer la structure
           </button>
         </form>
@@ -1195,7 +1195,7 @@ function QuizView({ onBack, onSubmit }) {
             </label>
           ))}
         </div>
-        <button onClick={() => onSubmit(q)} disabled={!q.troubleId} className="w-full mt-6 bg-emerald-700 disabled:bg-stone-300 text-white font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2">
+        <button onClick={() => onSubmit(q)} disabled={!q.troubleId} className="w-full mt-6 bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3.5 flex items-center justify-center gap-2">
           <Sparkles size={18} /> Voir les techniques recommandées
         </button>
       </div>
@@ -1347,7 +1347,7 @@ function FicheFormView({ initial, onBack, onSave }) {
         <Field label="Durée (minutes)"><input type="number" min={0} className={inputCls} value={f.dureeMinutes} onChange={(e) => set("dureeMinutes", Number(e.target.value))} /></Field>
         <Field label="Étapes (une par ligne)"><textarea rows={3} className={inputCls} value={etapesText} onChange={(e) => setEtapesText(e.target.value)} /></Field>
         <Field label="Matériel (un par ligne)"><textarea rows={2} className={inputCls} value={materielText} onChange={(e) => setMaterielText(e.target.value)} /></Field>
-        <button disabled={!f.titre.trim()} onClick={handleSave} className="w-full mt-3 bg-emerald-700 disabled:bg-stone-300 text-white font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2">
+        <button disabled={!f.titre.trim()} onClick={handleSave} className="w-full mt-3 bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3.5 flex items-center justify-center gap-2">
           <Save size={17} /> Enregistrer la fiche
         </button>
       </div>
