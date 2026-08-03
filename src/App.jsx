@@ -59,13 +59,16 @@ function TopBar({ title, onBack, right }) {
     </div>
   );
 }
-function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald" }) {
-  const accents = { emerald: "bg-emerald-700 text-white", amber: "bg-amber-400 text-emerald-950", stone: "bg-stone-700 text-white" };
+function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge }) {
+  const accents = { emerald: "bg-emerald-700 text-white", amber: "bg-amber-400 text-emerald-950", stone: "bg-stone-700 text-white", admin: "bg-stone-950 text-white" };
   return (
     <button onClick={onClick} className="w-full flex items-center gap-4 bg-white rounded-3xl p-5 shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] hover:shadow-[0_8px_28px_-6px_rgba(6,78,59,0.18)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200 text-left">
       <div className={`rounded-2xl p-3 ${accents[accent]}`}><Icon size={22} /></div>
       <div className="flex-1 min-w-0">
-        <div className="font-semibold text-emerald-950">{label}</div>
+        <div className="flex items-center gap-1.5">
+          <div className="font-semibold text-emerald-950">{label}</div>
+          {badge && <span className="text-[10px] font-semibold uppercase tracking-wide bg-stone-950 text-white rounded-full px-2 py-0.5">{badge}</span>}
+        </div>
         {sub && <div className="text-sm text-stone-500 truncate">{sub}</div>}
       </div>
       <ChevronRight size={18} className="text-stone-300" />
@@ -670,8 +673,8 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroub
         <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="emerald" />
         <NavCard icon={History} label="Historique" sub="Suivi de vos consultations" onClick={onOpenHistorique} accent="stone" />
         <NavCard icon={FileText} label="Mes fiches" sub="Toutes vos créations personnelles" onClick={onOpenMesFiches} accent="stone" />
-        {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="emerald" />}
-        {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="stone" />}
+        {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="admin" badge="Admin" />}
+        {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="admin" badge="Admin" />}
       </div>
       <div className="px-5 lg:px-8 mt-5">
         <button onClick={onOpenAdd} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-stone-300 hover:border-emerald-700/40 hover:bg-emerald-50/50 text-stone-500 hover:text-emerald-800 rounded-2xl py-4 font-medium transition-colors">
