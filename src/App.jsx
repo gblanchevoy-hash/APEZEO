@@ -677,7 +677,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroub
           <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> {dbCount} partagées par l'équipe</span>
         </div>
         <button onClick={onOpenQuiz} className="relative w-full bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all duration-200">
-          <Sparkles size={19} /> Trouver la meilleure technique maintenant
+          Trouver la meilleure technique maintenant
         </button>
       </div>
       <div className="px-5 lg:px-8 mt-6 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
@@ -711,17 +711,14 @@ function TroublesView({ fiches, onBack, onOpenTrouble }) {
   return (
     <div className="pb-10">
       <TopBar title="Choisir un trouble" onBack={onBack} />
-      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5">
+      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {TROUBLES.map((t) => {
           const n = fiches.filter((f) => f.troubles.includes(t)).length;
           return (
-            <button key={t} onClick={() => onOpenTrouble(t)} className="group bg-white rounded-3xl p-4 text-left shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_8px_24px_-6px_rgba(6,78,59,0.16)] hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
-              <div className="relative overflow-hidden w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white mb-3">
-                <div className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-white/30 blur-md pointer-events-none" />
-                <AlertTriangle size={17} className="relative" />
-              </div>
-              <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight">{t}</div>
-              <div className="text-xs text-stone-400 mt-2 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
+            <button key={t} onClick={() => onOpenTrouble(t)} className="relative bg-white rounded-2xl pl-4 pr-3 py-3.5 text-left border-l-[3px] border-emerald-600 shadow-[0_2px_10px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_18px_-6px_rgba(6,78,59,0.15)] hover:-translate-y-0.5 hover:border-emerald-700 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+              <span className="absolute top-3 right-3 text-[10px] font-bold text-emerald-700 bg-emerald-50 rounded-full px-2 py-0.5">{n}</span>
+              <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight pr-6">{t}</div>
+              <div className="text-xs text-stone-400 mt-1">fiche{n !== 1 ? "s" : ""} associée{n !== 1 ? "s" : ""}</div>
             </button>
           );
         })}
@@ -733,17 +730,13 @@ function FamillesView({ fiches, onBack, onOpenFamille }) {
   return (
     <div className="pb-10">
       <TopBar title="Rechercher par besoin" onBack={onBack} />
-      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5">
+      <div className="p-5 lg:px-9 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         {FAMILLES.map((c) => {
           const n = fiches.filter((f) => f.categorie === c).length;
           return (
-            <button key={c} onClick={() => onOpenFamille(c)} className="group bg-white rounded-3xl p-4 text-left shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_8px_24px_-6px_rgba(6,78,59,0.16)] hover:-translate-y-1 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
-              <div className="relative overflow-hidden w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white mb-3">
-                <div className="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-white/30 blur-md pointer-events-none" />
-                <Sparkles size={16} className="relative" />
-              </div>
+            <button key={c} onClick={() => onOpenFamille(c)} className="bg-emerald-50/60 hover:bg-white rounded-2xl p-4 text-left border border-emerald-800/10 hover:border-emerald-700/20 shadow-none hover:shadow-[0_6px_18px_-6px_rgba(6,78,59,0.12)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
               <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight">{c}</div>
-              <div className="text-xs text-stone-400 mt-2 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
+              <div className="text-xs text-emerald-700/70 mt-1.5 font-medium">{n} fiche{n !== 1 ? "s" : ""}</div>
             </button>
           );
         })}
@@ -1208,7 +1201,7 @@ function QuizView({ onBack, onSubmit }) {
           ))}
         </div>
         <button onClick={() => onSubmit(q)} disabled={!q.troubleId} className="w-full mt-6 bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3.5 flex items-center justify-center gap-2">
-          <Sparkles size={18} /> Voir les techniques recommandées
+          Voir les techniques recommandées
         </button>
       </div>
     </div>
@@ -1468,7 +1461,7 @@ function AidantApp({ onChangeMode }) {
             <h1 className="text-2xl lg:text-3xl font-bold mb-1 tracking-tight">Un geste apaisant, tout de suite.</h1>
             <p className="text-emerald-100 text-sm mb-5">Des idées simples à essayer, pas à pas.</p>
             <button onClick={() => push({ view: "quiz" })} className="w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] transition">
-              <Sparkles size={19} /> Que faire maintenant ?
+              Que faire maintenant ?
             </button>
           </div>
           <div className="px-5 lg:px-8 mt-5 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
