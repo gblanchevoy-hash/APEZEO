@@ -36,6 +36,21 @@ export function rowToFiche(row) {
     dateMaj: row.date_maj || "",
     niveauDetail: row.niveau_detail || "standard",
     techniqueId: row.technique_id || null,
+    techniquesLiees: row.techniques_liees || [],
+    objectifsObservables: row.objectifs_observables || [],
+    tempsMiseEnOeuvre: row.temps_mise_en_oeuvre || "",
+    frequence: row.frequence || "",
+    preparation: row.preparation || [],
+    deroulement: row.deroulement || [],
+    adaptationStades: row.adaptation_stades || null,
+    conditionsFavorables: row.conditions_favorables || [],
+    pointsVigilance: row.points_vigilance || [],
+    erreursFrequentes: row.erreurs_frequentes || [],
+    precautions: row.precautions || [],
+    fondementPrincipe: row.fondement_principe || "",
+    fondementApplication: row.fondement_application || "",
+    pointsCles: row.points_cles || [],
+    version: row.version || "",
   };
 }
 

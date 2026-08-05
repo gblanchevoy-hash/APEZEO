@@ -555,3 +555,57 @@ grant execute on function public.delete_structure(bigint) to authenticated;
 alter table interventions add column if not exists niveau_detail text not null default 'standard' check (niveau_detail in ('standard','expert'));
 alter table interventions add column if not exists technique_id text;
 create index if not exists idx_interventions_technique_id on interventions(technique_id);
+
+-- ============================================================
+-- FICHES "MACRO" — synthèse renvoyant vers plusieurs techniques
+-- atomiques précises (ex. COM-000 "Créer un premier contact apaisant"
+-- renvoie vers COM-002, COM-003, COM-005, COM-007).
+-- ============================================================
+-- techniques_liees : tableau de technique_id référencés par CETTE
+-- fiche (généralement une fiche "macro" de synthèse). Vide/absent pour
+-- une fiche atomique classique.
+
+alter table interventions add column if not exists techniques_liees text[];
+
+-- ============================================================
+-- CHARTE APÉZEO EXPERT (V1) — champs additionnels
+-- ============================================================
+-- Tous nullables : n'affectent en rien les 833 fiches standard
+-- existantes. Remplis uniquement pour les fiches niveau_detail='expert'
+-- rédigées selon la charte.
+
+alter table interventions add column if not exists objectifs_observables text[]; -- 5 objectifs observables (liste), distinct du champ "objectifs" (paragraphe) déjà existant
+alter table interventions add column if not exists temps_mise_en_oeuvre text;
+alter table interventions add column if not exists frequence text;
+alter table interventions add column if not exists preparation text[];
+alter table interventions add column if not exists adaptation_stade text;
+alter table interventions add column if not exists conditions_favorables text[];
+alter table interventions add column if not exists points_vigilance text[]; -- chaque entrée inclut son explication
+alter table interventions add column if not exists precautions text[];
+alter table interventions add column if not exists fondements text; -- "Principe → Application"
+alter table interventions add column if not exists points_cles text[]; -- 4-5 puces de synthèse
+
+-- ============================================================
+-- CHARTE APÉZEO EXPERT — AJUSTEMENT V1.0 (structure exacte du gabarit)
+-- ============================================================
+-- points_vigilance, fondements et adaptation_stade avaient été prévus
+-- trop simples (texte/liste plate) ; le gabarit final est plus riche
+-- (objets structurés). Ces 3 colonnes étant encore vides (aucune fiche
+-- experte n'existe à ce jour), on les remplace sans perte de données.
+
+alter table interventions drop column if exists points_vigilance;
+alter table interventions add column points_vigilance jsonb; -- [{ "point": "...", "explication": "..." }]
+
+alter table interventions drop column if exists fondements;
+alter table interventions add column fondement_principe text;
+alter table interventions add column fondement_application text;
+
+alter table interventions drop column if exists adaptation_stade; -- remplacé par la version structurée ci-dessous
+alter table interventions add column if not exists adaptation_stades jsonb; -- { "leger": [...], "modere": [...], "severe": [...] }
+
+-- Nouveaux champs structurés du gabarit, absents jusqu'ici
+alter table interventions add column if not exists deroulement jsonb; -- [{ "etape": 1, "titre": "...", "description": "..." }]
+alter table interventions add column if not exists erreurs_frequentes jsonb; -- [{ "erreur": "...", "pourquoi": "..." }]
+
+-- Suivi de version du gabarit (charte Apézeo Expert)
+alter table interventions add column if not exists version text; -- ex. "1.0"

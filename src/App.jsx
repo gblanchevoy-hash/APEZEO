@@ -1245,6 +1245,9 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
   const linked = (allFiches && f.techniqueId)
     ? allFiches.find((x) => x.techniqueId === f.techniqueId && x.niveauDetail !== f.niveauDetail)
     : null;
+  const techniquesAssociees = (allFiches && f.techniquesLiees && f.techniquesLiees.length)
+    ? f.techniquesLiees.map((tid) => allFiches.find((x) => x.techniqueId === tid)).filter(Boolean)
+    : [];
   return (
     <div className="pb-28">
       <TopBar title={f.categorie} onBack={onBack} />
@@ -1259,6 +1262,19 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
             <span>{linked.niveauDetail === "expert" ? "Voir la version experte, plus dense" : "Voir la version standard, plus simple"}</span>
             <ChevronRight size={15} className="ml-auto shrink-0" />
           </button>
+        )}
+        {techniquesAssociees.length > 0 && onOpenFiche && (
+          <div className="bg-emerald-50 rounded-2xl p-4 mb-5">
+            <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Techniques détaillées associées</div>
+            <div className="flex flex-col gap-1.5">
+              {techniquesAssociees.map((t) => (
+                <button key={t.id} onClick={() => onOpenFiche(t)} className="flex items-center gap-2 text-left text-sm text-emerald-900 hover:text-emerald-700 bg-white/60 hover:bg-white rounded-xl px-3 py-2 transition-colors">
+                  <span className="flex-1">{t.titre}</span>
+                  <ChevronRight size={14} className="shrink-0 text-emerald-400" />
+                </button>
+              ))}
+            </div>
+          </div>
         )}
         {nonSourcee && (
           <div className="bg-rose-50 rounded-2xl p-4 flex gap-2.5 text-sm text-rose-800 mb-5">
