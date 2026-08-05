@@ -539,3 +539,19 @@ end;
 $$;
 
 grant execute on function public.delete_structure(bigint) to authenticated;
+
+-- ============================================================
+-- NIVEAU DE DÉTAIL : STANDARD / EXPERT
+-- ============================================================
+-- niveau_detail : 'standard' (par défaut, tout le contenu existant)
+-- ou 'expert' (contenu plus dense, réservé aux comptes payants).
+--
+-- technique_id : identifiant texte optionnel permettant de relier une
+-- fiche standard à sa version experte du MÊME sujet (ex. 'musique-preferee').
+-- Laissé vide pour une fiche experte totalement inédite, sans équivalent
+-- standard, ou pour une fiche standard qui n'a pas (encore) de version
+-- experte associée.
+
+alter table interventions add column if not exists niveau_detail text not null default 'standard' check (niveau_detail in ('standard','expert'));
+alter table interventions add column if not exists technique_id text;
+create index if not exists idx_interventions_technique_id on interventions(technique_id);

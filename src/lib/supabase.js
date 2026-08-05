@@ -34,6 +34,8 @@ export function rowToFiche(row) {
     sources: row.sources || [],
     motsCles: row.mots_cles || [],
     dateMaj: row.date_maj || "",
+    niveauDetail: row.niveau_detail || "standard",
+    techniqueId: row.technique_id || null,
   };
 }
 

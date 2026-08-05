@@ -41,6 +41,7 @@ function Badge({ children, tone = "stone" }) {
     amber: "bg-amber-100 text-amber-800",
     rose: "bg-rose-100 text-rose-700",
     orangeDark: "bg-orange-800 text-white",
+    expert: "bg-emerald-950 text-amber-300",
   };
   return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${tones[tone]}`}>{children}</span>;
 }
@@ -92,6 +93,7 @@ function FicheCard({ f, onClick, favState }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
           <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>
+          {f.niveauDetail === "expert" && <Badge tone="expert">Expert</Badge>}
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
           {f.dureeMinutes > 0 ? <Badge>{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {f.isLocal && <Badge tone="amber">Personnelle</Badge>}
@@ -393,6 +395,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
     const seen = new Set();
     const sample = [];
     for (const f of dbFiches) {
+      if (f.niveauDetail === "expert") continue; // jamais dans l'échantillon gratuit
       if (!seen.has(f.categorie)) { seen.add(f.categorie); sample.push(f); }
     }
     return sample;
@@ -609,6 +612,8 @@ function AuthenticatedApp({ session, onChangeMode }) {
       {current.view === "fiche" && (
         <FicheDetailView
           fiche={ficheById(current.fiche.id) || current.fiche} favoris={favoris} onBack={pop}
+          allFiches={fiches}
+          onOpenFiche={(nf) => push({ view: "fiche", fiche: nf })}
           onToggleLike={() => toggleFav(current.fiche.id, "liked")}
           onToggleDislike={() => toggleFav(current.fiche.id, "disliked")}
           onLog={() => push({ view: "log", fiche: current.fiche })}
@@ -1231,16 +1236,30 @@ function RecommandationsView({ title, results, favoris, onBack, onOpenFiche }) {
     </div>
   );
 }
-function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike }) {
+function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const liked = favoris.liked.includes(f.id);
   const disliked = favoris.disliked.includes(f.id);
   const nonSourcee = f.categorie === "Technique personnelle";
+  const isExpert = f.niveauDetail === "expert";
+  const linked = (allFiches && f.techniqueId)
+    ? allFiches.find((x) => x.techniqueId === f.techniqueId && x.niveauDetail !== f.niveauDetail)
+    : null;
   return (
     <div className="pb-28">
       <TopBar title={f.categorie} onBack={onBack} />
       <div className="p-5 lg:p-9 lg:max-w-2xl">
+        <div className="flex items-center gap-2 mb-2">
+          {isExpert && <Badge tone="expert">Expert</Badge>}
+        </div>
         <h2 className="text-2xl font-bold text-emerald-950 mb-3 tracking-tight leading-tight">{f.titre}</h2>
+        {linked && onOpenFiche && (
+          <button onClick={() => onOpenFiche(linked)} className="w-full text-left bg-emerald-50 hover:bg-emerald-100 rounded-2xl p-3.5 flex items-center gap-2.5 text-sm text-emerald-800 mb-5 transition-colors">
+            <ArrowLeftRight size={15} className="shrink-0" />
+            <span>{linked.niveauDetail === "expert" ? "Voir la version experte, plus dense" : "Voir la version standard, plus simple"}</span>
+            <ChevronRight size={15} className="ml-auto shrink-0" />
+          </button>
+        )}
         {nonSourcee && (
           <div className="bg-rose-50 rounded-2xl p-4 flex gap-2.5 text-sm text-rose-800 mb-5">
             <AlertTriangle size={16} className="shrink-0 mt-0.5" />
