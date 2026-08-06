@@ -609,3 +609,23 @@ alter table interventions add column if not exists erreurs_frequentes jsonb; -- 
 
 -- Suivi de version du gabarit (charte Apézeo Expert)
 alter table interventions add column if not exists version text; -- ex. "1.0"
+
+-- ============================================================
+-- TYPE DE FICHE : Concept (macro, ~10-15% de la base experte) ou
+-- Technique (geste précis, ~85-90%)
+-- ============================================================
+alter table interventions add column if not exists type_fiche text default 'technique' check (type_fiche in ('concept','technique'));
+
+-- ============================================================
+-- SWITCH GLOBAL STANDARD / EXPERT (au niveau du compte, pas de la fiche)
+-- ============================================================
+-- Les deux bibliothèques ont des architectures trop différentes pour
+-- être reliées fiche par fiche. On bascule donc l'affichage au niveau
+-- du compte utilisateur : "standard" (833 fiches historiques) ou
+-- "expert" (nouveau référentiel dense). Réservé aux comptes payants
+-- (plan='structure') côté application — vérifié côté interface.
+
+alter table profiles add column if not exists affichage text not null default 'standard' check (affichage in ('standard','expert'));
+
+-- Nouveau champ de la charte : comment évaluer l'efficacité d'une technique
+alter table interventions add column if not exists comment_evaluer_efficacite text[];

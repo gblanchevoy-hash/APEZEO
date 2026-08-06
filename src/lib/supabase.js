@@ -49,6 +49,7 @@ export function rowToFiche(row) {
     precautions: row.precautions || [],
     fondementPrincipe: row.fondement_principe || "",
     fondementApplication: row.fondement_application || "",
+    commentEvaluerEfficacite: row.comment_evaluer_efficacite || [],
     pointsCles: row.points_cles || [],
     version: row.version || "",
   };

@@ -403,7 +403,12 @@ function AuthenticatedApp({ session, onChangeMode }) {
 
   const isGratuit = profile && profile.plan === "gratuit";
   const visibleDbFiches = isGratuit ? sampleDbFiches : dbFiches;
-  const fiches = useMemo(() => [...visibleDbFiches, ...localFiches], [visibleDbFiches, localFiches]);
+  const modeExpert = profile?.affichage === "expert" && profile?.plan === "structure";
+  const fichesDuMode = useMemo(
+    () => visibleDbFiches.filter((f) => modeExpert ? f.niveauDetail === "expert" : f.niveauDetail !== "expert"),
+    [visibleDbFiches, modeExpert]
+  );
+  const fiches = useMemo(() => [...fichesDuMode, ...localFiches], [fichesDuMode, localFiches]);
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200); };
 
@@ -478,6 +483,12 @@ function AuthenticatedApp({ session, onChangeMode }) {
     const liked = (data || []).filter((r) => r.type === "liked").map((r) => r.fiche_id);
     const disliked = (data || []).filter((r) => r.type === "disliked").map((r) => r.fiche_id);
     setFavoris({ liked, disliked });
+  };
+
+  const toggleAffichage = async () => {
+    const next = profile?.affichage === "expert" ? "standard" : "expert";
+    setProfile((p) => ({ ...p, affichage: next }));
+    await supabase.from("profiles").update({ affichage: next }).eq("id", userId);
   };
 
   const addHistoriqueEntry = async (entry) => {
@@ -556,6 +567,9 @@ function AuthenticatedApp({ session, onChangeMode }) {
           fiches={fiches} dbCount={visibleDbFiches.length} profession={session?.user?.user_metadata?.profession}
           isAdmin={profile?.role === "admin"}
           isSuperAdmin={profile?.super_admin === true}
+          canToggleExpert={profile?.plan === "structure"}
+          modeExpert={modeExpert}
+          onToggleAffichage={toggleAffichage}
           onOpenCreateStructure={() => push({ view: "create-structure" })}
           onOpenMesFiches={() => push({ view: "mes-fiches" })}
           onOpenLegal={(doc) => push({ view: "legal", doc })}
@@ -650,7 +664,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
 }
 
 /* ---------- HOME ---------- */
-function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenHistorique, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onRefresh, onLogout, onChangeMode }) {
+function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenHistorique, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
@@ -661,7 +675,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroub
         </svg>
         <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/[0.04] pointer-events-none" />
 
-        <div className="relative flex items-center justify-between mb-6">
+        <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Leaf size={20} />
             <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
@@ -673,6 +687,13 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, onOpenTroub
             <button onClick={onLogout} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Se déconnecter"><LogOut size={15} /></button>
           </div>
         </div>
+
+        {canToggleExpert && (
+          <div className="relative flex mb-4 bg-white/10 rounded-full p-0.5 w-fit">
+            <button onClick={() => modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${!modeExpert ? "bg-white text-emerald-800" : "text-emerald-100"}`}>Bibliothèque Standard</button>
+            <button onClick={() => !modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${modeExpert ? "bg-emerald-950 text-amber-300" : "text-emerald-100"}`}>Bibliothèque Expert</button>
+          </div>
+        )}
 
         <h1 className="relative text-2xl lg:text-3xl font-bold mb-1.5 tracking-tight">Un geste apaisant, tout de suite.</h1>
         {profession && <p className="relative text-emerald-200 text-xs mb-2.5">Connecté en tant que {profession}</p>}
@@ -1242,9 +1263,6 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
   const disliked = favoris.disliked.includes(f.id);
   const nonSourcee = f.categorie === "Technique personnelle";
   const isExpert = f.niveauDetail === "expert";
-  const linked = (allFiches && f.techniqueId)
-    ? allFiches.find((x) => x.techniqueId === f.techniqueId && x.niveauDetail !== f.niveauDetail)
-    : null;
   const techniquesAssociees = (allFiches && f.techniquesLiees && f.techniquesLiees.length)
     ? f.techniquesLiees.map((tid) => allFiches.find((x) => x.techniqueId === tid)).filter(Boolean)
     : [];
@@ -1256,13 +1274,6 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           {isExpert && <Badge tone="expert">Expert</Badge>}
         </div>
         <h2 className="text-2xl font-bold text-emerald-950 mb-3 tracking-tight leading-tight">{f.titre}</h2>
-        {linked && onOpenFiche && (
-          <button onClick={() => onOpenFiche(linked)} className="w-full text-left bg-emerald-50 hover:bg-emerald-100 rounded-2xl p-3.5 flex items-center gap-2.5 text-sm text-emerald-800 mb-5 transition-colors">
-            <ArrowLeftRight size={15} className="shrink-0" />
-            <span>{linked.niveauDetail === "expert" ? "Voir la version experte, plus dense" : "Voir la version standard, plus simple"}</span>
-            <ChevronRight size={15} className="ml-auto shrink-0" />
-          </button>
-        )}
         {techniquesAssociees.length > 0 && onOpenFiche && (
           <div className="bg-emerald-50 rounded-2xl p-4 mb-5">
             <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Techniques détaillées associées</div>
