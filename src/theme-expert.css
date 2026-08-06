@@ -1,0 +1,46 @@
+/* ============================================================
+   THÈME BLEU — Bibliothèque Expert
+   Généré automatiquement : chaque classe emerald utilisée dans
+   l'app a son équivalent blue à la même nuance, appliqué
+   uniquement sous .theme-expert (voir Home_/AuthenticatedApp).
+   ============================================================ */
+
+.theme-expert .accent-emerald-600 { accent-color: rgb(37 99 235) !important; }
+.theme-expert .accent-emerald-700 { accent-color: rgb(29 78 216) !important; }
+.theme-expert .bg-emerald-100 { background-color: rgb(219 234 254) !important; }
+.theme-expert .bg-emerald-50 { background-color: rgb(239 246 255) !important; }
+.theme-expert .bg-emerald-50\/50 { background-color: rgb(239 246 255 / 0.5) !important; }
+.theme-expert .bg-emerald-50\/60 { background-color: rgb(239 246 255 / 0.6) !important; }
+.theme-expert .bg-emerald-700 { background-color: rgb(29 78 216) !important; }
+.theme-expert .bg-emerald-800 { background-color: rgb(30 64 175) !important; }
+.theme-expert .bg-emerald-900\/8 { background-color: rgb(30 58 138 / 0.08) !important; }
+.theme-expert .bg-emerald-950 { background-color: rgb(23 37 84) !important; }
+.theme-expert .border-emerald-200 { border-color: rgb(191 219 254) !important; }
+.theme-expert .border-emerald-300 { border-color: rgb(147 197 253) !important; }
+.theme-expert .border-emerald-600 { border-color: rgb(37 99 235) !important; }
+.theme-expert .border-emerald-700 { border-color: rgb(29 78 216) !important; }
+.theme-expert .border-emerald-700\/20 { border-color: rgb(29 78 216 / 0.2) !important; }
+.theme-expert .border-emerald-700\/30 { border-color: rgb(29 78 216 / 0.3) !important; }
+.theme-expert .border-emerald-700\/40 { border-color: rgb(29 78 216 / 0.4) !important; }
+.theme-expert .border-emerald-800\/10 { border-color: rgb(30 64 175 / 0.1) !important; }
+.theme-expert .border-emerald-900\/5 { border-color: rgb(30 58 138 / 0.05) !important; }
+.theme-expert .from-emerald-500 { --tw-gradient-from: rgb(59 130 246) !important; --tw-gradient-to: rgb(59 130 246 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.theme-expert .from-emerald-800 { --tw-gradient-from: rgb(30 64 175) !important; --tw-gradient-to: rgb(30 64 175 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.theme-expert .from-emerald-900 { --tw-gradient-from: rgb(30 58 138) !important; --tw-gradient-to: rgb(30 58 138 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.theme-expert .outline-emerald-600 { outline-color: rgb(37 99 235) !important; }
+.theme-expert .ring-emerald-600 { --tw-ring-color: rgb(37 99 235) !important; }
+.theme-expert .ring-emerald-600\/10 { --tw-ring-color: rgb(37 99 235 / 0.1) !important; }
+.theme-expert .text-emerald-100 { color: rgb(219 234 254) !important; }
+.theme-expert .text-emerald-200 { color: rgb(191 219 254) !important; }
+.theme-expert .text-emerald-300 { color: rgb(147 197 253) !important; }
+.theme-expert .text-emerald-400 { color: rgb(96 165 250) !important; }
+.theme-expert .text-emerald-400\/50 { color: rgb(96 165 250 / 0.5) !important; }
+.theme-expert .text-emerald-50 { color: rgb(239 246 255) !important; }
+.theme-expert .text-emerald-600 { color: rgb(37 99 235) !important; }
+.theme-expert .text-emerald-700 { color: rgb(29 78 216) !important; }
+.theme-expert .text-emerald-700\/70 { color: rgb(29 78 216 / 0.7) !important; }
+.theme-expert .text-emerald-800 { color: rgb(30 64 175) !important; }
+.theme-expert .text-emerald-900 { color: rgb(30 58 138) !important; }
+.theme-expert .text-emerald-950 { color: rgb(23 37 84) !important; }
+.theme-expert .to-emerald-700 { --tw-gradient-to: rgb(29 78 216) !important; }
+.theme-expert .to-emerald-800 { --tw-gradient-to: rgb(30 64 175) !important; }

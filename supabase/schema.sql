@@ -590,17 +590,23 @@ alter table interventions add column if not exists points_cles text[]; -- 4-5 pu
 -- ============================================================
 -- points_vigilance, fondements et adaptation_stade avaient été prévus
 -- trop simples (texte/liste plate) ; le gabarit final est plus riche
--- (objets structurés). Ces 3 colonnes étant encore vides (aucune fiche
--- experte n'existe à ce jour), on les remplace sans perte de données.
+-- (objets structurés).
+--
+-- Correctif important : les premières versions de ce bloc utilisaient
+-- "drop column" puis "add column" SANS "if not exists" sur certaines
+-- lignes. Résultat concret : 1) une erreur "column already exists" à
+-- la réexécution (fondement_principe/application), et surtout 2) le
+-- risque bien plus grave d'effacer purement et simplement les données
+-- de "points_vigilance" des fiches déjà importées à chaque nouvelle
+-- exécution du script (drop + recréation vide). Corrigé ci-dessous :
+-- tout passe en "add column if not exists", aucune perte de données,
+-- rejouable à l'infini sans risque.
 
-alter table interventions drop column if exists points_vigilance;
-alter table interventions add column points_vigilance jsonb; -- [{ "point": "...", "explication": "..." }]
+alter table interventions add column if not exists points_vigilance jsonb; -- [{ "point": "...", "explication": "..." }]
 
-alter table interventions drop column if exists fondements;
-alter table interventions add column fondement_principe text;
-alter table interventions add column fondement_application text;
+alter table interventions add column if not exists fondement_principe text;
+alter table interventions add column if not exists fondement_application text;
 
-alter table interventions drop column if exists adaptation_stade; -- remplacé par la version structurée ci-dessous
 alter table interventions add column if not exists adaptation_stades jsonb; -- { "leger": [...], "modere": [...], "severe": [...] }
 
 -- Nouveaux champs structurés du gabarit, absents jusqu'ici
@@ -629,3 +635,5 @@ alter table profiles add column if not exists affichage text not null default 's
 
 -- Nouveau champ de la charte : comment évaluer l'efficacité d'une technique
 alter table interventions add column if not exists comment_evaluer_efficacite text[];
+
+-- (evaluation_efficacite : voir comment_evaluer_efficacite plus haut dans ce fichier, déjà présent — pas de doublon)

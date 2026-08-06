@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, createContext, useContext } from "react";
 import {
   Search, Heart, HeartOff, History, Plus, ArrowLeft, Star, ChevronRight,
   Sparkles, Clock, AlertTriangle, Filter, Leaf, Save, Info, RefreshCw,
   Trash2, DatabaseZap, LogOut, UserCircle, Mail, Lock, Stethoscope, Users,
   ArrowLeftRight, CheckCircle2, ShieldCheck, UserX, UserCheck, Copy, BookOpen,
-  Eye, EyeOff, FileText,
+  Eye, EyeOff, FileText, Home,
 } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES, PROFESSIONS } from "./data/constants.js";
 import { MENTIONS_LEGALES, CGU, CONFIDENTIALITE, NON_RESPONSABILITE } from "./data/legalTexts.js";
@@ -45,13 +45,21 @@ function Badge({ children, tone = "stone" }) {
   };
   return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${tones[tone]}`}>{children}</span>;
 }
+const HomeContext = createContext(() => {});
+
 function TopBar({ title, onBack, right }) {
+  const goHome = useContext(HomeContext);
   return (
     <div className="sticky top-0 z-10 bg-[#F4F6F2]/65 backdrop-blur-xl backdrop-saturate-150 px-5 py-4 lg:px-9 lg:py-5 flex items-center gap-3">
       {onBack ? (
-        <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-emerald-900/8 active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200" aria-label="Retour">
-          <ArrowLeft size={19} className="text-emerald-900" />
-        </button>
+        <>
+          <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-emerald-900/8 active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200" aria-label="Retour">
+            <ArrowLeft size={19} className="text-emerald-900" />
+          </button>
+          <button onClick={goHome} className="p-2 rounded-full hover:bg-emerald-900/8 active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200" aria-label="Retour au menu principal">
+            <Home size={18} className="text-emerald-900" />
+          </button>
+        </>
       ) : (
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white"><Leaf size={17} /></div>
       )}
@@ -386,6 +394,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
 
   const current = stack[stack.length - 1];
   const push = (frame) => setStack((s) => [...s, frame]);
+  const goHome = () => setStack([{ view: "home" }]);
   const pop = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
 
   // Compte "gratuit" (sans structure) : accès à un échantillon seulement —
@@ -561,7 +570,8 @@ function AuthenticatedApp({ session, onChangeMode }) {
         </div>
       )}
 
-      <div className="lg:max-w-5xl xl:max-w-6xl lg:mx-auto">
+      <HomeContext.Provider value={goHome}>
+      <div className={`lg:max-w-5xl xl:max-w-6xl lg:mx-auto ${modeExpert ? "theme-expert" : ""}`}>
       {current.view === "home" && (
         <Home_
           fiches={fiches} dbCount={visibleDbFiches.length} profession={session?.user?.user_metadata?.profession}
@@ -654,6 +664,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <LegalView doc={current.doc} onBack={pop} />
       )}
       </div>
+      </HomeContext.Provider>
 
       {toast && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-950 text-white text-sm px-4 py-2 rounded-full shadow-lg z-50">{toast}</div>
@@ -1454,6 +1465,7 @@ function AidantApp({ onChangeMode }) {
   const current = stack[stack.length - 1];
   const push = (frame) => setStack((s) => [...s, frame]);
   const pop = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
+  const goHome = () => setStack([{ view: "home" }]);
   const fiches = useMemo(() => [...AIDANT_FICHES, ...localFiches], [localFiches]);
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200); };
 
@@ -1496,6 +1508,7 @@ function AidantApp({ onChangeMode }) {
   return (
     <div className="min-h-screen bg-[#F4F6F2] md:bg-stone-200 md:flex md:justify-center md:py-8 lg:bg-[#F4F6F2] lg:block lg:py-0">
     <div className="w-full md:max-w-2xl md:bg-[#F4F6F2] md:rounded-3xl md:shadow-2xl md:overflow-hidden md:border md:border-stone-300/60 lg:max-w-none lg:rounded-none lg:shadow-none lg:border-none lg:overflow-visible">
+      <HomeContext.Provider value={goHome}>
       <div className="lg:max-w-5xl xl:max-w-6xl lg:mx-auto">
       {current.view === "home" && (
         <div className="pb-10">
@@ -1575,6 +1588,7 @@ function AidantApp({ onChangeMode }) {
         <FicheFormView initial={current.fiche} onBack={pop} onSave={(f) => { addLocalFiche(f); pop(); }} />
       )}
       </div>
+      </HomeContext.Provider>
 
       {toast && <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-950 text-white text-sm px-4 py-2 rounded-full shadow-lg z-50">{toast}</div>}
     </div>
