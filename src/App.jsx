@@ -1280,13 +1280,13 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
   return (
     <div className="pb-28">
       <TopBar title={f.categorie} onBack={onBack} />
-      <div className="p-5 lg:p-9 lg:max-w-2xl">
+      <div className="p-5 lg:p-9 lg:max-w-3xl">
         <div className="flex items-center gap-2 mb-2">
           {isExpert && <Badge tone="expert">Expert</Badge>}
         </div>
         <h2 className="text-2xl font-bold text-emerald-950 mb-3 tracking-tight leading-tight">{f.titre}</h2>
         {techniquesAssociees.length > 0 && onOpenFiche && (
-          <div className="bg-emerald-50 rounded-2xl p-4 mb-5">
+          <div className="bg-emerald-50 rounded-2xl p-4 mb-5 lg:float-right lg:w-72 lg:ml-7 lg:mb-4">
             <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Techniques détaillées associées</div>
             <div className="flex flex-col gap-1.5">
               {techniquesAssociees.map((t) => (
@@ -1311,18 +1311,104 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
         </div>
         <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
-        <Section title="Description"><p className="text-sm text-stone-700 leading-relaxed">{f.description}</p></Section>
-        <Section title={simple ? "Pourquoi ça aide" : "Pourquoi ça fonctionne"}><p className="text-sm text-stone-700 leading-relaxed">{f.pourquoi}</p></Section>
-        <Section title="Quand l'utiliser"><p className="text-sm text-stone-700 leading-relaxed">{f.quandUtiliser}</p></Section>
-        {f.quandEviter && <Section title="Quand éviter"><p className="text-sm text-rose-700 leading-relaxed flex gap-1.5"><AlertTriangle size={15} className="shrink-0 mt-0.5" />{f.quandEviter}</p></Section>}
-        <Section title="Étapes"><BulletList items={f.etapes} /></Section>
-        <Section title="Matériel"><BulletList items={f.materiel} /></Section>
-        <Section title="Conseils"><BulletList items={f.conseils} /></Section>
-        <Section title="Erreurs à éviter"><BulletList items={f.erreurs} /></Section>
-        {f.contreIndications && f.contreIndications.length > 0 && (
-          <Section title="Contre-indications"><div className="bg-rose-50 rounded-2xl p-4"><BulletList items={f.contreIndications} /></div></Section>
+
+        {isExpert && f.pointsCles && f.pointsCles.length > 0 && (
+          <div className="bg-emerald-900 text-white rounded-2xl p-4 mb-6">
+            <div className="text-xs font-bold uppercase tracking-wider text-emerald-300 mb-2">Points clés à retenir</div>
+            <ul className="space-y-1.5">{f.pointsCles.map((p, i) => <li key={i} className="text-sm flex gap-2"><span className="text-amber-300 mt-0.5">•</span><span>{p}</span></li>)}</ul>
+          </div>
         )}
-        {!simple && f.sources && f.sources.length > 0 && <div className="text-xs text-stone-400 mt-1">Sources : {f.sources.join(", ")}{f.dateMaj ? ` · maj ${f.dateMaj}` : ""}</div>}
+
+        <Section title="Description"><p className="text-sm text-stone-700 leading-relaxed">{f.description}</p></Section>
+
+        {isExpert ? (
+          <>
+            {(f.duree || f.tempsMiseEnOeuvre || f.frequence) && (
+              <div className="flex flex-wrap gap-4 mb-6 text-sm">
+                {f.duree && <div><span className="text-stone-400">Durée : </span><span className="text-stone-700 font-medium">{f.duree}</span></div>}
+                {f.tempsMiseEnOeuvre && <div><span className="text-stone-400">Mise en œuvre : </span><span className="text-stone-700 font-medium">{f.tempsMiseEnOeuvre}</span></div>}
+                {f.frequence && <div><span className="text-stone-400">Fréquence : </span><span className="text-stone-700 font-medium">{f.frequence}</span></div>}
+              </div>
+            )}
+            <Section title="Objectifs"><BulletList items={f.objectifsObservables} /></Section>
+            <Section title="Matériel"><BulletList items={f.materiel} /></Section>
+            <Section title="Préparation"><BulletList items={f.preparation} /></Section>
+            {f.deroulement && f.deroulement.length > 0 && (
+              <Section title="Déroulement">
+                <div className="flex flex-col gap-3">
+                  {f.deroulement.map((e) => (
+                    <div key={e.etape} className="flex gap-3">
+                      <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{e.etape}</div>
+                      <div>
+                        <div className="text-sm font-semibold text-emerald-950">{e.titre}</div>
+                        {e.description && e.description !== e.titre && <div className="text-sm text-stone-600">{e.description}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+            {f.adaptationStades && (f.adaptationStades.leger?.length || f.adaptationStades.modere?.length || f.adaptationStades.severe?.length) && (
+              <Section title="Adaptation selon le stade">
+                <div className="flex flex-col gap-2.5">
+                  {[["Léger", f.adaptationStades.leger], ["Modéré", f.adaptationStades.modere], ["Sévère", f.adaptationStades.severe]].map(([label, items]) => items && items.length > 0 && (
+                    <div key={label} className="bg-stone-50 rounded-xl p-3">
+                      <div className="text-xs font-bold text-emerald-700 mb-1">{label}</div>
+                      <BulletList items={items} />
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+            <Section title="Conditions favorables"><BulletList items={f.conditionsFavorables} /></Section>
+            {f.pointsVigilance && f.pointsVigilance.length > 0 && (
+              <Section title="Points de vigilance">
+                <div className="flex flex-col gap-2">
+                  {f.pointsVigilance.map((pv, i) => (
+                    <div key={i} className="bg-amber-50 rounded-xl p-3 text-sm">
+                      <div className="font-semibold text-amber-900">{pv.point}</div>
+                      {pv.explication && <div className="text-amber-800">{pv.explication}</div>}
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+            {f.erreursFrequentes && f.erreursFrequentes.length > 0 && (
+              <Section title="Erreurs fréquentes">
+                <div className="flex flex-col gap-2">
+                  {f.erreursFrequentes.map((er, i) => (
+                    <div key={i} className="bg-rose-50 rounded-xl p-3 text-sm">
+                      <div className="font-semibold text-rose-900">{er.erreur}</div>
+                      {er.pourquoi && <div className="text-rose-800">{er.pourquoi}</div>}
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+            <Section title="Précautions"><BulletList items={f.precautions} /></Section>
+            {(f.fondementPrincipe || f.fondementApplication) && (
+              <Section title="Fondements">
+                {f.fondementPrincipe && <p className="text-sm text-stone-700 leading-relaxed mb-2"><span className="font-semibold text-emerald-800">Principe — </span>{f.fondementPrincipe}</p>}
+                {f.fondementApplication && <p className="text-sm text-stone-700 leading-relaxed"><span className="font-semibold text-emerald-800">Application — </span>{f.fondementApplication}</p>}
+              </Section>
+            )}
+            <Section title="Comment évaluer l'efficacité"><BulletList items={f.commentEvaluerEfficacite} /></Section>
+          </>
+        ) : (
+          <>
+            <Section title={simple ? "Pourquoi ça aide" : "Pourquoi ça fonctionne"}><p className="text-sm text-stone-700 leading-relaxed">{f.pourquoi}</p></Section>
+            <Section title="Quand l'utiliser"><p className="text-sm text-stone-700 leading-relaxed">{f.quandUtiliser}</p></Section>
+            {f.quandEviter && <Section title="Quand éviter"><p className="text-sm text-rose-700 leading-relaxed flex gap-1.5"><AlertTriangle size={15} className="shrink-0 mt-0.5" />{f.quandEviter}</p></Section>}
+            <Section title="Étapes"><BulletList items={f.etapes} /></Section>
+            <Section title="Matériel"><BulletList items={f.materiel} /></Section>
+            <Section title="Conseils"><BulletList items={f.conseils} /></Section>
+            <Section title="Erreurs à éviter"><BulletList items={f.erreurs} /></Section>
+            {f.contreIndications && f.contreIndications.length > 0 && (
+              <Section title="Contre-indications"><div className="bg-rose-50 rounded-2xl p-4"><BulletList items={f.contreIndications} /></div></Section>
+            )}
+          </>
+        )}
+        {!simple && f.sources && f.sources.length > 0 && <div className="text-xs text-stone-400 mt-1 clear-both">Sources : {f.sources.join(", ")}{f.dateMaj ? ` · maj ${f.dateMaj}` : ""}</div>}
 
         {onDelete && (confirmDelete ? (
           <div className="mt-6 bg-rose-50 rounded-2xl p-4 text-sm">
