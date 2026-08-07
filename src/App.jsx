@@ -1280,24 +1280,27 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
   return (
     <div className="pb-28">
       <TopBar title={f.categorie} onBack={onBack} />
-      <div className="p-5 lg:p-9 lg:max-w-3xl">
+      <div className="p-5 lg:p-9 lg:max-w-5xl">
         <div className="flex items-center gap-2 mb-2">
           {isExpert && <Badge tone="expert">Expert</Badge>}
         </div>
-        <h2 className="text-2xl font-bold text-emerald-950 mb-3 tracking-tight leading-tight">{f.titre}</h2>
-        {techniquesAssociees.length > 0 && onOpenFiche && (
-          <div className="bg-emerald-50 border border-emerald-800/10 shadow-sm rounded-2xl p-4 mb-6 lg:float-right lg:w-72 lg:ml-10 lg:mb-6 lg:mt-1">
-            <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Techniques détaillées associées</div>
-            <div className="flex flex-col gap-1.5">
-              {techniquesAssociees.map((t) => (
-                <button key={t.id} onClick={() => onOpenFiche(t)} className="flex items-center gap-2 text-left text-sm text-emerald-900 hover:text-emerald-700 bg-white/60 hover:bg-white rounded-xl px-3 py-2 transition-colors">
-                  <span className="flex-1">{t.titre}</span>
-                  <ChevronRight size={14} className="shrink-0 text-emerald-400" />
-                </button>
-              ))}
+        <h2 className="text-2xl font-bold text-emerald-950 mb-5 tracking-tight leading-tight">{f.titre}</h2>
+
+        <div className="lg:grid lg:grid-cols-[1fr_290px] lg:gap-10 lg:items-start">
+          {techniquesAssociees.length > 0 && onOpenFiche && (
+            <div className="bg-emerald-50 border border-emerald-800/10 shadow-sm rounded-2xl p-4 mb-6 lg:order-2 lg:mb-0 lg:sticky lg:top-24">
+              <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Techniques détaillées associées</div>
+              <div className="flex flex-col gap-1.5">
+                {techniquesAssociees.map((t) => (
+                  <button key={t.id} onClick={() => onOpenFiche(t)} className="flex items-center gap-2 text-left text-sm text-emerald-900 hover:text-emerald-700 bg-white/60 hover:bg-white rounded-xl px-3 py-2 transition-colors">
+                    <span className="flex-1">{t.titre}</span>
+                    <ChevronRight size={14} className="shrink-0 text-emerald-400" />
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          <div className="lg:order-1 min-w-0">
         {nonSourcee && (
           <div className="bg-rose-50 rounded-2xl p-4 flex gap-2.5 text-sm text-rose-800 mb-5">
             <AlertTriangle size={16} className="shrink-0 mt-0.5" />
@@ -1412,7 +1415,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
             )}
           </>
         )}
-        {!simple && f.sources && f.sources.length > 0 && <div className="text-xs text-stone-400 mt-1 clear-both">Sources : {f.sources.join(", ")}{f.dateMaj ? ` · maj ${f.dateMaj}` : ""}</div>}
+        {!simple && f.sources && f.sources.length > 0 && <div className="text-xs text-stone-400 mt-1">Sources : {f.sources.join(", ")}{f.dateMaj ? ` · maj ${f.dateMaj}` : ""}</div>}
 
         {onDelete && (confirmDelete ? (
           <div className="mt-6 bg-rose-50 rounded-2xl p-4 text-sm">
@@ -1425,6 +1428,8 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
         ) : (
           <button onClick={() => setConfirmDelete(true)} className="mt-6 text-xs text-stone-400 flex items-center gap-1"><Trash2 size={13} /> Supprimer cette fiche</button>
         ))}
+          </div>
+        </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 lg:px-9 flex gap-2.5 shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
         <button onClick={onToggleLike} className={`flex items-center justify-center gap-1.5 rounded-2xl py-3 ${onlyLike ? "px-5" : "flex-1"} text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
