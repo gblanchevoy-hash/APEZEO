@@ -710,7 +710,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
         <div className="relative flex items-center gap-3 text-emerald-100 text-sm mb-7">
           <span className="flex items-center gap-1.5"><BookOpen size={15} className="text-emerald-300" /> {fiches.length} techniques</span>
           <span className="text-emerald-400/50">|</span>
-          <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> {dbCount} partagées par l'équipe</span>
+          <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> Bibliothèque complète : {dbCount}</span>
         </div>
         <button onClick={onOpenQuiz} className="relative w-full bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all duration-200">
           Trouver la meilleure technique maintenant
