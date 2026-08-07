@@ -109,7 +109,7 @@ function FicheCard({ f, onClick, favState }) {
         </div>
         <div className="font-semibold text-emerald-950 truncate tracking-tight">{f.titre}</div>
         <div className="text-sm text-stone-500 line-clamp-2 mt-0.5">{f.description}</div>
-        <div className="mt-1.5"><Stars n={f.niveauPreuve} /></div>
+        {f.niveauDetail !== "expert" && <div className="mt-1.5"><Stars n={f.niveauPreuve} /></div>}
       </div>
       <ChevronRight size={18} className="text-stone-300 mt-1 shrink-0" />
     </button>
@@ -1305,9 +1305,9 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           </div>
         )}
         <div className="flex items-center gap-2 flex-wrap mb-3">
-          {!simple && <Stars n={f.niveauPreuve} />}
+          {!simple && !isExpert && <Stars n={f.niveauPreuve} />}
           {f.dureeMinutes > 0 ? <Badge><Clock size={11} className="inline mr-1" />{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
-          {!simple && <Badge>{f.difficulte}</Badge>}
+          {!simple && !isExpert && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
         </div>
         <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
