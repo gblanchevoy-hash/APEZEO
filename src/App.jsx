@@ -1286,7 +1286,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
         </div>
         <h2 className="text-2xl font-bold text-emerald-950 mb-3 tracking-tight leading-tight">{f.titre}</h2>
         {techniquesAssociees.length > 0 && onOpenFiche && (
-          <div className="bg-emerald-50 rounded-2xl p-4 mb-5 lg:float-right lg:w-72 lg:ml-7 lg:mb-4">
+          <div className="bg-emerald-50 border border-emerald-800/10 shadow-sm rounded-2xl p-4 mb-6 lg:float-right lg:w-72 lg:ml-10 lg:mb-6 lg:mt-1">
             <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Techniques détaillées associées</div>
             <div className="flex flex-col gap-1.5">
               {techniquesAssociees.map((t) => (
@@ -1336,15 +1336,19 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
             {f.deroulement && f.deroulement.length > 0 && (
               <Section title="Déroulement">
                 <div className="flex flex-col gap-3">
-                  {f.deroulement.map((e) => (
-                    <div key={e.etape} className="flex gap-3">
-                      <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{e.etape}</div>
-                      <div>
-                        <div className="text-sm font-semibold text-emerald-950">{e.titre}</div>
-                        {e.description && e.description !== e.titre && <div className="text-sm text-stone-600">{e.description}</div>}
+                  {f.deroulement.map((e) => {
+                    const norm = (s) => (s || "").trim().replace(/[.!?…]+$/, "").toLowerCase();
+                    const isDuplicate = norm(e.description) === norm(e.titre);
+                    return (
+                      <div key={e.etape} className="flex gap-3">
+                        <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{e.etape}</div>
+                        <div>
+                          <div className="text-sm font-semibold text-emerald-950">{e.titre}</div>
+                          {e.description && !isDuplicate && <div className="text-sm text-stone-600">{e.description}</div>}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </Section>
             )}
