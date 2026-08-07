@@ -824,20 +824,13 @@ function SearchView({ fiches, onBack, onOpenFiche, favoris }) {
 }
 function FavorisView({ fiches, favoris, onBack, onOpenFiche }) {
   const liked = fiches.filter((f) => favoris.liked.includes(f.id));
-  const disliked = fiches.filter((f) => favoris.disliked.includes(f.id));
   return (
     <div className="pb-10">
       <TopBar title="Favoris" onBack={onBack} />
       <div className="p-4">
-        <div className="text-sm font-semibold text-emerald-900 mb-2 flex items-center gap-1.5"><Heart size={15} className="fill-rose-500 text-rose-500" /> Ce qui fonctionne</div>
-        <div className="flex flex-col gap-2.5 mb-6">
-          {liked.length === 0 && <div className="text-stone-400 text-sm">Aucune technique marquée pour l'instant.</div>}
-          {liked.map((f) => <FicheCard key={f.id} f={f} favState="liked" onClick={() => onOpenFiche(f)} />)}
-        </div>
-        <div className="text-sm font-semibold text-stone-500 mb-2 flex items-center gap-1.5"><HeartOff size={15} /> À éviter</div>
         <div className="flex flex-col gap-2.5">
-          {disliked.length === 0 && <div className="text-stone-400 text-sm">Aucune technique écartée.</div>}
-          {disliked.map((f) => <FicheCard key={f.id} f={f} favState="disliked" onClick={() => onOpenFiche(f)} />)}
+          {liked.length === 0 && <div className="text-stone-400 text-sm">Aucune technique ajoutée à vos favoris pour l'instant.</div>}
+          {liked.map((f) => <FicheCard key={f.id} f={f} favState="liked" onClick={() => onOpenFiche(f)} />)}
         </div>
       </div>
     </div>
@@ -914,6 +907,8 @@ function CreateStructureView({ onBack }) {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [rowBusyId, setRowBusyId] = useState(null);
   const [rowMsg, setRowMsg] = useState(null); // {id, ok, text}
+  const [editQuotaId, setEditQuotaId] = useState(null);
+  const [editQuotaValue, setEditQuotaValue] = useState("");
 
   const loadStructures = useCallback(async () => {
     setLoadingList(true);
@@ -986,6 +981,19 @@ function CreateStructureView({ onBack }) {
     loadStructures();
   };
 
+  const saveQuota = async (s) => {
+    const next = Number(editQuotaValue);
+    if (!next || next < 1) { setRowMsg({ id: s.id, ok: false, text: "Le quota doit être un nombre positif." }); return; }
+    setRowBusyId(s.id);
+    setRowMsg(null);
+    const { error } = await supabase.from("structures").update({ quota: next }).eq("id", s.id);
+    setRowBusyId(null);
+    if (error) { setRowMsg({ id: s.id, ok: false, text: error.message }); return; }
+    setRowMsg({ id: s.id, ok: true, text: "Quota mis à jour." });
+    setEditQuotaId(null);
+    loadStructures();
+  };
+
   return (
     <div className="pb-10">
       <TopBar title="Créer une structure" onBack={onBack} />
@@ -1034,10 +1042,28 @@ function CreateStructureView({ onBack }) {
                   {s.suspended && <Badge tone="rose">Suspendue</Badge>}
                 </div>
                 <div className="flex items-center justify-between bg-stone-50 rounded-lg px-2.5 py-1.5 mb-2">
-                  <span className="text-xs text-stone-600 font-mono">{s.code_invitation} · quota {s.quota}</span>
+                  <span className="text-xs text-stone-600 font-mono">{s.code_invitation}</span>
                   <button onClick={() => copyRowCode(s)} className="flex items-center gap-1 text-xs text-emerald-700 font-medium shrink-0 ml-2">
                     <Copy size={12} /> {copiedId === s.id ? "Copié !" : "Copier"}
                   </button>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  {editQuotaId === s.id ? (
+                    <div className="flex items-center gap-1.5 flex-1">
+                      <input
+                        type="number" min={1} autoFocus value={editQuotaValue}
+                        onChange={(e) => setEditQuotaValue(e.target.value)}
+                        className="w-20 rounded-lg border border-emerald-300 px-2 py-1 text-xs"
+                      />
+                      <button onClick={() => saveQuota(s)} disabled={rowBusyId === s.id} className="text-xs font-semibold text-emerald-700">Valider</button>
+                      <button onClick={() => setEditQuotaId(null)} className="text-xs text-stone-400">Annuler</button>
+                    </div>
+                  ) : (
+                    <button onClick={() => { setEditQuotaId(s.id); setEditQuotaValue(String(s.quota)); }} className="flex items-center gap-1.5 text-xs text-stone-600 hover:text-emerald-700">
+                      <span>Quota : <span className="font-semibold">{s.quota}</span> comptes</span>
+                      <span className="text-emerald-600 underline">modifier</span>
+                    </button>
+                  )}
                 </div>
 
                 {confirmDeleteId === s.id ? (
@@ -1271,7 +1297,6 @@ function RecommandationsView({ title, results, favoris, onBack, onOpenFiche }) {
 function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const liked = favoris.liked.includes(f.id);
-  const disliked = favoris.disliked.includes(f.id);
   const nonSourcee = f.categorie === "Technique personnelle";
   const isExpert = f.niveauDetail === "expert";
   const techniquesAssociees = (allFiches && f.techniquesLiees && f.techniquesLiees.length)
@@ -1286,9 +1311,9 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
         </div>
         <h2 className="text-2xl font-bold text-emerald-950 mb-5 tracking-tight leading-tight">{f.titre}</h2>
 
-        <div className="lg:grid lg:grid-cols-[1fr_290px] lg:gap-10 lg:items-start">
+        <div className="flex flex-col lg:grid lg:grid-cols-[1fr_290px] lg:gap-10 lg:items-start">
           {techniquesAssociees.length > 0 && onOpenFiche && (
-            <div className="bg-emerald-50 border border-emerald-800/10 shadow-sm rounded-2xl p-4 mb-6 lg:order-2 lg:mb-0 lg:sticky lg:top-24">
+            <div className="order-2 bg-emerald-50 border border-emerald-800/10 shadow-sm rounded-2xl p-4 mt-6 lg:mt-0 lg:sticky lg:top-24">
               <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Techniques détaillées associées</div>
               <div className="flex flex-col gap-1.5">
                 {techniquesAssociees.map((t) => (
@@ -1300,7 +1325,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
               </div>
             </div>
           )}
-          <div className="lg:order-1 min-w-0">
+          <div className="order-1 min-w-0">
         {nonSourcee && (
           <div className="bg-rose-50 rounded-2xl p-4 flex gap-2.5 text-sm text-rose-800 mb-5">
             <AlertTriangle size={16} className="shrink-0 mt-0.5" />
@@ -1431,17 +1456,9 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 lg:px-9 flex gap-2.5 shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
-        <button onClick={onToggleLike} className={`flex items-center justify-center gap-1.5 rounded-2xl py-3 ${onlyLike ? "px-5" : "flex-1"} text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
-          <Heart size={16} className={liked ? "fill-white" : ""} /> {onlyLike ? "" : "Efficace"}
-        </button>
-        {!onlyLike && (
-          <button onClick={onToggleDislike} className={`flex items-center justify-center gap-1.5 rounded-2xl py-3 px-4 text-sm font-semibold transition-all duration-200 active:scale-95 ${disliked ? "bg-stone-700 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
-            <HeartOff size={16} />
-          </button>
-        )}
-        <button onClick={onLog} className="flex-1 flex items-center justify-center gap-1.5 rounded-2xl py-3 text-sm font-semibold bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] text-white transition-all duration-200">
-          <History size={16} /> Enregistrer un essai
+      <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 lg:px-9 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+        <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
+          <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
         </button>
       </div>
     </div>
