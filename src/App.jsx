@@ -1241,31 +1241,82 @@ function AdminTeamView({ structureId, onBack }) {
 function QuizView({ onBack, onSubmit }) {
   const [q, setQ] = useState({ troubleIds: [], besoin: "", stade: "", contexte: "", tempsDispo: 10, materielDispo: false });
   const toggleTrouble = (t) => setQ((s) => ({ ...s, troubleIds: s.troubleIds.includes(t) ? s.troubleIds.filter((x) => x !== t) : [...s.troubleIds, t] }));
+  const sliderPct = Math.round(((q.tempsDispo - 1) / 39) * 100);
   return (
     <div className="pb-10">
       <TopBar title="Trouver la meilleure technique" onBack={onBack} />
-      <div className="p-4">
-        <Field label="Quel(s) trouble(s) observez-vous en ce moment ?">
-          <p className="text-xs text-stone-400 mb-2">Sélectionnez-en plusieurs si besoin — seules les fiches couvrant tous les troubles cochés seront proposées.</p>
-          <CheckGroup options={TROUBLES} selected={q.troubleIds} onToggle={toggleTrouble} />
-        </Field>
-        <Field label="Type de besoin (optionnel)">
-          <select className={inputCls} value={q.besoin} onChange={(e) => setQ({ ...q, besoin: e.target.value })}>
+
+      <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 py-6 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-3xl">
+        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/[0.05] pointer-events-none" />
+        <div className="relative flex items-center gap-3">
+          <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center shrink-0"><Search size={20} /></div>
+          <div>
+            <div className="font-bold text-lg tracking-tight">Quelques précisions</div>
+            <div className="text-emerald-200 text-sm">Plus vous êtes précis, plus la recommandation le sera aussi.</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 lg:px-8 flex flex-col gap-3.5">
+
+        <div className="bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] p-5">
+          <div className="flex items-center gap-2.5 mb-1">
+            <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">1</div>
+            <span className="font-semibold text-emerald-950">Trouble(s) observé(s)</span>
+          </div>
+          <p className="text-xs text-stone-400 mb-3 ml-9">Sélectionnez-en plusieurs si besoin — seules les fiches couvrant tous les troubles cochés seront proposées.</p>
+          <div className="ml-9"><CheckGroup options={TROUBLES} selected={q.troubleIds} onToggle={toggleTrouble} /></div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] p-5">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">2</div>
+            <span className="font-semibold text-emerald-950">Type de besoin</span>
+            <span className="text-xs text-stone-400">(optionnel)</span>
+          </div>
+          <select className={inputCls + " ml-9 w-[calc(100%-2.25rem)]"} value={q.besoin} onChange={(e) => setQ({ ...q, besoin: e.target.value })}>
             <option value="">Tous types</option>
             {FAMILLES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
-        </Field>
-        <Field label="Stade de la maladie"><CheckGroup options={STADES} selected={q.stade ? [q.stade] : []} onToggle={(v) => setQ({ ...q, stade: q.stade === v ? "" : v })} /></Field>
-        <Field label="Contexte"><CheckGroup options={CONTEXTES} selected={q.contexte ? [q.contexte] : []} onToggle={(v) => setQ({ ...q, contexte: q.contexte === v ? "" : v })} /></Field>
-        <Field label={`Temps disponible : ${q.tempsDispo} min`}>
-          <p className="text-xs text-stone-400 mb-1">Les fiches plus longues que ce temps ne seront pas proposées.</p>
-          <input type="range" min={1} max={40} value={q.tempsDispo} onChange={(e) => setQ({ ...q, tempsDispo: Number(e.target.value) })} className="w-full accent-emerald-700" />
-        </Field>
-        <label className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-3 border border-emerald-900/5 mt-1">
-          <input type="checkbox" checked={q.materielDispo} onChange={(e) => setQ({ ...q, materielDispo: e.target.checked })} className="w-4 h-4 accent-emerald-700" />
-          <span className="text-sm text-stone-700">J'ai du matériel disponible</span>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] p-5">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">3</div>
+            <span className="font-semibold text-emerald-950">Stade et contexte</span>
+            <span className="text-xs text-stone-400">(optionnel)</span>
+          </div>
+          <div className="ml-9 flex flex-col gap-3">
+            <CheckGroup options={STADES} selected={q.stade ? [q.stade] : []} onToggle={(v) => setQ({ ...q, stade: q.stade === v ? "" : v })} />
+            <CheckGroup options={CONTEXTES} selected={q.contexte ? [q.contexte] : []} onToggle={(v) => setQ({ ...q, contexte: q.contexte === v ? "" : v })} />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] p-5">
+          <div className="flex items-center gap-2.5 mb-1">
+            <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">4</div>
+            <span className="font-semibold text-emerald-950">Temps disponible</span>
+            <span className="ml-auto text-sm font-bold text-emerald-700">{q.tempsDispo} min</span>
+          </div>
+          <p className="text-xs text-stone-400 mb-3 ml-9">Les fiches plus longues que ce temps ne seront pas proposées.</p>
+          <div className="ml-9">
+            <input
+              type="range" min={1} max={40} value={q.tempsDispo}
+              onChange={(e) => setQ({ ...q, tempsDispo: Number(e.target.value) })}
+              className="w-full h-2 rounded-full appearance-none cursor-pointer accent-emerald-700"
+              style={{ background: `linear-gradient(to right, #047857 ${sliderPct}%, #e7e5e4 ${sliderPct}%)` }}
+            />
+          </div>
+        </div>
+
+        <label className="flex items-center gap-3 bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] px-5 py-4 cursor-pointer">
+          <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">5</div>
+          <span className="text-sm font-medium text-stone-700 flex-1">J'ai du matériel disponible</span>
+          <input type="checkbox" checked={q.materielDispo} onChange={(e) => setQ({ ...q, materielDispo: e.target.checked })} className="w-5 h-5 accent-emerald-700" />
         </label>
-        <button onClick={() => onSubmit(q)} disabled={q.troubleIds.length === 0} className="w-full mt-6 bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3.5 flex items-center justify-center gap-2">
+
+        <button onClick={() => onSubmit(q)} disabled={q.troubleIds.length === 0} className="relative overflow-hidden w-full mt-2 bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-4 flex items-center justify-center gap-2">
+          {q.troubleIds.length > 0 && <span className="cta-shine" />}
           Voir les techniques recommandées
         </button>
       </div>
