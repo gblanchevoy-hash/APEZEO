@@ -4,10 +4,10 @@ import {
   Sparkles, Clock, AlertTriangle, Filter, Leaf, Save, Info, RefreshCw,
   Trash2, DatabaseZap, LogOut, UserCircle, Mail, Lock, Stethoscope, Users,
   ArrowLeftRight, CheckCircle2, ShieldCheck, UserX, UserCheck, Copy, BookOpen,
-  Eye, EyeOff, FileText, Home, Lightbulb,
+  Eye, EyeOff, FileText, Home, Lightbulb, PhoneCall,
 } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES, PROFESSIONS } from "./data/constants.js";
-import { MENTIONS_LEGALES, CGU, CONFIDENTIALITE, NON_RESPONSABILITE } from "./data/legalTexts.js";
+import { MENTIONS_LEGALES, CGU, CONFIDENTIALITE, NON_RESPONSABILITE, METHODE_EDITORIALE } from "./data/legalTexts.js";
 import { AIDANT_FICHES } from "./data/aidantFiches.js";
 import { supabase, supabaseReady, rowToFiche, rowToPersonalFiche, ficheToPersonalRow } from "./lib/supabase.js";
 import { getLocal, setLocal } from "./lib/localStore.js";
@@ -180,6 +180,7 @@ function LegalView({ doc, onBack }) {
     cgu: { title: "CGU", text: CGU },
     confidentialite: { title: "Confidentialité", text: CONFIDENTIALITE },
     responsabilite: { title: "Non-responsabilité", text: NON_RESPONSABILITE },
+    methode: { title: "Notre méthode éditoriale", text: METHODE_EDITORIALE },
   };
   const entry = map[doc] || map.mentions;
   return (
@@ -196,6 +197,7 @@ function LegalFooterLinks({ onOpen }) {
       <button onClick={() => onOpen("cgu")} className="underline">CGU</button>
       <button onClick={() => onOpen("confidentialite")} className="underline">Confidentialité</button>
       <button onClick={() => onOpen("responsabilite")} className="underline">Non-responsabilité</button>
+      <button onClick={() => onOpen("methode")} className="underline">Notre méthode éditoriale</button>
     </div>
   );
 }
@@ -581,6 +583,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           onOpenCreateStructure={() => push({ view: "create-structure" })}
           onOpenMesFiches={() => push({ view: "mes-fiches" })}
           onOpenLegal={(doc) => push({ view: "legal", doc })}
+          onOpenCompte={() => push({ view: "compte" })}
           onOpenTeam={() => push({ view: "team" })}
           onOpenTroubles={() => push({ view: "troubles" })}
           onOpenBesoins={() => push({ view: "besoins" })}
@@ -655,6 +658,9 @@ function AuthenticatedApp({ session, onChangeMode }) {
       {current.view === "team" && (
         <AdminTeamView structureId={profile?.structure_id} onBack={pop} />
       )}
+      {current.view === "compte" && (
+        <MonCompteView email={session?.user?.email} profile={profile} onProfileUpdated={(patch) => setProfile((p) => ({ ...p, ...patch }))} onBack={pop} />
+      )}
       {current.view === "create-structure" && (
         <CreateStructureView onBack={pop} />
       )}
@@ -673,7 +679,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
 }
 
 /* ---------- HOME ---------- */
-function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onRefresh, onLogout, onChangeMode }) {
+function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
@@ -738,6 +744,9 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
           <Info size={16} className="shrink-0 mt-0.5" />
           <span>En cas de danger immédiat, ou si les troubles deviennent fréquents et intenses, consultez un médecin ou un gériatre.</span>
         </div>
+      </div>
+      <div className="text-center">
+        <button onClick={onOpenCompte} className="text-xs text-stone-400 underline">Mon compte</button>
       </div>
       <LegalFooterLinks onOpen={onOpenLegal} />
     </div>
@@ -1105,6 +1114,182 @@ function CreateStructureView({ onBack }) {
 }
 
 
+/* ---------- MON COMPTE (suppression en libre-service) ---------- */
+function MonCompteView({ email, profile, onProfileUpdated, onBack }) {
+  const [structureNom, setStructureNom] = useState(null);
+  const [profession, setProfession] = useState(profile?.profession || PROFESSIONS[0]);
+  const [savingProfession, setSavingProfession] = useState(false);
+  const [professionMsg, setProfessionMsg] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState({ ok: false, text: "" });
+
+  const [exporting, setExporting] = useState(false);
+
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (profile?.structure_id) {
+      supabase.from("structures").select("nom").eq("id", profile.structure_id).single()
+        .then(({ data }) => setStructureNom(data?.nom || null));
+    }
+  }, [profile?.structure_id]);
+
+  const planLabel = { gratuit: "Compte gratuit — accès à un échantillon", structure: "Compte structure — accès complet", payant_manuel: "Compte payant" }[profile?.plan] || "Compte gratuit — accès à un échantillon";
+
+  const saveProfession = async () => {
+    setSavingProfession(true);
+    setProfessionMsg("");
+    const { error: err } = await supabase.from("profiles").update({ profession }).eq("id", profile.id);
+    setSavingProfession(false);
+    if (err) { setProfessionMsg("Échec : " + err.message); return; }
+    setProfessionMsg("Mis à jour.");
+    onProfileUpdated({ profession });
+    setTimeout(() => setProfessionMsg(""), 2000);
+  };
+
+  const savePassword = async () => {
+    if (newPassword.length < 6) { setPasswordMsg({ ok: false, text: "6 caractères minimum." }); return; }
+    if (newPassword !== confirmPassword) { setPasswordMsg({ ok: false, text: "Les mots de passe ne correspondent pas." }); return; }
+    setSavingPassword(true);
+    setPasswordMsg({ ok: false, text: "" });
+    const { error: err } = await supabase.auth.updateUser({ password: newPassword });
+    setSavingPassword(false);
+    if (err) { setPasswordMsg({ ok: false, text: err.message }); return; }
+    setPasswordMsg({ ok: true, text: "Mot de passe mis à jour." });
+    setNewPassword(""); setConfirmPassword("");
+  };
+
+  const downloadMyData = async () => {
+    setExporting(true);
+    const [{ data: favoris }, { data: historique }, { data: fiches }] = await Promise.all([
+      supabase.from("favoris").select("*"),
+      supabase.from("historique").select("*"),
+      supabase.from("fiches_personnelles").select("*"),
+    ]);
+    const payload = {
+      export_genere_le: new Date().toISOString(),
+      profil: { email, profession: profile?.profession, plan: profile?.plan, structure: structureNom },
+      favoris: favoris || [],
+      historique: historique || [],
+      fiches_personnelles: fiches || [],
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "apezeo-mes-donnees.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setExporting(false);
+  };
+
+  const doDelete = async () => {
+    setBusy(true);
+    setError("");
+    const { data, error: err } = await supabase.rpc("delete_own_account");
+    const result = data && data[0];
+    if (err || !result?.success) {
+      setError(err?.message || result?.message || "Échec de la suppression.");
+      setBusy(false);
+      return;
+    }
+    await supabase.auth.signOut();
+  };
+
+  return (
+    <div className="pb-10">
+      <TopBar title="Mon compte" onBack={onBack} />
+      <div className="p-4">
+
+        <div className="bg-white rounded-2xl p-4 border border-emerald-900/5 shadow-sm mb-4">
+          <div className="text-xs text-stone-400 mb-0.5">Adresse e-mail</div>
+          <div className="text-sm text-emerald-950 font-medium mb-3">{email}</div>
+          <div className="text-xs text-stone-400 mb-0.5">Type d'accès</div>
+          <div className="text-sm text-emerald-950 font-medium mb-3">{planLabel}</div>
+          {structureNom && (
+            <>
+              <div className="text-xs text-stone-400 mb-0.5">Structure de rattachement</div>
+              <div className="text-sm text-emerald-950 font-medium">{structureNom}</div>
+            </>
+          )}
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 border border-emerald-900/5 shadow-sm mb-4">
+          <div className="font-semibold text-emerald-950 text-sm mb-2.5">Votre profession</div>
+          <div className="flex gap-2">
+            <select className={inputCls + " flex-1"} value={profession} onChange={(e) => setProfession(e.target.value)}>
+              {PROFESSIONS.map((p) => <option key={p}>{p}</option>)}
+            </select>
+            <button onClick={saveProfession} disabled={savingProfession || profession === profile?.profession} className="px-4 rounded-2xl bg-emerald-700 disabled:bg-stone-300 text-white text-sm font-semibold">
+              Enregistrer
+            </button>
+          </div>
+          {professionMsg && <p className="text-xs text-emerald-700 mt-2">{professionMsg}</p>}
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 border border-emerald-900/5 shadow-sm mb-4">
+          <div className="font-semibold text-emerald-950 text-sm mb-2.5">Changer de mot de passe</div>
+          <div className="flex flex-col gap-2.5">
+            <div className="relative">
+              <input type={showPassword ? "text" : "password"} placeholder="Nouveau mot de passe" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={inputCls + " pr-9"} />
+              <button type="button" onClick={() => setShowPassword((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400">
+                {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            </div>
+            <input type={showPassword ? "text" : "password"} placeholder="Confirmer le mot de passe" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={inputCls} />
+            <button onClick={savePassword} disabled={savingPassword || !newPassword} className="bg-emerald-700 disabled:bg-stone-300 text-white text-sm font-semibold rounded-2xl py-2.5">
+              {savingPassword ? "Mise à jour…" : "Mettre à jour le mot de passe"}
+            </button>
+            {passwordMsg.text && <p className={`text-xs ${passwordMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{passwordMsg.text}</p>}
+          </div>
+        </div>
+
+        <button onClick={downloadMyData} disabled={exporting} className="w-full flex items-center justify-center gap-2 bg-white border border-emerald-900/5 shadow-sm text-emerald-800 rounded-2xl py-3.5 font-medium mb-4">
+          <FileText size={16} /> {exporting ? "Préparation…" : "Télécharger mes données"}
+        </button>
+
+        <button onClick={() => supabase.auth.signOut()} className="w-full flex items-center justify-center gap-2 text-stone-500 border border-stone-200 rounded-2xl py-3.5 font-medium mb-4">
+          <LogOut size={16} /> Se déconnecter
+        </button>
+
+        {!confirmDelete ? (
+          <button onClick={() => setConfirmDelete(true)} className="w-full flex items-center justify-center gap-2 text-rose-600 border border-rose-200 rounded-2xl py-3.5 font-medium hover:bg-rose-50 transition-colors">
+            <Trash2 size={16} /> Supprimer mon compte
+          </button>
+        ) : (
+          <div className="bg-rose-50 rounded-2xl p-4">
+            <p className="text-sm text-rose-800 mb-3">
+              Cette action est <strong>irréversible</strong>. Votre compte, vos favoris, votre historique et vos fiches personnelles seront définitivement supprimés.
+            </p>
+            <p className="text-xs text-rose-700 mb-2">Pour confirmer, tapez <strong>SUPPRIMER</strong> ci-dessous :</p>
+            <input
+              value={confirmText} onChange={(e) => setConfirmText(e.target.value)}
+              className="w-full rounded-xl border border-rose-300 px-3 py-2 text-sm mb-3"
+              placeholder="SUPPRIMER"
+            />
+            {error && <p className="text-xs text-rose-700 mb-2">{error}</p>}
+            <div className="flex gap-2">
+              <button
+                onClick={doDelete} disabled={confirmText !== "SUPPRIMER" || busy}
+                className="flex-1 bg-rose-600 disabled:bg-stone-300 text-white text-sm font-semibold rounded-xl py-2.5"
+              >
+                {busy ? "Suppression…" : "Confirmer la suppression"}
+              </button>
+              <button onClick={() => { setConfirmDelete(false); setConfirmText(""); setError(""); }} className="flex-1 bg-white border border-stone-300 text-sm rounded-xl py-2.5">Annuler</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function AdminTeamView({ structureId, onBack }) {
   const [loading, setLoading] = useState(true);
   const [structure, setStructure] = useState(null);
@@ -1114,16 +1299,19 @@ function AdminTeamView({ structureId, onBack }) {
   const [attachEmail, setAttachEmail] = useState("");
   const [attaching, setAttaching] = useState(false);
   const [attachMsg, setAttachMsg] = useState(null); // {ok: bool, text: string}
+  const [topFiches, setTopFiches] = useState([]);
 
   const load = useCallback(async () => {
     if (!structureId) { setLoading(false); return; }
     setLoading(true);
-    const [{ data: structData }, { data: memberData }] = await Promise.all([
+    const [{ data: structData }, { data: memberData }, { data: topData }] = await Promise.all([
       supabase.from("structures").select("*").eq("id", structureId).single(),
       supabase.from("profiles").select("*").eq("structure_id", structureId).order("created_at", { ascending: true }),
+      supabase.rpc("top_fiches_structure"),
     ]);
     setStructure(structData || null);
     setMembers(memberData || []);
+    setTopFiches(topData || []);
     setLoading(false);
   }, [structureId]);
 
@@ -1211,6 +1399,22 @@ function AdminTeamView({ structureId, onBack }) {
             <p className={`text-xs mt-2 ${attachMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{attachMsg.text}</p>
           )}
         </div>
+
+        {topFiches.length > 0 && (
+          <div className="bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm mb-4">
+            <div className="font-semibold text-emerald-950 text-sm mb-0.5">Fiches les plus consultées ce mois-ci</div>
+            <p className="text-xs text-stone-400 mb-3">Statistique collective de votre équipe — aucune donnée individuelle.</p>
+            <div className="flex flex-col gap-1.5">
+              {topFiches.map((t, i) => (
+                <div key={t.fiche_ref} className="flex items-center gap-2.5 text-sm">
+                  <span className="w-5 text-stone-300 font-bold text-xs">{i + 1}</span>
+                  <span className="flex-1 text-stone-700 truncate">{t.fiche_ref}</span>
+                  <span className="text-xs text-emerald-700 font-semibold bg-emerald-50 rounded-full px-2 py-0.5">{t.vues} vue{t.vues !== 1 ? "s" : ""}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">Membres de l'équipe</div>
         <div className="flex flex-col gap-2">
@@ -1350,6 +1554,9 @@ function RecommandationsView({ title, results, favoris, onBack, onOpenFiche }) {
 function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   useEffect(() => { window.scrollTo(0, 0); }, [f.id]);
+  useEffect(() => {
+    if (!simple) supabase.rpc("enregistrer_vue", { p_fiche_ref: f.titre }).then(() => {}).catch(() => {});
+  }, [f.id, simple]);
   const liked = favoris.liked.includes(f.id);
   const nonSourcee = f.categorie === "Technique personnelle";
   const isExpert = f.niveauDetail === "expert";
@@ -1708,6 +1915,7 @@ function AidantApp({ onChangeMode }) {
   const [favoris, setFavoris] = useState(() => getLocal("aidant-favoris", []));
   const [historique, setHistorique] = useState(() => getLocal("aidant-historique", []));
   const [toast, setToast] = useState(null);
+  const [showUrgence, setShowUrgence] = useState(false);
   const [stack, setStack] = useState([{ view: "home" }]);
 
   const current = stack[stack.length - 1];
@@ -1852,6 +2060,37 @@ function AidantApp({ onChangeMode }) {
       )}
       </div>
       </HomeContext.Provider>
+
+      {/* Raccourci Urgence — toujours visible, uniquement côté Aidant */}
+      <button
+        onClick={() => setShowUrgence(true)}
+        className="fixed top-4 right-4 z-40 flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold pl-3 pr-3.5 py-2 rounded-full shadow-lg active:scale-95 transition"
+        aria-label="Numéros d'urgence"
+      >
+        <PhoneCall size={14} /> Urgence
+      </button>
+      {showUrgence && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4" onClick={() => setShowUrgence(false)}>
+          <div className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2.5 mb-1">
+              <div className="w-10 h-10 rounded-2xl bg-rose-100 flex items-center justify-center shrink-0"><PhoneCall size={19} className="text-rose-600" /></div>
+              <div className="font-bold text-lg text-stone-800">En cas d'urgence</div>
+            </div>
+            <p className="text-sm text-stone-500 mb-5">Si la situation présente un danger immédiat, contactez directement les secours — n'attendez pas de trouver une réponse dans l'application.</p>
+            <div className="flex flex-col gap-2.5">
+              <a href="tel:15" className="flex items-center justify-between bg-rose-50 hover:bg-rose-100 rounded-2xl px-4 py-3.5 transition">
+                <span className="font-semibold text-rose-900">SAMU</span>
+                <span className="font-bold text-rose-700 text-lg">15</span>
+              </a>
+              <a href="tel:112" className="flex items-center justify-between bg-rose-50 hover:bg-rose-100 rounded-2xl px-4 py-3.5 transition">
+                <span className="font-semibold text-rose-900">Numéro d'urgence européen</span>
+                <span className="font-bold text-rose-700 text-lg">112</span>
+              </a>
+            </div>
+            <button onClick={() => setShowUrgence(false)} className="w-full mt-5 text-sm text-stone-400 py-2">Fermer</button>
+          </div>
+        </div>
+      )}
 
       {toast && <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-emerald-950 text-white text-sm px-4 py-2 rounded-full shadow-lg z-50">{toast}</div>}
     </div>

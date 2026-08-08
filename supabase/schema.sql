@@ -670,3 +670,81 @@ alter table interventions
 --   description = excluded.description,
 --   -- ... (tous les autres champs) ...
 --   date_maj = excluded.date_maj;
+
+-- ============================================================
+-- SUPPRESSION DE COMPTE EN LIBRE-SERVICE
+-- ============================================================
+-- L'utilisateur ne peut supprimer que SON PROPRE compte (auth.uid()),
+-- jamais celui d'un tiers. La suppression de la ligne auth.users
+-- entraîne automatiquement, par cascade déjà en place, celle de
+-- profiles, favoris, historique et fiches_personnelles.
+
+create or replace function public.delete_own_account()
+returns table(success boolean, message text)
+language plpgsql security definer
+set search_path = public, pg_temp
+as $$
+begin
+  if auth.uid() is null then
+    return query select false, 'Non authentifié.';
+    return;
+  end if;
+  delete from auth.users where id = auth.uid();
+  return query select true, 'Compte supprimé.';
+end;
+$$;
+
+grant execute on function public.delete_own_account() to authenticated;
+
+-- ============================================================
+-- STATISTIQUES D'USAGE COLLECTIVES (par structure, jamais par personne)
+-- ============================================================
+-- Un simple compteur par fiche et par structure, incrémenté à chaque
+-- consultation. Aucune donnée individuelle : impossible de savoir QUI
+-- a consulté quoi, seulement COMBIEN de fois une fiche a été ouverte
+-- au sein d'une structure sur le mois en cours.
+
+create table if not exists fiche_vues (
+  id bigint generated always as identity primary key,
+  fiche_ref text not null,
+  structure_id bigint references structures(id) on delete cascade,
+  mois text not null,
+  vues int not null default 0,
+  unique (fiche_ref, structure_id, mois)
+);
+alter table fiche_vues enable row level security;
+
+-- Enregistre une consultation. Ne fait rien si le compte n'est
+-- rattaché à aucune structure (comptes gratuits) : pas de collecte
+-- inutile dans ce cas.
+create or replace function public.enregistrer_vue(p_fiche_ref text)
+returns void language plpgsql security definer
+set search_path = public, pg_temp as $$
+declare
+  v_structure_id bigint;
+begin
+  select structure_id into v_structure_id from public.profiles where id = auth.uid();
+  if v_structure_id is null then
+    return;
+  end if;
+  insert into public.fiche_vues (fiche_ref, structure_id, mois, vues)
+  values (p_fiche_ref, v_structure_id, to_char(now(), 'YYYY-MM'), 1)
+  on conflict (fiche_ref, structure_id, mois) do update set vues = fiche_vues.vues + 1;
+end;
+$$;
+grant execute on function public.enregistrer_vue(text) to authenticated;
+
+-- Renvoie le top 5 des fiches les plus consultées ce mois-ci, pour la
+-- structure de l'administrateur qui appelle — jamais celle d'un autre.
+create or replace function public.top_fiches_structure()
+returns table(fiche_ref text, vues int)
+language sql security definer stable
+set search_path = public, pg_temp as $$
+  select fv.fiche_ref, fv.vues
+  from public.fiche_vues fv
+  where fv.structure_id = public.my_structure_id(auth.uid())
+    and fv.mois = to_char(now(), 'YYYY-MM')
+  order by fv.vues desc
+  limit 5;
+$$;
+grant execute on function public.top_fiches_structure() to authenticated;

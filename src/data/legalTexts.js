@@ -322,3 +322,68 @@ L'utilisation d'Apézeo, notamment la création d'un compte professionnel, vaut 
 *Dernière mise à jour : [À COMPLÉTER — date de publication]*
 *Contact : contact@apezeo.fr*
 `;
+
+export const METHODE_EDITORIALE = `# Notre méthode éditoriale — Apézeo
+
+*Comment les fiches d'Apézeo sont construites, sourcées et validées — en toute transparence.*
+
+---
+
+## Deux niveaux, deux logiques
+
+Apézeo propose deux bibliothèques de contenu, construites selon des logiques différentes mais complémentaires.
+
+**La bibliothèque Standard** rassemble plus de 900 fiches pratiques, couvrant un large éventail de techniques d'accompagnement non médicamenteuses, organisées par trouble du comportement et par famille d'intervention.
+
+**La bibliothèque Expert** est construite selon une charte éditoriale stricte, fiche par fiche, avec un niveau d'exigence supérieur en termes de structure, de sourcing et de densité clinique.
+
+---
+
+## Le socle documentaire
+
+Chaque fiche Expert s'appuie sur un nombre restreint de références reconnues, plutôt que sur des sources hétérogènes ou de qualité inégale :
+
+- **Haute Autorité de Santé (HAS)**
+- **National Institute for Health and Care Excellence (NICE)**, notamment la recommandation NG97
+- **Organisation mondiale de la Santé (OMS)**, notamment le programme ICOPE
+- **Société Française de Gériatrie et Gérontologie (SFGG)**
+- **France Alzheimer**
+- **Fédération des Centres Mémoire (CMRR)**
+- **International Psychogeriatric Association (IPA)**
+
+**Règle appliquée systématiquement** : aucune fiche Expert n'est publiée si elle ne peut pas être rattachée à au moins deux références de ce socle documentaire.
+
+**Ce que nous n'utilisons jamais comme source unique** : les blogs, les sites commerciaux, ou les méthodes propriétaires déposées (par exemple Validation®, Humanitude®, Montessori®). Ces approches peuvent être mentionnées lorsque leurs principes sont également décrits dans une recommandation publique reconnue, mais jamais comme unique fondement d'une fiche.
+
+**Ce que nous privilégions** : les recommandations de bonnes pratiques, les consensus d'experts et les guides professionnels — plutôt que des études isolées, qui restent moins robustes à grande échelle.
+
+---
+
+## Une fiche, une compétence
+
+Chaque fiche Expert applique un principe simple : **une fiche décrit un seul geste professionnel précis**, jamais plusieurs techniques mélangées. Une fiche qui expliquerait à la fois comment se présenter, se placer et parler ne respecte pas ce principe — elle doit être découpée en fiches distinctes, chacune consacrée à un seul geste.
+
+Certaines fiches, dites "Concept", font exception : elles présentent un principe général et renvoient explicitement vers les fiches "Technique" qui en détaillent chaque composante — sans jamais les dupliquer.
+
+---
+
+## Ce qu'Apézeo n'est pas
+
+- **Apézeo n'est pas un outil d'aide au diagnostic.** Aucune fiche n'évalue l'état de santé d'une personne précise.
+- **Apézeo n'est pas un outil de décision clinique individualisée.** Les fiches proposent des pistes générales à adapter par le professionnel, jamais une prescription pour un patient nommé.
+- **Apézeo ne contient aucun arbre décisionnel** qui orienterait automatiquement vers une action en fonction de symptômes saisis pour une personne identifiée.
+- **Apézeo ne fait aucune promesse de résultat.** Les techniques proposées sont des pistes à évaluer, pas des garanties.
+
+Voir également notre [Clause de non-responsabilité](#), qui précise ces points en détail.
+
+---
+
+## Un contenu vivant, versionné
+
+Chaque fiche Expert porte un numéro de version. La charte éditoriale elle-même évolue et est versionnée (actuellement V1.0) — toute évolution significative de nos méthodes de rédaction sera documentée ici.
+
+---
+
+*Dernière mise à jour : août 2026*
+*Contact : contact@apezeo.fr*
+`;
