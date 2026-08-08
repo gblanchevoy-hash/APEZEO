@@ -712,8 +712,8 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
           <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> Bibliothèque complète : {dbCount}</span>
         </div>
         <div className="relative">
-          <div className="absolute -inset-2 bg-amber-400/50 blur-xl rounded-3xl animate-cta-glow pointer-events-none" />
-          <button onClick={onOpenQuiz} className="relative w-full bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">
+          <button onClick={onOpenQuiz} className="relative w-full overflow-hidden bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">
+            <span className="cta-shine" />
             Trouver la meilleure technique maintenant
           </button>
         </div>
@@ -1710,28 +1710,41 @@ function AidantApp({ onChangeMode }) {
       <div className="lg:max-w-5xl xl:max-w-6xl lg:mx-auto">
       {current.view === "home" && (
         <div className="pb-10">
-          <div className="px-5 pt-8 pb-6 bg-gradient-to-b from-emerald-800 to-emerald-700 text-white rounded-b-[2rem]">
-            <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center gap-2"><Leaf size={20} /><span className="uppercase tracking-widest text-xs text-emerald-200">Apézeo</span></div>
-              <button onClick={onChangeMode} className="p-1.5 rounded-full hover:bg-white/10" aria-label="Changer de mode"><ArrowLeftRight size={16} /></button>
+          <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
+            <svg className="absolute inset-x-0 bottom-0 w-full h-24 lg:h-32 pointer-events-none" viewBox="0 0 400 100" preserveAspectRatio="none">
+              <path d="M0,55 C80,80 140,30 220,50 C290,68 340,40 400,58 L400,100 L0,100 Z" fill="rgba(255,255,255,0.05)" />
+              <path d="M0,68 C90,45 160,85 240,65 C310,48 350,75 400,62 L400,100 L0,100 Z" fill="rgba(255,255,255,0.07)" />
+            </svg>
+            <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/[0.04] pointer-events-none" />
+
+            <div className="relative flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <Leaf size={20} />
+                <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
+              </div>
+              <button onClick={onChangeMode} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Changer de mode"><ArrowLeftRight size={15} /></button>
             </div>
-            <h1 className="text-2xl lg:text-3xl font-bold mb-1 tracking-tight">Un geste apaisant, tout de suite.</h1>
-            <p className="text-emerald-100 text-sm mb-5">Des idées simples à essayer, pas à pas.</p>
-            <button onClick={() => push({ view: "quiz" })} className="w-full bg-amber-500 hover:bg-amber-400 text-emerald-950 font-semibold rounded-2xl py-3.5 flex items-center justify-center gap-2 shadow-lg active:scale-[0.99] transition">
-              Que faire maintenant ?
-            </button>
+
+            <h1 className="relative text-2xl lg:text-3xl font-bold mb-1.5 tracking-tight">Un geste apaisant, tout de suite.</h1>
+            <p className="relative text-emerald-200 text-sm mb-7">Des idées simples à essayer, pas à pas.</p>
+            <div className="relative">
+              <button onClick={() => push({ view: "quiz" })} className="relative w-full overflow-hidden bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">
+                <span className="cta-shine" />
+                Que faire maintenant ?
+              </button>
+            </div>
           </div>
-          <div className="px-5 lg:px-8 mt-5 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
+          <div className="px-5 lg:px-8 mt-6 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
             <NavCard icon={AlertTriangle} label="Choisir une situation" sub="Agitation, cris, refus de soins…" onClick={() => push({ view: "troubles" })} accent="emerald" />
             <NavCard icon={Search} label="Recherche libre" onClick={() => push({ view: "search" })} accent="stone" />
-            <NavCard icon={Heart} label="Mes favoris" sub={`${favoris.length} idée${favoris.length !== 1 ? "s" : ""} qui fonctionne${favoris.length !== 1 ? "nt" : ""} pour vous`} onClick={() => push({ view: "favoris" })} accent="amber" />
+            <NavCard icon={Heart} label="Mes favoris" sub={`${favoris.length} idée${favoris.length !== 1 ? "s" : ""} qui fonctionne${favoris.length !== 1 ? "nt" : ""} pour vous`} onClick={() => push({ view: "favoris" })} accent="emerald" />
           </div>
-          <div className="px-5 mt-5">
-            <button onClick={() => push({ view: "form", fiche: emptyLocalFiche() })} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-emerald-700/30 text-emerald-800 rounded-2xl py-3 font-medium">
+          <div className="px-5 lg:px-8 mt-5">
+            <button onClick={() => push({ view: "form", fiche: emptyLocalFiche() })} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-stone-300 hover:border-emerald-700/40 hover:bg-emerald-50/50 text-stone-500 hover:text-emerald-800 rounded-2xl py-4 font-medium transition-colors">
               <Plus size={18} /> Ajouter une idée qui a marché pour vous
             </button>
           </div>
-          <div className="px-5 mt-5">
+          <div className="px-5 lg:px-8 mt-5">
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2.5 text-sm text-amber-900">
               <Info size={16} className="shrink-0 mt-0.5" />
               <span>En cas de danger immédiat, ou si les troubles deviennent fréquents et intenses, consultez un médecin ou un gériatre.</span>

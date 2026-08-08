@@ -10,12 +10,22 @@ body {
   font-family: "Inter", sans-serif;
 }
 
-/* Halo lumineux discret et élégant derrière le bouton principal
-   "Trouver la meilleure technique" — attire l'œil sans être criard. */
-@keyframes cta-glow {
-  0%, 100% { opacity: 0.45; transform: scale(1); }
-  50%      { opacity: 0.75; transform: scale(1.04); }
+/* Reflet lumineux intermittent sur les boutons principaux — un trait de
+   lumière balaie le bouton toutes les quelques secondes, puis disparaît,
+   plutôt qu'un halo flou permanent. */
+.cta-shine {
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.65), transparent);
+  transform: skewX(-20deg);
+  animation: cta-shine-sweep 4.5s ease-in-out infinite;
+  pointer-events: none;
 }
-.animate-cta-glow {
-  animation: cta-glow 3.2s ease-in-out infinite;
+@keyframes cta-shine-sweep {
+  0%   { left: -60%; }
+  16%  { left: 130%; }
+  100% { left: 130%; }
 }
