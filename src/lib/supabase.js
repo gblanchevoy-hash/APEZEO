@@ -35,6 +35,7 @@ export function rowToFiche(row) {
     motsCles: row.mots_cles || [],
     dateMaj: row.date_maj || "",
     niveauDetail: row.niveau_detail || "standard",
+    typeFiche: row.type_fiche || "technique",
     techniqueId: row.technique_id || null,
     techniquesLiees: row.techniques_liees || [],
     objectifsObservables: row.objectifs_observables || [],

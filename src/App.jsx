@@ -513,22 +513,20 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const ficheById = (id) => fiches.find((f) => f.id === id);
 
   const scoreFiche = (f, q) => {
-    if (q.troubleId && !f.troubles.includes(q.troubleId)) return null;
+    if (f.typeFiche === "concept") return null; // pas actionnable directement dans un quiz
+    if (q.troubleIds && q.troubleIds.length > 0 && !q.troubleIds.every((t) => f.troubles.includes(t))) return null;
+    if (q.besoin && f.categorie !== q.besoin) return null;
+    if (q.tempsDispo != null && f.dureeMinutes > 0 && f.dureeMinutes > q.tempsDispo) return null;
     let score = 0;
-    if (q.troubleId) score += 40;
+    score += (q.troubleIds?.length || 0) * 20;
+    if (q.besoin) score += 25;
     if (q.stade && f.stades.includes(q.stade)) score += 15;
     if (q.contexte && (f.contextes || []).includes(q.contexte)) score += 10;
-    if (q.tempsDispo != null && f.dureeMinutes && f.dureeMinutes <= q.tempsDispo) score += 10;
     if (q.materielDispo === false && (f.materiel || []).length === 0) score += 10;
     if (q.materielDispo === true) score += 3;
-    if (q.aimeMusique && f.categorie === "Musicothérapie") score += 8;
-    if (q.supporteToucher && f.categorie === "Toucher / Massage") score += 8;
-    if (q.accepteActivites && ["Activité physique", "Activités domestiques", "Activités créatives"].includes(f.categorie)) score += 8;
     score += (f.niveauPreuve || 0) * 2;
     if (favoris.liked.includes(f.id)) score += 15;
     if (favoris.disliked.includes(f.id)) score -= 60;
-    const relevant = historique.filter((h) => h.ficheId === f.id);
-    if (relevant.length) score += (relevant.reduce((s, h) => s + (h.avant - h.apres), 0) / relevant.length) * 3;
     return score;
   };
 
@@ -1237,31 +1235,33 @@ function AdminTeamView({ structureId, onBack }) {
 }
 
 function QuizView({ onBack, onSubmit }) {
-  const [q, setQ] = useState({ troubleId: "", stade: "", contexte: "", tempsDispo: 10, materielDispo: false, aimeMusique: false, supporteToucher: false, accepteActivites: false });
+  const [q, setQ] = useState({ troubleIds: [], besoin: "", stade: "", contexte: "", tempsDispo: 10, materielDispo: false });
+  const toggleTrouble = (t) => setQ((s) => ({ ...s, troubleIds: s.troubleIds.includes(t) ? s.troubleIds.filter((x) => x !== t) : [...s.troubleIds, t] }));
   return (
     <div className="pb-10">
       <TopBar title="Trouver la meilleure technique" onBack={onBack} />
       <div className="p-4">
-        <Field label="Quel trouble observez-vous en ce moment ?">
-          <select className={inputCls} value={q.troubleId} onChange={(e) => setQ({ ...q, troubleId: e.target.value })}>
-            <option value="">Sélectionner…</option>
-            {TROUBLES.map((t) => <option key={t} value={t}>{t}</option>)}
+        <Field label="Quel(s) trouble(s) observez-vous en ce moment ?">
+          <p className="text-xs text-stone-400 mb-2">Sélectionnez-en plusieurs si besoin — seules les fiches couvrant tous les troubles cochés seront proposées.</p>
+          <CheckGroup options={TROUBLES} selected={q.troubleIds} onToggle={toggleTrouble} />
+        </Field>
+        <Field label="Type de besoin (optionnel)">
+          <select className={inputCls} value={q.besoin} onChange={(e) => setQ({ ...q, besoin: e.target.value })}>
+            <option value="">Tous types</option>
+            {FAMILLES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </Field>
         <Field label="Stade de la maladie"><CheckGroup options={STADES} selected={q.stade ? [q.stade] : []} onToggle={(v) => setQ({ ...q, stade: q.stade === v ? "" : v })} /></Field>
         <Field label="Contexte"><CheckGroup options={CONTEXTES} selected={q.contexte ? [q.contexte] : []} onToggle={(v) => setQ({ ...q, contexte: q.contexte === v ? "" : v })} /></Field>
         <Field label={`Temps disponible : ${q.tempsDispo} min`}>
+          <p className="text-xs text-stone-400 mb-1">Les fiches plus longues que ce temps ne seront pas proposées.</p>
           <input type="range" min={1} max={40} value={q.tempsDispo} onChange={(e) => setQ({ ...q, tempsDispo: Number(e.target.value) })} className="w-full accent-emerald-700" />
         </Field>
-        <div className="flex flex-col gap-2.5 mt-1">
-          {[["materielDispo", "J'ai du matériel disponible"], ["aimeMusique", "La personne aime la musique"], ["supporteToucher", "La personne supporte le toucher"], ["accepteActivites", "La personne accepte de petites activités"]].map(([key, label]) => (
-            <label key={key} className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-3 border border-emerald-900/5">
-              <input type="checkbox" checked={q[key]} onChange={(e) => setQ({ ...q, [key]: e.target.checked })} className="w-4 h-4 accent-emerald-700" />
-              <span className="text-sm text-stone-700">{label}</span>
-            </label>
-          ))}
-        </div>
-        <button onClick={() => onSubmit(q)} disabled={!q.troubleId} className="w-full mt-6 bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3.5 flex items-center justify-center gap-2">
+        <label className="flex items-center gap-3 bg-white rounded-xl px-3.5 py-3 border border-emerald-900/5 mt-1">
+          <input type="checkbox" checked={q.materielDispo} onChange={(e) => setQ({ ...q, materielDispo: e.target.checked })} className="w-4 h-4 accent-emerald-700" />
+          <span className="text-sm text-stone-700">J'ai du matériel disponible</span>
+        </label>
+        <button onClick={() => onSubmit(q)} disabled={q.troubleIds.length === 0} className="w-full mt-6 bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3.5 flex items-center justify-center gap-2">
           Voir les techniques recommandées
         </button>
       </div>
@@ -1294,6 +1294,7 @@ function RecommandationsView({ title, results, favoris, onBack, onOpenFiche }) {
 }
 function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
+  useEffect(() => { window.scrollTo(0, 0); }, [f.id]);
   const liked = favoris.liked.includes(f.id);
   const nonSourcee = f.categorie === "Technique personnelle";
   const isExpert = f.niveauDetail === "expert";
@@ -1603,15 +1604,16 @@ function AidantApp({ onChangeMode }) {
   const ficheById = (id) => fiches.find((f) => f.id === id);
 
   const scoreFiche = (f, q) => {
-    if (q.troubleId && !f.troubles.includes(q.troubleId)) return null;
+    if (f.typeFiche === "concept") return null;
+    if (q.troubleIds && q.troubleIds.length > 0 && !q.troubleIds.every((t) => f.troubles.includes(t))) return null;
+    if (q.besoin && f.categorie !== q.besoin) return null;
+    if (q.tempsDispo != null && f.dureeMinutes > 0 && f.dureeMinutes > q.tempsDispo) return null;
     let score = 0;
-    if (q.troubleId) score += 40;
-    if (q.tempsDispo != null && f.dureeMinutes && f.dureeMinutes <= q.tempsDispo) score += 10;
+    score += (q.troubleIds?.length || 0) * 20;
+    if (q.besoin) score += 25;
     if (q.materielDispo === false && (f.materiel || []).length === 0) score += 10;
     score += (f.niveauPreuve || 0) * 2;
     if (favoris.includes(f.id)) score += 15;
-    const relevant = historique.filter((h) => h.ficheId === f.id);
-    if (relevant.length) score += (relevant.reduce((s, h) => s + (h.avant - h.apres), 0) / relevant.length) * 3;
     return score;
   };
 
