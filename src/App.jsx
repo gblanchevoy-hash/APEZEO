@@ -624,7 +624,8 @@ function AuthenticatedApp({ session, onChangeMode }) {
           const scored = fiches.map((f) => ({ f, s: scoreFiche(f, q) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s).slice(0, 8);
           const max = 134;
           const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));
-          push({ view: "recommandations", results, trouble: q.troubleId });
+          const label = [q.troubleIds.join(", "), q.besoin].filter(Boolean).join(" · ");
+          push({ view: "recommandations", results, trouble: label });
         }} />
       )}
       {current.view === "recommandations" && (
@@ -710,9 +711,12 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
           <span className="text-emerald-400/50">|</span>
           <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> Bibliothèque complète : {dbCount}</span>
         </div>
-        <button onClick={onOpenQuiz} className="relative w-full bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all duration-200">
-          Trouver la meilleure technique maintenant
-        </button>
+        <div className="relative">
+          <div className="absolute -inset-2 bg-amber-400/50 blur-xl rounded-3xl animate-cta-glow pointer-events-none" />
+          <button onClick={onOpenQuiz} className="relative w-full bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">
+            Trouver la meilleure technique maintenant
+          </button>
+        </div>
       </div>
       <div className="px-5 lg:px-8 mt-6 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
         <NavCard icon={AlertTriangle} label="Choisir un trouble" sub="Agitation, cris, refus de soins…" onClick={onOpenTroubles} accent="emerald" />
@@ -1678,7 +1682,8 @@ function AidantApp({ onChangeMode }) {
           const scored = fiches.map((f) => ({ f, s: scoreFiche(f, q) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s).slice(0, 8);
           const max = 100;
           const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));
-          push({ view: "recommandations", results, trouble: q.troubleId });
+          const label = [q.troubleIds.join(", "), q.besoin].filter(Boolean).join(" · ");
+          push({ view: "recommandations", results, trouble: label });
         }} />
       )}
       {current.view === "recommandations" && (

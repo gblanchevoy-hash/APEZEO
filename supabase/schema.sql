@@ -637,3 +637,36 @@ alter table profiles add column if not exists affichage text not null default 's
 alter table interventions add column if not exists comment_evaluer_efficacite text[];
 
 -- (evaluation_efficacite : voir comment_evaluer_efficacite plus haut dans ce fichier, déjà présent — pas de doublon)
+
+-- ============================================================
+-- GARDE-FOU CONTRE LES DOUBLONS D'IMPORT
+-- ============================================================
+-- Empêche qu'un même technique_id soit importé deux fois par erreur.
+-- Les fiches standard (technique_id = null) ne sont pas concernées :
+-- une contrainte "unique" en SQL autorise autant de valeurs NULL que
+-- l'on veut, elle ne s'applique qu'aux vraies valeurs renseignées.
+-- Nécessite d'abord que les doublons existants soient nettoyés
+-- (voir nettoyer_doublons.sql) sinon cette ligne échouera.
+
+alter table interventions
+  drop constraint if exists interventions_technique_id_unique,
+  add constraint interventions_technique_id_unique unique (technique_id);
+
+-- ============================================================
+-- MODÈLE D'IMPORT DÉSORMAIS UTILISÉ (upsert, jamais de doublon)
+-- ============================================================
+-- Tous les imports de fiches Expert utilisent maintenant
+-- "on conflict (technique_id) do update" au lieu d'un simple insert.
+-- Concrètement : si vous relancez deux fois le même fichier d'import,
+-- ou si un lot en écrase un autre par erreur, la fiche existante est
+-- simplement MISE À JOUR avec le nouveau contenu — jamais dupliquée,
+-- jamais d'erreur bloquante. Modèle (à titre indicatif, chaque
+-- fichier d'import livré suit déjà cette structure) :
+--
+-- insert into interventions (technique_id, titre, ...)
+-- select technique_id, titre, ... from json_to_recordset($$ ... $$::json) as x(...)
+-- on conflict (technique_id) do update set
+--   titre = excluded.titre,
+--   description = excluded.description,
+--   -- ... (tous les autres champs) ...
+--   date_maj = excluded.date_maj;

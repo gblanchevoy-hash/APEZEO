@@ -9,3 +9,13 @@ body {
   background: #f4f6f2;
   font-family: "Inter", sans-serif;
 }
+
+/* Halo lumineux discret et élégant derrière le bouton principal
+   "Trouver la meilleure technique" — attire l'œil sans être criard. */
+@keyframes cta-glow {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%      { opacity: 0.75; transform: scale(1.04); }
+}
+.animate-cta-glow {
+  animation: cta-glow 3.2s ease-in-out infinite;
+}
