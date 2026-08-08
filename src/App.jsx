@@ -4,7 +4,7 @@ import {
   Sparkles, Clock, AlertTriangle, Filter, Leaf, Save, Info, RefreshCw,
   Trash2, DatabaseZap, LogOut, UserCircle, Mail, Lock, Stethoscope, Users,
   ArrowLeftRight, CheckCircle2, ShieldCheck, UserX, UserCheck, Copy, BookOpen,
-  Eye, EyeOff, FileText, Home,
+  Eye, EyeOff, FileText, Home, Lightbulb,
 } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES, PROFESSIONS } from "./data/constants.js";
 import { MENTIONS_LEGALES, CGU, CONFIDENTIALITE, NON_RESPONSABILITE } from "./data/legalTexts.js";
@@ -1305,6 +1305,88 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
   const techniquesAssociees = (allFiches && f.techniquesLiees && f.techniquesLiees.length)
     ? f.techniquesLiees.map((tid) => allFiches.find((x) => x.techniqueId === tid)).filter(Boolean)
     : [];
+
+  if (simple) {
+    return (
+      <div className="pb-28">
+        <TopBar title={f.categorie} onBack={onBack} />
+        <div className="bg-gradient-to-b from-emerald-50 to-[#F4F6F2] px-6 pt-2 pb-5">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mb-4">
+            <Leaf size={26} className="text-emerald-700" />
+          </div>
+          <h1 className="font-serif text-2xl text-stone-800 leading-snug mb-3">{f.titre}</h1>
+          <div className="flex gap-2 flex-wrap">
+            {f.troubles.map((t) => <span key={t} className="text-xs font-medium bg-amber-100 text-amber-800 px-3 py-1 rounded-full">{t}</span>)}
+          </div>
+        </div>
+
+        <div className="px-6 pt-6 pb-8">
+          <p className="text-stone-600 text-[15px] leading-relaxed mb-6">{f.description}</p>
+
+          {f.pourquoi && (
+            <div className="bg-amber-50 rounded-2xl p-4 flex gap-3 mb-7">
+              <Lightbulb size={20} className="text-amber-600 shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-900 leading-relaxed"><span className="font-semibold">Pourquoi ça marche : </span>{f.pourquoi}</p>
+            </div>
+          )}
+
+          {f.etapes && f.etapes.length > 0 && (
+            <div className="mb-7">
+              <h2 className="font-serif text-lg text-stone-800 mb-5">Le chemin, pas à pas</h2>
+              <div className="relative">
+                <div className="absolute left-[27px] top-3 bottom-3 w-0.5 bg-emerald-200" />
+                <div className="flex flex-col gap-5">
+                  {f.etapes.map((e, i) => (
+                    <div key={i} className="flex gap-4 items-start relative">
+                      <div className="w-14 h-14 rounded-2xl bg-white border-2 border-emerald-200 flex items-center justify-center shrink-0 relative z-10 text-emerald-700 font-serif font-semibold text-lg">{i + 1}</div>
+                      <p className="text-stone-700 text-[15px] leading-relaxed pt-3">{e}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-stone-400 text-sm mb-7">
+            {(f.dureeMinutes > 0 || f.dureeLabel) && (
+              <span className="flex items-center gap-1.5"><Clock size={15} /> Environ {f.dureeMinutes > 0 ? `${f.dureeMinutes} minutes` : f.dureeLabel}</span>
+            )}
+            {f.materiel && f.materiel.length > 0 && (
+              <span className="flex items-center gap-1.5">🧺 {f.materiel.join(", ")}</span>
+            )}
+          </div>
+
+          {f.conseils && f.conseils.length > 0 && (
+            <div className="bg-emerald-50 rounded-2xl p-4 mb-7">
+              <div className="text-sm font-semibold text-emerald-800 mb-2">Petits conseils</div>
+              <ul className="space-y-1.5">{f.conseils.map((c, i) => <li key={i} className="text-sm text-emerald-900 flex gap-2"><span>•</span><span>{c}</span></li>)}</ul>
+            </div>
+          )}
+
+          {(f.quandEviter || (f.erreurs && f.erreurs.length > 0)) && (
+            <div className="bg-rose-50 rounded-2xl p-4 flex gap-3 mb-8">
+              <AlertTriangle size={20} className="text-rose-500 shrink-0 mt-0.5" />
+              <div className="text-sm text-rose-900 leading-relaxed">
+                {f.quandEviter && <p><span className="font-semibold">Évitez de : </span>{f.quandEviter}</p>}
+                {f.erreurs && f.erreurs.length > 0 && (
+                  <ul className={f.quandEviter ? "mt-2 space-y-1" : "space-y-1"}>
+                    {f.erreurs.map((e, i) => <li key={i} className="flex gap-2"><span>•</span><span>{e}</span></li>)}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+          <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-emerald-700 text-white hover:bg-emerald-800"}`}>
+            <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pb-28">
       <TopBar title={f.categorie} onBack={onBack} />
