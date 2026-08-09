@@ -771,3 +771,4 @@ alter table interventions add column if not exists contre_indication_outil text[
 alter table interventions add column if not exists precautions_particulieres text[];
 alter table interventions add column if not exists croquis_svg text; -- code SVG du croquis, généré par Claude, jamais un produit de marque
 alter table interventions add column if not exists croquis_url text; -- image réelle du croquis (base64 ou URL hébergée), prioritaire sur croquis_svg si les deux sont présents
+alter table interventions add column if not exists alerte_outil text; -- alerte réglementaire/sécuritaire mise en avant (ex. statut de contention physique passive), affichée en évidence, distincte des précautions habituelles

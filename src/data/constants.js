@@ -2,7 +2,7 @@ export const TROUBLES = [
   "Agitation", "Agressivité", "Anxiété", "Déambulation", "Refus de soins",
   "Cris répétés", "Hallucinations", "Idées délirantes", "Opposition",
   "Apathie", "Dépression", "Sommeil perturbé", "Syndrome crépusculaire",
-  "Désorientation", "Errance", "Répétitions verbales", "Fugues",
+  "Désorientation", "Errance", "Répétitions verbales", "Sortie inopinée",
   "Comportements sexuels inadaptés", "Refus alimentaire",
   "Troubles pendant la toilette", "Troubles pendant les repas",
   "Troubles pendant l'habillage", "Troubles nocturnes", "Stress de l'aidant",
@@ -23,7 +23,8 @@ export const FAMILLES = [
 export const OUTILS_TYPES = [
   "Poupées et peluches thérapeutiques", "Objets de manipulation sensorielle",
   "Luminothérapie", "Diffusion sonore et musicale", "Aides visuelles et repères",
-  "Robots et animaux de compagnie simulés", "Autre outil",
+  "Robots et animaux de compagnie simulés", "Aromathérapie", "Réminiscence",
+  "Environnement multisensoriel", "Autre outil",
 ];
 
 export const STADES = ["Léger", "Modéré", "Sévère"];

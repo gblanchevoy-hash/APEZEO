@@ -104,6 +104,7 @@ function FicheCard({ f, onClick, favState }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
           {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>}
+          {f.alerteOutil && <span className="flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 rounded-full px-2 py-0.5"><AlertTriangle size={11} /> Vigilance</span>}
           {f.niveauDetail === "expert" && <Badge tone="expert">Expert</Badge>}
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
           {f.dureeMinutes > 0 ? <Badge>{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
@@ -866,10 +867,14 @@ function SearchView({ fiches, onBack, onOpenFiche, favoris }) {
   const results = useMemo(() => {
     if (!q.trim()) return [];
     const s = q.toLowerCase();
+    const match = (v) => typeof v === "string" && v.toLowerCase().includes(s);
+    const matchArr = (arr) => Array.isArray(arr) && arr.some((k) => match(k));
     return fiches.filter((f) =>
-      f.titre.toLowerCase().includes(s) || (f.description || "").toLowerCase().includes(s) ||
-      f.categorie.toLowerCase().includes(s) || f.troubles.some((t) => t.toLowerCase().includes(s)) ||
-      (f.motsCles || []).some((k) => k.toLowerCase().includes(s))
+      match(f.titre) || match(f.description) || match(f.categorie) ||
+      matchArr(f.troubles) || matchArr(f.motsCles) ||
+      matchArr(f.objectifsObservables) || matchArr(f.pointsCles) ||
+      match(f.fondementPrincipe) || match(f.fondementApplication) ||
+      match(f.indication) || matchArr(f.contreIndicationOutil) || matchArr(f.precautionsParticulieres)
     );
   }, [q, fiches]);
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
@@ -1631,9 +1636,26 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           <Badge tone="outil">Outil spécifique</Badge>
           <h2 className="text-2xl font-bold text-violet-950 mt-2 mb-4 tracking-tight leading-tight">{f.titre}</h2>
 
+          {f.alerteOutil && (
+            <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 mb-5 flex gap-3">
+              <AlertTriangle size={22} className="text-red-600 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-xs font-bold uppercase tracking-wider text-red-700 mb-1">Point de vigilance réglementaire</div>
+                <p className="text-sm text-red-900 leading-relaxed font-medium">{f.alerteOutil}</p>
+              </div>
+            </div>
+          )}
+
           {f.croquisUrl ? (
-            <div className="bg-violet-50/60 rounded-2xl p-4 mb-5 flex items-center justify-center">
-              <img src={f.croquisUrl} alt={f.titre} className="max-h-56 rounded-xl" />
+            <div className="relative bg-white rounded-r-2xl rounded-l-md border border-stone-200 shadow-sm mb-5 flex overflow-hidden">
+              <div className="w-6 shrink-0 bg-stone-50 border-r border-dashed border-stone-300 flex flex-col items-center justify-evenly py-4">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="w-2.5 h-2.5 rounded-full bg-[#F4F6F2] border border-stone-300" />
+                ))}
+              </div>
+              <div className="flex-1 flex items-center justify-center p-5">
+                <img src={f.croquisUrl} alt={f.titre} className="max-h-52" />
+              </div>
             </div>
           ) : f.croquisSvg ? (
             <div className="bg-violet-50/60 rounded-2xl p-6 mb-5 flex items-center justify-center" dangerouslySetInnerHTML={{ __html: f.croquisSvg }} />

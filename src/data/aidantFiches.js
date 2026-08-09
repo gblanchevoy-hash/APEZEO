@@ -589,7 +589,7 @@ export const AIDANT_FICHES = [
       "Déambulation",
       "Errance",
       "Agitation",
-      "Fugues"
+      "Sortie inopinée"
     ],
     "stades": [
       "Léger",
@@ -635,7 +635,7 @@ export const AIDANT_FICHES = [
     "troubles": [
       "Déambulation",
       "Errance",
-      "Fugues"
+      "Sortie inopinée"
     ],
     "stades": [
       "Modéré",
@@ -1415,7 +1415,7 @@ export const AIDANT_FICHES = [
     "quandUtiliser": "",
     "quandEviter": "",
     "troubles": [
-      "Fugues",
+      "Sortie inopinée",
       "Errance",
       "Déambulation"
     ],
