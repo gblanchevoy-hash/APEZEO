@@ -20,6 +20,12 @@ export const FAMILLES = [
   "Activités favorisant l'autonomie", "Technique personnelle", "Autres",
 ];
 
+export const OUTILS_TYPES = [
+  "Poupées et peluches thérapeutiques", "Objets de manipulation sensorielle",
+  "Luminothérapie", "Diffusion sonore et musicale", "Aides visuelles et repères",
+  "Robots et animaux de compagnie simulés", "Autre outil",
+];
+
 export const STADES = ["Léger", "Modéré", "Sévère"];
 export const CONTEXTES = ["Domicile", "EHPAD", "Hôpital"];
 

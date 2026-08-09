@@ -4,9 +4,9 @@ import {
   Sparkles, Clock, AlertTriangle, Filter, Leaf, Save, Info, RefreshCw,
   Trash2, DatabaseZap, LogOut, UserCircle, Mail, Lock, Stethoscope, Users,
   ArrowLeftRight, CheckCircle2, ShieldCheck, UserX, UserCheck, Copy, BookOpen,
-  Eye, EyeOff, FileText, Home, Lightbulb, PhoneCall,
+  Eye, EyeOff, FileText, Home, Lightbulb, PhoneCall, Box,
 } from "lucide-react";
-import { TROUBLES, FAMILLES, STADES, CONTEXTES, PROFESSIONS } from "./data/constants.js";
+import { TROUBLES, FAMILLES, STADES, CONTEXTES, PROFESSIONS, OUTILS_TYPES } from "./data/constants.js";
 import { MENTIONS_LEGALES, CGU, CONFIDENTIALITE, NON_RESPONSABILITE, METHODE_EDITORIALE } from "./data/legalTexts.js";
 import { AIDANT_FICHES } from "./data/aidantFiches.js";
 import { supabase, supabaseReady, rowToFiche, rowToPersonalFiche, ficheToPersonalRow } from "./lib/supabase.js";
@@ -42,6 +42,7 @@ function Badge({ children, tone = "stone" }) {
     rose: "bg-rose-100 text-rose-700",
     orangeDark: "bg-orange-800 text-white",
     expert: "bg-emerald-950 text-amber-300",
+    outil: "bg-violet-100 text-violet-800",
   };
   return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${tones[tone]}`}>{children}</span>;
 }
@@ -74,6 +75,7 @@ function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge })
     amber: "bg-gradient-to-br from-amber-300 to-amber-500 text-emerald-950",
     stone: "bg-gradient-to-br from-stone-500 to-stone-700 text-white",
     admin: "bg-gradient-to-br from-stone-800 to-stone-950 text-white",
+    violet: "bg-gradient-to-br from-violet-400 to-violet-700 text-white",
   };
   return (
     <button onClick={onClick} className="w-full flex items-center gap-4 bg-white rounded-3xl p-5 shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] hover:shadow-[0_8px_28px_-6px_rgba(6,78,59,0.18)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200 text-left">
@@ -96,20 +98,21 @@ function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge })
 }
 function FicheCard({ f, onClick, favState }) {
   const nonSourcee = f.categorie === "Technique personnelle";
+  const isOutil = f.typeFiche === "outil";
   return (
-    <button onClick={onClick} className="w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200 flex items-start gap-3">
+    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : "focus-visible:outline-emerald-600"}`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
-          <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>
+          {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>}
           {f.niveauDetail === "expert" && <Badge tone="expert">Expert</Badge>}
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
           {f.dureeMinutes > 0 ? <Badge>{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {f.isLocal && <Badge tone="amber">Personnelle</Badge>}
           {favState === "liked" && <Heart size={14} className="fill-rose-500 text-rose-500" />}
         </div>
-        <div className="font-semibold text-emerald-950 truncate tracking-tight">{f.titre}</div>
+        <div className={`font-semibold truncate tracking-tight ${isOutil ? "text-violet-950" : "text-emerald-950"}`}>{f.titre}</div>
         <div className="text-sm text-stone-500 line-clamp-2 mt-0.5">{f.description}</div>
-        {f.niveauDetail !== "expert" && <div className="mt-1.5"><Stars n={f.niveauPreuve} /></div>}
+        {!isOutil && f.niveauDetail !== "expert" && <div className="mt-1.5"><Stars n={f.niveauPreuve} /></div>}
       </div>
       <ChevronRight size={18} className="text-stone-300 mt-1 shrink-0" />
     </button>
@@ -156,20 +159,42 @@ function ScoreRing({ pct }) {
 
 /* ---------- AUTHENTIFICATION ---------- */
 /* ---------- AFFICHAGE DES TEXTES LÉGAUX (markdown-lite, sans dépendance) ---------- */
+function renderInline(str) {
+  const parts = str.split(/\*\*(.+?)\*\*/g);
+  return parts.map((part, i) => (i % 2 === 1 ? <strong key={i} className="font-semibold text-emerald-950">{part}</strong> : part));
+}
+function SourcesLine({ sources, dateMaj }) {
+  if (!sources || sources.length === 0) return null;
+  return (
+    <div className="text-xs text-stone-400 mt-1">
+      Sources :{" "}
+      {sources.map((s, i) => {
+        const [label, url] = s.split("|");
+        return (
+          <span key={i}>
+            {url ? <a href={url} target="_blank" rel="noopener noreferrer" className="underline text-emerald-700">{label}</a> : label}
+            {i < sources.length - 1 ? ", " : ""}
+          </span>
+        );
+      })}
+      {dateMaj ? ` · maj ${dateMaj}` : ""}
+    </div>
+  );
+}
 function LegalContent({ text }) {
   const lines = text.split("\n");
   return (
     <div className="text-sm text-stone-700 leading-relaxed">
       {lines.map((line, i) => {
         const t = line.trim();
-        if (t.startsWith("### ")) return <h3 key={i} className="font-semibold text-emerald-950 mt-4 mb-1">{t.slice(4)}</h3>;
-        if (t.startsWith("## ")) return <h2 key={i} className="font-semibold text-emerald-950 text-base mt-5 mb-1.5">{t.slice(3)}</h2>;
+        if (t.startsWith("### ")) return <h3 key={i} className="font-semibold text-emerald-950 mt-4 mb-1">{renderInline(t.slice(4))}</h3>;
+        if (t.startsWith("## ")) return <h2 key={i} className="font-semibold text-emerald-950 text-base mt-5 mb-1.5">{renderInline(t.slice(3))}</h2>;
         if (t.startsWith("# ")) return null; // titre déjà affiché dans le TopBar
-        if (t.startsWith("- ")) return <li key={i} className="ml-4 list-disc mb-1">{t.slice(2)}</li>;
+        if (t.startsWith("- ")) return <li key={i} className="ml-4 list-disc mb-1">{renderInline(t.slice(2))}</li>;
         if (t.startsWith("---")) return <hr key={i} className="my-4 border-stone-200" />;
-        if (t.startsWith("*") && t.endsWith("*") && t.length > 1) return <p key={i} className="italic text-stone-500 text-xs mb-2">{t.slice(1, -1)}</p>;
+        if (t.startsWith("*") && t.endsWith("*") && !t.startsWith("**") && t.length > 1) return <p key={i} className="italic text-stone-500 text-xs mb-2">{renderInline(t.slice(1, -1))}</p>;
         if (t === "") return <div key={i} className="h-2" />;
-        return <p key={i} className="mb-2">{t}</p>;
+        return <p key={i} className="mb-2">{renderInline(t)}</p>;
       })}
     </div>
   );
@@ -416,10 +441,13 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const visibleDbFiches = isGratuit ? sampleDbFiches : dbFiches;
   const modeExpert = profile?.affichage === "expert" && profile?.plan === "structure";
   const fichesDuMode = useMemo(
-    () => visibleDbFiches.filter((f) => modeExpert ? f.niveauDetail === "expert" : f.niveauDetail !== "expert"),
+    () => visibleDbFiches.filter((f) => f.typeFiche !== "outil" && (modeExpert ? f.niveauDetail === "expert" : f.niveauDetail !== "expert")),
     [visibleDbFiches, modeExpert]
   );
   const fiches = useMemo(() => [...fichesDuMode, ...localFiches], [fichesDuMode, localFiches]);
+  const outilsFiches = useMemo(() => visibleDbFiches.filter((f) => f.typeFiche === "outil"), [visibleDbFiches]);
+  // Recherche et favoris : toujours accessibles, y compris les outils, indépendamment du mode Standard/Expert.
+  const fichesRecherchables = useMemo(() => [...fiches, ...outilsFiches], [fiches, outilsFiches]);
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200); };
 
@@ -512,7 +540,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
     setHistorique((data || []).map((r) => ({ id: r.id, ficheId: r.fiche_id, avant: r.avant, apres: r.apres, commentaire: r.commentaire, date: r.created_at })));
   };
 
-  const ficheById = (id) => fiches.find((f) => f.id === id);
+  const ficheById = (id) => fichesRecherchables.find((f) => f.id === id);
 
   const scoreFiche = (f, q) => {
     if (f.typeFiche === "concept") return null; // pas actionnable directement dans un quiz
@@ -587,6 +615,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           onOpenTeam={() => push({ view: "team" })}
           onOpenTroubles={() => push({ view: "troubles" })}
           onOpenBesoins={() => push({ view: "besoins" })}
+          onOpenOutils={() => push({ view: "outils" })}
           onOpenSearch={() => push({ view: "search" })}
           onOpenFavoris={() => push({ view: "favoris" })}
           onOpenQuiz={() => push({ view: "quiz" })}
@@ -613,11 +642,19 @@ function AuthenticatedApp({ session, onChangeMode }) {
           items={fiches.filter((f) => f.categorie === current.famille)}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucune fiche dans cette famille pour l'instant." />
       )}
+      {current.view === "outils" && (
+        <OutilsView fiches={outilsFiches} onBack={pop} onOpenType={(t) => push({ view: "outil-type", outilType: t })} />
+      )}
+      {current.view === "outil-type" && (
+        <FicheListView title={current.outilType} onBack={pop} favoris={favoris}
+          items={outilsFiches.filter((f) => f.outilType === current.outilType)}
+          onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucun outil dans cette catégorie pour l'instant." />
+      )}
       {current.view === "search" && (
-        <SearchView fiches={fiches} onBack={pop} favoris={favoris} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+        <SearchView fiches={fichesRecherchables} onBack={pop} favoris={favoris} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "favoris" && (
-        <FavorisView fiches={fiches} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+        <FavorisView fiches={fichesRecherchables} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "historique" && (
         <HistoriqueView historique={historique} ficheById={ficheById} onBack={pop} />
@@ -679,7 +716,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
 }
 
 /* ---------- HOME ---------- */
-function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
+function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
@@ -727,6 +764,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
       <div className="px-5 lg:px-8 mt-6 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
         <NavCard icon={AlertTriangle} label="Choisir un trouble" sub="Agitation, cris, refus de soins…" onClick={onOpenTroubles} accent="emerald" />
         <NavCard icon={Filter} label="Rechercher par besoin" sub="Communication, musique, toucher…" onClick={onOpenBesoins} accent="emerald" />
+        <NavCard icon={Box} label="Outils spécifiques" sub="Poupées, luminothérapie, objets sensoriels…" onClick={onOpenOutils} accent="violet" />
         <NavCard icon={Search} label="Recherche libre" onClick={onOpenSearch} accent="emerald" />
         <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="emerald" />
         <NavCard icon={FileText} label="Mes fiches" sub="Toutes vos créations personnelles" onClick={onOpenMesFiches} accent="emerald" />
@@ -768,6 +806,27 @@ function TroublesView({ fiches, onBack, onOpenTrouble }) {
             </button>
           );
         })}
+      </div>
+    </div>
+  );
+}
+function OutilsView({ fiches, onBack, onOpenType }) {
+  return (
+    <div className="pb-10">
+      <TopBar title="Outils spécifiques" onBack={onBack} />
+      <div className="p-5 lg:px-9">
+        <p className="text-sm text-stone-500 mb-5">Des objets et dispositifs matériels utilisés en soutien des approches non médicamenteuses — indications, contre-indications et précautions pour chacun.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {OUTILS_TYPES.map((t) => {
+            const n = fiches.filter((f) => f.outilType === t).length;
+            return (
+              <button key={t} onClick={() => onOpenType(t)} className="bg-violet-50/60 hover:bg-white rounded-2xl p-4 text-left border border-violet-800/10 hover:border-violet-700/20 shadow-none hover:shadow-[0_6px_18px_-6px_rgba(88,28,135,0.12)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-600 transition-all duration-200">
+                <div className="font-semibold text-violet-950 text-sm leading-snug tracking-tight">{t}</div>
+                <div className="text-xs text-violet-700/70 mt-1.5 font-medium">{n} outil{n !== 1 ? "s" : ""}</div>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -1564,6 +1623,48 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
     ? f.techniquesLiees.map((tid) => allFiches.find((x) => x.techniqueId === tid)).filter(Boolean)
     : [];
 
+  if (f.typeFiche === "outil") {
+    return (
+      <div className="pb-10">
+        <TopBar title={f.outilType || "Outil spécifique"} onBack={onBack} />
+        <div className="p-5 lg:p-9 lg:max-w-2xl">
+          <Badge tone="outil">Outil spécifique</Badge>
+          <h2 className="text-2xl font-bold text-violet-950 mt-2 mb-4 tracking-tight leading-tight">{f.titre}</h2>
+
+          {f.croquisUrl ? (
+            <div className="bg-violet-50/60 rounded-2xl p-4 mb-5 flex items-center justify-center">
+              <img src={f.croquisUrl} alt={f.titre} className="max-h-56 rounded-xl" />
+            </div>
+          ) : f.croquisSvg ? (
+            <div className="bg-violet-50/60 rounded-2xl p-6 mb-5 flex items-center justify-center" dangerouslySetInnerHTML={{ __html: f.croquisSvg }} />
+          ) : null}
+
+          <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="outil">{t}</Badge>)}</div>
+
+          <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-violet-700 mb-2">Description</div><p className="text-sm text-stone-700 leading-relaxed">{f.description}</p></div>
+
+          {f.indication && <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-violet-700 mb-2">Indication</div><p className="text-sm text-stone-700 leading-relaxed">{f.indication}</p></div>}
+
+          {f.contreIndicationOutil && f.contreIndicationOutil.length > 0 && (
+            <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-violet-700 mb-2">Contre-indications</div><div className="bg-rose-50 rounded-2xl p-4"><BulletList items={f.contreIndicationOutil} /></div></div>
+          )}
+
+          {f.precautionsParticulieres && f.precautionsParticulieres.length > 0 && (
+            <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-violet-700 mb-2">Précautions particulières</div><div className="bg-amber-50 rounded-2xl p-4"><BulletList items={f.precautionsParticulieres} /></div></div>
+          )}
+
+          {!simple && <SourcesLine sources={f.sources} dateMaj={f.dateMaj} />}
+        </div>
+
+        <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(88,28,135,0.12)]">
+          <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-violet-100 text-violet-800 hover:bg-violet-200"}`}>
+            <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (simple) {
     return (
       <div className="pb-28">
@@ -1783,7 +1884,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
             )}
           </>
         )}
-        {!simple && f.sources && f.sources.length > 0 && <div className="text-xs text-stone-400 mt-1">Sources : {f.sources.join(", ")}{f.dateMaj ? ` · maj ${f.dateMaj}` : ""}</div>}
+        {!simple && <SourcesLine sources={f.sources} dateMaj={f.dateMaj} />}
 
         {onDelete && (confirmDelete ? (
           <div className="mt-6 bg-rose-50 rounded-2xl p-4 text-sm">

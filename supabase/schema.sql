@@ -748,3 +748,26 @@ set search_path = public, pg_temp as $$
   limit 5;
 $$;
 grant execute on function public.top_fiches_structure() to authenticated;
+
+-- ============================================================
+-- OUTILS SPÉCIFIQUES
+-- ============================================================
+-- Nouveau module distinct des fiches "technique" : des outils
+-- matériels utilisés en soutien des approches non médicamenteuses
+-- (poupée d'empathie, luminothérapie, animal robotisé, etc.).
+-- Structure volontairement plus simple : indication, contre-indication,
+-- précautions, et un croquis (SVG neutre, jamais un produit/marque
+-- existant) plutôt qu'un déroulement en étapes.
+--
+-- type_fiche gagne une 3e valeur possible : 'outil'.
+
+alter table interventions drop constraint if exists interventions_type_fiche_check;
+alter table interventions add constraint interventions_type_fiche_check
+  check (type_fiche in ('concept','technique','outil'));
+
+alter table interventions add column if not exists outil_type text; -- ex. "Poupées et peluches thérapeutiques"
+alter table interventions add column if not exists indication text;
+alter table interventions add column if not exists contre_indication_outil text[];
+alter table interventions add column if not exists precautions_particulieres text[];
+alter table interventions add column if not exists croquis_svg text; -- code SVG du croquis, généré par Claude, jamais un produit de marque
+alter table interventions add column if not exists croquis_url text; -- image réelle du croquis (base64 ou URL hébergée), prioritaire sur croquis_svg si les deux sont présents
