@@ -662,7 +662,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
       {current.view === "quiz" && (
         <QuizView onBack={pop} onSubmit={(q) => {
-          const scored = fiches.map((f) => ({ f, s: scoreFiche(f, q) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s).slice(0, 8);
+          const scored = [...fiches, ...outilsFiches].map((f) => ({ f, s: scoreFiche(f, q) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s).slice(0, 8);
           const max = 134;
           const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));
           const label = [q.troubleIds.join(", "), q.besoin].filter(Boolean).join(" · ");
@@ -1647,14 +1647,20 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           )}
 
           {f.croquisUrl ? (
-            <div className="relative bg-white rounded-r-2xl rounded-l-md border border-stone-200 shadow-sm mb-5 flex overflow-hidden">
-              <div className="w-6 shrink-0 bg-stone-50 border-r border-dashed border-stone-300 flex flex-col items-center justify-evenly py-4">
+            <div
+              className="relative bg-[#FEFDFB] shadow-[2px_6px_16px_-4px_rgba(0,0,0,0.18)] mb-6 flex overflow-hidden -rotate-[0.6deg]"
+              style={{
+                clipPath: "polygon(0% 3%, 3% 0%, 97% 1%, 100% 4%, 99% 96%, 96% 100%, 2% 99%, 1% 95%)",
+              }}
+            >
+              <div className="w-8 shrink-0 bg-gradient-to-r from-stone-100 to-[#FEFDFB] flex flex-col items-center justify-evenly py-5 relative">
+                <div className="absolute inset-y-0 right-0 w-px bg-stone-200" />
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="w-2.5 h-2.5 rounded-full bg-[#F4F6F2] border border-stone-300" />
+                  <div key={i} className="w-3 h-3 rounded-full bg-[#F4F6F2] shadow-[inset_1px_1px_2px_rgba(0,0,0,0.25)] border border-stone-300/70" />
                 ))}
               </div>
-              <div className="flex-1 flex items-center justify-center p-5">
-                <img src={f.croquisUrl} alt={f.titre} className="max-h-52" />
+              <div className="flex-1 flex items-center justify-center p-6">
+                <img src={f.croquisUrl} alt={f.titre} className="max-h-52 drop-shadow-sm" />
               </div>
             </div>
           ) : f.croquisSvg ? (
