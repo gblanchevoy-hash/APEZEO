@@ -1654,20 +1654,15 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           )}
 
           {f.croquisUrl ? (
-            <div
-              className="relative bg-[#FEFDFB] shadow-[2px_6px_16px_-4px_rgba(0,0,0,0.18)] mb-6 flex overflow-hidden -rotate-[0.6deg]"
-              style={{
-                clipPath: "polygon(0% 3%, 3% 0%, 97% 1%, 100% 4%, 99% 96%, 96% 100%, 2% 99%, 1% 95%)",
-              }}
-            >
-              <div className="w-8 shrink-0 bg-gradient-to-r from-stone-100 to-[#FEFDFB] flex flex-col items-center justify-evenly py-5 relative">
-                <div className="absolute inset-y-0 right-0 w-px bg-stone-200" />
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="w-3 h-3 rounded-full bg-[#F4F6F2] shadow-[inset_1px_1px_2px_rgba(0,0,0,0.25)] border border-stone-300/70" />
-                ))}
-              </div>
-              <div className="flex-1 flex items-center justify-center p-6">
-                <img src={f.croquisUrl} alt={f.titre} className="max-h-52 drop-shadow-sm" />
+            <div className="relative mb-6" style={{ aspectRatio: "900 / 560" }}>
+              <img src="/images/notebook-page-bg.png" alt="" className="absolute inset-0 w-full h-full" />
+              <div className="absolute flex items-center justify-center" style={{ left: "11%", right: "3%", top: "4%", bottom: "4%" }}>
+                <img
+                  src={f.croquisUrl}
+                  alt={f.titre}
+                  className="max-w-full max-h-full"
+                  style={{ transform: "rotate(-1.5deg)", filter: "drop-shadow(3px 5px 3px rgba(0,0,0,0.12))" }}
+                />
               </div>
             </div>
           ) : f.croquisSvg ? (
