@@ -146,14 +146,17 @@ function BulletList({ items }) {
   if (!items || items.length === 0) return null;
   return <ul className="space-y-1.5">{items.map((it, i) => <li key={i} className="text-sm text-stone-700 flex gap-2"><span className="text-emerald-600 mt-0.5">•</span><span>{it}</span></li>)}</ul>;
 }
-function ScoreRing({ pct }) {
+function ScoreRing({ pct, violet }) {
   const r = 20, c = 2 * Math.PI * r;
+  const color = violet ? "#6d28d9" : "#047857";
+  const textColor = violet ? "#4c1d95" : "#064e3b";
   return (
     <svg width="52" height="52" viewBox="0 0 52 52" className="shrink-0">
+      <title>Score de correspondance avec les critères que vous avez indiqués (troubles, besoin, stade, contexte, temps disponible) — plus il est élevé, plus la fiche correspond à ce que vous cherchez.</title>
       <circle cx="26" cy="26" r={r} stroke="#e7e5e4" strokeWidth="5" fill="none" />
-      <circle cx="26" cy="26" r={r} stroke="#047857" strokeWidth="5" fill="none"
+      <circle cx="26" cy="26" r={r} stroke={color} strokeWidth="5" fill="none"
         strokeDasharray={c} strokeDashoffset={c - (pct / 100) * c} strokeLinecap="round" transform="rotate(-90 26 26)" />
-      <text x="26" y="30" textAnchor="middle" fontSize="13" fontWeight="600" fill="#064e3b">{pct}%</text>
+      <text x="26" y="30" textAnchor="middle" fontSize="13" fontWeight="600" fill={textColor}>{pct}%</text>
     </svg>
   );
 }
@@ -1598,19 +1601,23 @@ function RecommandationsView({ title, results, favoris, onBack, onOpenFiche }) {
       <TopBar title={`Pour : ${title}`} onBack={onBack} />
       <div className="p-4 flex flex-col gap-2.5">
         {results.length === 0 && <div className="text-center text-stone-400 text-sm py-10">Aucune fiche ne correspond, essayez d'élargir vos critères.</div>}
-        {results.map(({ f, pct }) => (
-          <button key={f.id} onClick={() => onOpenFiche(f)} className="w-full text-left bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm flex items-center gap-3 active:scale-[0.99] transition">
-            <ScoreRing pct={pct} />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                <Badge tone="emerald">{f.categorie}</Badge>
-                {favState(f.id) === "liked" && <Heart size={13} className="fill-rose-500 text-rose-500" />}
+        {results.map(({ f, pct }) => {
+          const isOutil = f.typeFiche === "outil";
+          return (
+            <button key={f.id} onClick={() => onOpenFiche(f)} className={`w-full text-left bg-white rounded-xl p-3.5 shadow-sm flex items-center gap-3 active:scale-[0.99] transition ${isOutil ? "border-l-[3px] border-violet-400" : "border border-emerald-900/5"}`}>
+              <ScoreRing pct={pct} violet={isOutil} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                  {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone="emerald">{f.categorie}</Badge>}
+                  {f.alerteOutil && <span className="flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 rounded-full px-2 py-0.5"><AlertTriangle size={11} /> Vigilance</span>}
+                  {favState(f.id) === "liked" && <Heart size={13} className="fill-rose-500 text-rose-500" />}
+                </div>
+                <div className={`font-semibold ${isOutil ? "text-violet-950" : "text-emerald-950"}`}>{f.titre}</div>
+                <div className="text-sm text-stone-500 line-clamp-2">{f.description}</div>
               </div>
-              <div className="font-semibold text-emerald-950">{f.titre}</div>
-              <div className="text-sm text-stone-500 line-clamp-2">{f.description}</div>
-            </div>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
