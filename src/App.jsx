@@ -434,8 +434,15 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const sampleDbFiches = useMemo(() => {
     const seen = new Set();
     const sample = [];
+    let outilAjoute = false;
     for (const f of dbFiches) {
       if (f.niveauDetail === "expert") continue; // jamais dans l'échantillon gratuit
+      if (f.typeFiche === "outil") {
+        if (outilAjoute) continue; // un seul outil spécifique visible en accès découverte
+        outilAjoute = true;
+        sample.push(f);
+        continue;
+      }
       if (!seen.has(f.categorie)) { seen.add(f.categorie); sample.push(f); }
     }
     return sample;
@@ -2192,13 +2199,17 @@ function AidantApp({ onChangeMode }) {
       </div>
       </HomeContext.Provider>
 
-      {/* Raccourci Urgence — toujours visible, uniquement côté Aidant */}
+      {/* Raccourci Urgence — toujours visible, uniquement côté Aidant.
+          Positionné en onglet sur le bord droit, à mi-hauteur : ne
+          chevauche ni l'en-tête (bouton changer de mode) ni la barre
+          d'action fixe en bas des fiches. */}
       <button
         onClick={() => setShowUrgence(true)}
-        className="fixed top-4 right-4 z-40 flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold pl-3 pr-3.5 py-2 rounded-full shadow-lg active:scale-95 transition"
+        className="fixed top-1/2 right-0 -translate-y-1/2 z-40 flex items-center justify-center bg-rose-600 hover:bg-rose-700 text-white p-3 rounded-l-2xl shadow-lg active:scale-95 transition"
         aria-label="Numéros d'urgence"
+        title="Urgence"
       >
-        <PhoneCall size={14} /> Urgence
+        <PhoneCall size={19} />
       </button>
       {showUrgence && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4" onClick={() => setShowUrgence(false)}>
