@@ -462,12 +462,34 @@ function AuthenticatedApp({ session, onChangeMode }) {
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200); };
 
+  // Supabase plafonne toute requête non paginée à 1000 lignes par défaut.
+  // Cette fonction récupère la table entière par blocs successifs, quelle
+  // que soit sa taille — indispensable maintenant que "interventions"
+  // dépasse ce seuil.
+  const fetchAllRows = useCallback(async (table, orderCol = "id") => {
+    const pageSize = 1000;
+    let from = 0;
+    let all = [];
+    while (true) {
+      const { data, error } = await supabase
+        .from(table)
+        .select("*")
+        .order(orderCol, { ascending: true })
+        .range(from, from + pageSize - 1);
+      if (error) return { data: null, error };
+      all = all.concat(data || []);
+      if (!data || data.length < pageSize) break;
+      from += pageSize;
+    }
+    return { data: all, error: null };
+  }, []);
+
   const loadFromSupabase = useCallback(async () => {
     if (!supabaseReady) { setLoading(false); return; }
     setLoading(true);
 
     const [interv, personal, favRows, histRows, profileRow] = await Promise.all([
-      supabase.from("interventions").select("*").order("id", { ascending: true }),
+      fetchAllRows("interventions", "id"),
       supabase.from("fiches_personnelles").select("*").eq("user_id", userId).order("id", { ascending: true }),
       supabase.from("favoris").select("*").eq("user_id", userId),
       supabase.from("historique").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
@@ -496,7 +518,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
     if (!profileRow.error) setProfile(profileRow.data);
 
     setLoading(false);
-  }, [userId]);
+  }, [userId, fetchAllRows]);
 
   useEffect(() => { loadFromSupabase(); }, [loadFromSupabase]);
 
