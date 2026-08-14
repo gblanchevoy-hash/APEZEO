@@ -51,7 +51,7 @@ const HomeContext = createContext(() => {});
 function TopBar({ title, onBack, right }) {
   const goHome = useContext(HomeContext);
   return (
-    <div className="sticky top-0 z-10 bg-[#F4F6F2]/65 backdrop-blur-xl backdrop-saturate-150 px-5 py-4 lg:px-9 lg:py-5 flex items-center gap-3">
+    <div className="sticky top-0 z-30 bg-[#F4F6F2]/55 backdrop-blur-xl backdrop-saturate-150 px-5 py-4 lg:px-9 lg:py-5 flex items-center gap-3">
       {onBack ? (
         <>
           <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-emerald-900/8 active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200" aria-label="Retour">
@@ -62,7 +62,7 @@ function TopBar({ title, onBack, right }) {
           </button>
         </>
       ) : (
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white"><Leaf size={17} /></div>
+        <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9 rounded-xl object-cover shadow-sm" />
       )}
       <h1 className="flex-1 text-lg font-bold text-emerald-950 truncate tracking-tight">{title}</h1>
       {right}
@@ -294,7 +294,7 @@ function AuthView({ onChangeMode }) {
       <div className="w-full max-w-sm">
         {/* Vitrine commerciale */}
         <div className="text-center mb-6">
-          <div className="w-11 h-11 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white"><Leaf size={20} /></div>
+          <img src="/logo-phoenix.png" alt="Apézeo" className="w-11 h-11 mx-auto mb-3 rounded-2xl object-cover shadow-sm" />
           <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
           <p className="text-sm text-stone-500 mt-0.5">Version Pro</p>
         </div>
@@ -597,7 +597,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F6F2]">
         <div className="flex flex-col items-center gap-3 text-emerald-800">
-          <Leaf className="animate-pulse" size={28} />
+          <img src="/logo-phoenix.png" alt="Apézeo" className="w-14 h-14 rounded-2xl object-cover animate-pulse shadow-md" />
           <span className="text-sm">Chargement d'Apézeo…</span>
         </div>
       </div>
@@ -762,7 +762,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
 
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Leaf size={20} />
+            <img src="/logo-phoenix.png" alt="Apézeo" className="w-5 h-5 rounded-full object-cover" />
             <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
             <span className="text-[11px] bg-white/15 rounded-full px-2 py-0.5">Version Pro</span>
           </div>
@@ -1715,7 +1715,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           {!simple && <SourcesLine sources={f.sources} dateMaj={f.dateMaj} />}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(88,28,135,0.12)]">
+        <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/70 backdrop-blur-xl backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(88,28,135,0.12)]">
           <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-violet-100 text-violet-800 hover:bg-violet-200"}`}>
             <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
           </button>
@@ -1756,7 +1756,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
                 <div className="flex flex-col gap-5">
                   {f.etapes.map((e, i) => (
                     <div key={i} className="flex gap-4 items-start relative">
-                      <div className="w-14 h-14 rounded-2xl bg-white border-2 border-emerald-200 flex items-center justify-center shrink-0 relative z-10 text-emerald-700 font-serif font-semibold text-lg">{i + 1}</div>
+                      <div className="w-14 h-14 rounded-2xl bg-white border-2 border-emerald-200 flex items-center justify-center shrink-0 relative z-[1] text-emerald-700 font-serif font-semibold text-lg">{i + 1}</div>
                       <p className="text-stone-700 text-[15px] leading-relaxed pt-3">{e}</p>
                     </div>
                   ))}
@@ -1796,7 +1796,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           )}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+        <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/70 backdrop-blur-xl backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
           <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-emerald-700 text-white hover:bg-emerald-800"}`}>
             <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
           </button>
@@ -1959,7 +1959,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-xl p-4 lg:px-9 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/70 backdrop-blur-xl backdrop-saturate-150 p-4 lg:px-9 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
         <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
           <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
         </button>
@@ -2037,7 +2037,7 @@ function Gate({ onChoose }) {
   return (
     <div className="min-h-screen bg-[#F4F6F2] flex items-center justify-center p-5">
       <div className="w-full max-w-sm text-center">
-        <Leaf className="mx-auto mb-2 text-emerald-700" size={30} />
+        <img src="/logo-phoenix.png" alt="Apézeo" className="w-16 h-16 rounded-2xl mx-auto mb-3 object-cover shadow-sm" />
         <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
         <p className="text-sm text-stone-500 mt-2 mb-7">Des idées concrètes pour apaiser une personne atteinte d'Alzheimer ou maladie apparentée.</p>
 
@@ -2138,7 +2138,7 @@ function AidantApp({ onChangeMode }) {
 
             <div className="relative flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <Leaf size={20} />
+                <img src="/logo-phoenix.png" alt="Apézeo" className="w-5 h-5 rounded-full object-cover" />
                 <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
               </div>
               <button onClick={onChangeMode} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Changer de mode"><ArrowLeftRight size={15} /></button>
@@ -2157,6 +2157,7 @@ function AidantApp({ onChangeMode }) {
             <NavCard icon={AlertTriangle} label="Choisir une situation" sub="Agitation, cris, refus de soins…" onClick={() => push({ view: "troubles" })} accent="emerald" />
             <NavCard icon={Search} label="Recherche libre" onClick={() => push({ view: "search" })} accent="stone" />
             <NavCard icon={Heart} label="Mes favoris" sub={`${favoris.length} idée${favoris.length !== 1 ? "s" : ""} qui fonctionne${favoris.length !== 1 ? "nt" : ""} pour vous`} onClick={() => push({ view: "favoris" })} accent="emerald" />
+            <NavCard icon={FileText} label="Mes fiches" sub="Vos idées créées vous-même" onClick={() => push({ view: "mes-fiches" })} accent="stone" />
           </div>
           <div className="px-5 lg:px-8 mt-5">
             <button onClick={() => push({ view: "form", fiche: emptyLocalFiche() })} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-stone-300 hover:border-emerald-700/40 hover:bg-emerald-50/50 text-stone-500 hover:text-emerald-800 rounded-2xl py-4 font-medium transition-colors">
@@ -2190,6 +2191,9 @@ function AidantApp({ onChangeMode }) {
       )}
       {current.view === "favoris" && (
         <AidantFavorisView fiches={fiches} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+      )}
+      {current.view === "mes-fiches" && (
+        <MesFichesView fiches={fiches} favoris={{ liked: favoris, disliked: [] }} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "quiz" && (
         <QuizView onBack={pop} onSubmit={(q) => {
@@ -2340,7 +2344,7 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F6F2]">
         <div className="flex flex-col items-center gap-3 text-emerald-800">
-          <Leaf className="animate-pulse" size={28} />
+          <img src="/logo-phoenix.png" alt="Apézeo" className="w-14 h-14 rounded-2xl object-cover animate-pulse shadow-md" />
           <span className="text-sm">Chargement d'Apézeo…</span>
         </div>
       </div>
