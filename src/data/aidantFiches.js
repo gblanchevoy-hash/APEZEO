@@ -876,7 +876,7 @@ export const AIDANT_FICHES = [
   {
     "id": "aidant-21",
     "isLocal": false,
-    "titre": "Salle Snoezelen / stimulation multisensorielle",
+    "titre": "Salle dédiée à la stimulation sensorielle",
     "categorie": "Stimulation sensorielle",
     "sousCategorie": "Multisensoriel",
     "description": "Séance dans un espace multisensoriel contrôlé (lumière douce, musique, matières, parfums légers).",

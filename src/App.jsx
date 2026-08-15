@@ -62,7 +62,7 @@ function TopBar({ title, onBack, right }) {
           </button>
         </>
       ) : (
-        <img src="/logo-phoenix.png" alt="Apézeo" className="w-14 h-14 rounded-2xl object-cover shadow-md" />
+        <img src="/logo-phoenix.png" alt="Apézeo" className="w-16 h-16 drop-shadow-md" />
       )}
       <h1 className="flex-1 text-lg font-bold text-emerald-950 truncate tracking-tight">{title}</h1>
       {right}
@@ -294,9 +294,9 @@ function AuthView({ onChangeMode }) {
       <div className="w-full max-w-sm">
         {/* Vitrine commerciale */}
         <div className="text-center mb-6">
-          <img src="/logo-phoenix.png" alt="Apézeo" className="w-20 h-20 mx-auto mb-3 rounded-2xl object-cover shadow-md" />
-          <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
-          <p className="text-sm text-stone-500 mt-0.5">Version Pro</p>
+          <img src="/logo-phoenix.png" alt="Apézeo" className="w-36 h-36 mx-auto mb-4 drop-shadow-lg" />
+          <h1 className="text-4xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
+          <p className="text-base text-stone-500 mt-1">Version Pro</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px] p-6 mb-6">
           <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/[0.05] pointer-events-none" />
@@ -1727,7 +1727,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           {!simple && <SourcesLine sources={f.sources} dateMaj={f.dateMaj} />}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/70 backdrop-blur-xl backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(88,28,135,0.12)]">
+        <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/70 backdrop-blur-xl backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(88,28,135,0.12)]">
           <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-violet-100 text-violet-800 hover:bg-violet-200"}`}>
             <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
           </button>
@@ -1808,7 +1808,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           )}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/70 backdrop-blur-xl backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+        <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/70 backdrop-blur-xl backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
           <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-emerald-700 text-white hover:bg-emerald-800"}`}>
             <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
           </button>
@@ -1971,7 +1971,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-white/70 backdrop-blur-xl backdrop-saturate-150 p-4 lg:px-9 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/70 backdrop-blur-xl backdrop-saturate-150 p-4 lg:px-9 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
         <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
           <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
         </button>
@@ -2049,7 +2049,7 @@ function Gate({ onChoose }) {
   return (
     <div className="min-h-screen bg-[#F4F6F2] flex items-center justify-center p-5">
       <div className="w-full max-w-sm text-center">
-        <img src="/logo-phoenix.png" alt="Apézeo" className="w-24 h-24 rounded-2xl mx-auto mb-3 object-cover shadow-lg" />
+        <img src="/logo-phoenix.png" alt="Apézeo" className="w-28 h-28 mx-auto mb-3 drop-shadow-lg" />
         <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
         <p className="text-sm text-stone-500 mt-2 mb-7">Des idées concrètes pour apaiser une personne atteinte d'Alzheimer ou maladie apparentée.</p>
 
