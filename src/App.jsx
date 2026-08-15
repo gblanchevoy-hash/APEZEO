@@ -62,7 +62,7 @@ function TopBar({ title, onBack, right }) {
           </button>
         </>
       ) : (
-        <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9 rounded-xl object-cover shadow-sm" />
+        <img src="/logo-phoenix.png" alt="Apézeo" className="w-14 h-14 rounded-2xl object-cover shadow-md" />
       )}
       <h1 className="flex-1 text-lg font-bold text-emerald-950 truncate tracking-tight">{title}</h1>
       {right}
@@ -97,7 +97,7 @@ function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge })
   );
 }
 function FicheCard({ f, onClick, favState }) {
-  const nonSourcee = f.categorie === "Technique personnelle";
+  const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie
   const isOutil = f.typeFiche === "outil";
   return (
     <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : "focus-visible:outline-emerald-600"}`}>
@@ -294,7 +294,7 @@ function AuthView({ onChangeMode }) {
       <div className="w-full max-w-sm">
         {/* Vitrine commerciale */}
         <div className="text-center mb-6">
-          <img src="/logo-phoenix.png" alt="Apézeo" className="w-11 h-11 mx-auto mb-3 rounded-2xl object-cover shadow-sm" />
+          <img src="/logo-phoenix.png" alt="Apézeo" className="w-20 h-20 mx-auto mb-3 rounded-2xl object-cover shadow-md" />
           <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
           <p className="text-sm text-stone-500 mt-0.5">Version Pro</p>
         </div>
@@ -596,8 +596,20 @@ function AuthenticatedApp({ session, onChangeMode }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F6F2]">
-        <div className="flex flex-col items-center gap-3 text-emerald-800">
-          <img src="/logo-phoenix.png" alt="Apézeo" className="w-14 h-14 rounded-2xl object-cover animate-pulse shadow-md" />
+        <div className="flex flex-col items-center gap-6 text-emerald-800">
+          <div className="relative w-56 h-56 flex items-center justify-center">
+            <div
+              className="absolute inset-0 rounded-full logo-orbit-ring"
+              style={{
+                background: "conic-gradient(from 0deg, transparent 0%, transparent 68%, rgba(217,180,80,0.18) 84%, rgba(245,197,66,0.95) 97%, #fff7d6 100%)",
+                WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px))",
+                mask: "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px))",
+              }}
+            >
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-amber-300 shadow-[0_0_16px_5px_rgba(245,197,66,0.85)]" />
+            </div>
+            <img src="/logo-phoenix-large.png" alt="Apézeo" className="w-44 h-44 rounded-full" />
+          </div>
           <span className="text-sm">Chargement d'Apézeo…</span>
         </div>
       </div>
@@ -762,7 +774,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
 
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <img src="/logo-phoenix.png" alt="Apézeo" className="w-5 h-5 rounded-full object-cover" />
+            <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9 rounded-full object-cover shadow-sm" />
             <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
             <span className="text-[11px] bg-white/15 rounded-full px-2 py-0.5">Version Pro</span>
           </div>
@@ -1658,7 +1670,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
     if (!simple) supabase.rpc("enregistrer_vue", { p_fiche_ref: f.titre }).then(() => {}).catch(() => {});
   }, [f.id, simple]);
   const liked = favoris.liked.includes(f.id);
-  const nonSourcee = f.categorie === "Technique personnelle";
+  const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie
   const isExpert = f.niveauDetail === "expert";
   const techniquesAssociees = (allFiches && f.techniquesLiees && f.techniquesLiees.length)
     ? f.techniquesLiees.map((tid) => allFiches.find((x) => x.techniqueId === tid)).filter(Boolean)
@@ -2037,7 +2049,7 @@ function Gate({ onChoose }) {
   return (
     <div className="min-h-screen bg-[#F4F6F2] flex items-center justify-center p-5">
       <div className="w-full max-w-sm text-center">
-        <img src="/logo-phoenix.png" alt="Apézeo" className="w-16 h-16 rounded-2xl mx-auto mb-3 object-cover shadow-sm" />
+        <img src="/logo-phoenix.png" alt="Apézeo" className="w-24 h-24 rounded-2xl mx-auto mb-3 object-cover shadow-lg" />
         <h1 className="text-2xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
         <p className="text-sm text-stone-500 mt-2 mb-7">Des idées concrètes pour apaiser une personne atteinte d'Alzheimer ou maladie apparentée.</p>
 
@@ -2138,7 +2150,7 @@ function AidantApp({ onChangeMode }) {
 
             <div className="relative flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <img src="/logo-phoenix.png" alt="Apézeo" className="w-5 h-5 rounded-full object-cover" />
+                <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9 rounded-full object-cover shadow-sm" />
                 <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
               </div>
               <button onClick={onChangeMode} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Changer de mode"><ArrowLeftRight size={15} /></button>
@@ -2343,8 +2355,20 @@ export default function App() {
   if (session === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F6F2]">
-        <div className="flex flex-col items-center gap-3 text-emerald-800">
-          <img src="/logo-phoenix.png" alt="Apézeo" className="w-14 h-14 rounded-2xl object-cover animate-pulse shadow-md" />
+        <div className="flex flex-col items-center gap-6 text-emerald-800">
+          <div className="relative w-56 h-56 flex items-center justify-center">
+            <div
+              className="absolute inset-0 rounded-full logo-orbit-ring"
+              style={{
+                background: "conic-gradient(from 0deg, transparent 0%, transparent 68%, rgba(217,180,80,0.18) 84%, rgba(245,197,66,0.95) 97%, #fff7d6 100%)",
+                WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px))",
+                mask: "radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px))",
+              }}
+            >
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-amber-300 shadow-[0_0_16px_5px_rgba(245,197,66,0.85)]" />
+            </div>
+            <img src="/logo-phoenix-large.png" alt="Apézeo" className="w-44 h-44 rounded-full" />
+          </div>
           <span className="text-sm">Chargement d'Apézeo…</span>
         </div>
       </div>

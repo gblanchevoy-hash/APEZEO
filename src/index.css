@@ -29,3 +29,14 @@ body {
   16%  { left: 130%; }
   100% { left: 130%; }
 }
+
+/* Anneau doré tournant façon étoile filante, derrière le logo au
+   chargement — une traînée qui s'estompe progressivement plutôt
+   qu'un simple spinner. */
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.logo-orbit-ring {
+  animation: orbit-spin 2.6s linear infinite;
+}
