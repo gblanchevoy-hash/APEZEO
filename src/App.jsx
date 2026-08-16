@@ -1797,7 +1797,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
             <div className="bg-rose-50 rounded-2xl p-4 flex gap-3 mb-8">
               <AlertTriangle size={20} className="text-rose-500 shrink-0 mt-0.5" />
               <div className="text-sm text-rose-900 leading-relaxed">
-                {f.quandEviter && <p><span className="font-semibold">Évitez de : </span>{f.quandEviter}</p>}
+                {f.quandEviter && <p><span className="font-semibold">Évitez si : </span>{f.quandEviter}</p>}
                 {f.erreurs && f.erreurs.length > 0 && (
                   <ul className={f.quandEviter ? "mt-2 space-y-1" : "space-y-1"}>
                     {f.erreurs.map((e, i) => <li key={i} className="flex gap-2"><span>•</span><span>{e}</span></li>)}
