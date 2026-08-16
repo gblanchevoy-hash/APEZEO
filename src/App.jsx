@@ -2047,31 +2047,11 @@ function FicheFormView({ initial, onBack, onSave }) {
 }
 
 /* ---------- ÉCRAN DE CHOIX DE PROFIL ---------- */
-const SITUATIONS_GATE = [
-  { icon: Activity, label: "Agitation", bg: "bg-emerald-50", color: "text-emerald-700" },
-  { icon: Frown, label: "Anxiété", bg: "bg-amber-50", color: "text-amber-700" },
-  { icon: Footprints, label: "Déambulation", bg: "bg-violet-50", color: "text-violet-700" },
-  { icon: ShieldAlert, label: "Refus de soins", bg: "bg-rose-50", color: "text-rose-700" },
-  { icon: Volume2, label: "Cris répétés", bg: "bg-sky-50", color: "text-sky-700" },
-  { icon: Moon, label: "Troubles du sommeil", bg: "bg-emerald-50", color: "text-emerald-700" },
-  { icon: XCircle, label: "Opposition", bg: "bg-amber-50", color: "text-amber-700" },
-  { icon: Utensils, label: "Troubles pendant les repas", bg: "bg-violet-50", color: "text-violet-700" },
-  { icon: UserX, label: "Apathie", bg: "bg-rose-50", color: "text-rose-700" },
-  { icon: Compass, label: "Désorientation", bg: "bg-sky-50", color: "text-sky-700" },
-];
-
-const GALLERY_GATE = [
-  { src: "/landing/gallery-1.jpg", label: "Poupée d'empathie" },
-  { src: "/landing/gallery-2.jpg", label: "Diffuseur chromatique" },
-  { src: "/landing/gallery-3.jpg", label: "Bouillotte thérapeutique" },
-  { src: "/landing/gallery-4.jpg", label: "Peluche zoomorphe" },
-];
-
 function GateDesktop({ onChoose }) {
   return (
-    <div className="hidden lg:block bg-[#FBFAF7] text-[#1a2e28]">
+    <div className="hidden lg:block bg-white text-[#1a2e28]">
       {/* En-tête */}
-      <header className="max-w-[1180px] mx-auto px-12 py-6 flex items-center justify-between">
+      <header className="max-w-[1100px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9" />
           <span className="text-lg font-extrabold text-emerald-950 tracking-tight">Apézeo</span>
@@ -2079,145 +2059,64 @@ function GateDesktop({ onChoose }) {
         <button onClick={() => onChoose("pro")} className="text-sm font-semibold text-emerald-800 border border-emerald-900/15 bg-white rounded-full px-5 py-2 hover:bg-emerald-50 transition">Connexion</button>
       </header>
 
-      {/* Hero */}
+      {/* Hero — sobre, texte seul */}
       <div className="relative overflow-hidden">
-        <div className="absolute -top-44 -right-28 w-[520px] h-[520px] rounded-full opacity-30 blur-[70px]" style={{ background: "radial-gradient(circle, #10b981, transparent 70%)" }} />
-        <div className="absolute top-28 right-96 w-[420px] h-[420px] rounded-full opacity-20 blur-[70px]" style={{ background: "radial-gradient(circle, #1e3a5f, transparent 70%)" }} />
-        <div className="relative max-w-[1180px] mx-auto px-12 pt-10 pb-16 grid grid-cols-2 gap-12 items-center">
+        <div className="absolute -top-40 -right-32 w-[460px] h-[460px] rounded-full opacity-[0.18] blur-[80px]" style={{ background: "radial-gradient(circle, #10b981, transparent 70%)" }} />
+        <div className="relative max-w-[820px] mx-auto px-12 pt-16 pb-20 text-center">
+          <span className="inline-block text-[11px] font-bold tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-1.5 mb-6">TECHNIQUES NON MÉDICAMENTEUSES</span>
+          <h1 className="text-[46px] font-extrabold text-emerald-950 tracking-tight leading-[1.1] mb-6">Mieux accompagner.<br/>Autrement.</h1>
+          <p className="text-[17px] text-stone-500 leading-relaxed mb-9 max-w-lg mx-auto">Apézeo rassemble des techniques concrètes pour aider les aidants et les professionnels à mieux comprendre, apaiser et accompagner les situations difficiles liées à Alzheimer et aux maladies apparentées.</p>
+          <div className="flex gap-3 justify-center mb-4">
+            <button onClick={() => onChoose("aidant")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-emerald-900 text-white shadow-[0_12px_25px_-8px_rgba(6,78,59,0.4)] hover:bg-emerald-800 transition">Je suis aidant</button>
+            <button onClick={() => onChoose("pro")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-white text-emerald-900 border border-emerald-900/15 hover:bg-emerald-50 transition">Je suis professionnel</button>
+          </div>
+          <p className="text-xs text-stone-400">Une même bibliothèque. Deux expériences pensées pour vos besoins.</p>
+        </div>
+      </div>
+
+      {/* Pour les professionnels — photo + arguments concrets */}
+      <section className="max-w-[1100px] mx-auto px-12 py-16">
+        <div className="grid grid-cols-2 gap-14 items-center">
+          <div className="rounded-[28px] overflow-hidden shadow-[0_30px_70px_-24px_rgba(6,78,59,0.3)]">
+            <img src="/landing/photo-pro.jpg" alt="Professionnelle accompagnant une personne âgée" className="w-full h-[420px] object-cover" />
+          </div>
           <div>
-            <span className="inline-block text-[11px] font-bold tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-1.5 mb-5">TECHNIQUES NON MÉDICAMENTEUSES</span>
-            <h1 className="text-5xl font-extrabold text-emerald-950 tracking-tight leading-[1.06] mb-5">Mieux accompagner.<br/>Autrement.</h1>
-            <p className="text-[17px] text-stone-500 leading-relaxed mb-8 max-w-md">Apézeo rassemble des techniques concrètes pour aider les aidants et les professionnels à mieux comprendre, apaiser et accompagner les situations difficiles liées à Alzheimer et aux maladies apparentées.</p>
-            <div className="flex gap-3 mb-4">
-              <button onClick={() => onChoose("aidant")} className="text-[14.5px] font-bold px-6 py-3.5 rounded-xl bg-emerald-900 text-white shadow-[0_12px_25px_-8px_rgba(6,78,59,0.4)] hover:bg-emerald-800 transition">Je suis aidant</button>
-              <button onClick={() => onChoose("pro")} className="text-[14.5px] font-bold px-6 py-3.5 rounded-xl bg-white text-emerald-900 border border-emerald-900/15 hover:bg-emerald-50 transition">Je suis professionnel</button>
-            </div>
-            <p className="text-xs text-stone-400">Une même bibliothèque. Deux expériences pensées pour vos besoins.</p>
-          </div>
-          <div className="relative h-[420px]">
-            <div className="absolute top-20 left-44 w-[280px] bg-white rounded-3xl shadow-[0_30px_70px_-20px_rgba(6,78,59,0.2)] p-6 rotate-6 opacity-90">
-              <span className="inline-block text-[10px] font-bold text-violet-700 bg-violet-100 rounded-full px-3 py-1 mb-3">Outils spécifiques</span>
-              <div className="text-[15px] font-extrabold text-emerald-950 mb-3 leading-snug">Diffuseur de lumière chromatique</div>
-              <div className="h-2 bg-stone-100 rounded-full w-full mb-2" />
-              <div className="h-2 bg-stone-100 rounded-full w-3/4" />
-            </div>
-            <div className="absolute top-2 left-8 w-[290px] bg-white rounded-3xl shadow-[0_35px_75px_-18px_rgba(6,78,59,0.28)] p-6">
-              <span className="inline-block text-[10px] font-bold text-emerald-700 bg-emerald-50 rounded-full px-3 py-1 mb-3">Communication</span>
-              <div className="text-[16px] font-extrabold text-emerald-950 mb-2.5 leading-snug">Ne pas raisonner, ne pas contredire</div>
-              <div className="flex gap-1.5 mb-4">
-                <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 rounded-full px-2.5 py-1">Opposition</span>
-                <span className="text-[10px] font-semibold text-rose-700 bg-rose-50 rounded-full px-2.5 py-1">Agressivité</span>
-              </div>
-              <div className="h-2 bg-stone-100 rounded-full w-full mb-2" />
-              <div className="h-2 bg-stone-100 rounded-full w-[85%] mb-2" />
-              <div className="h-2 bg-stone-100 rounded-full w-2/3" />
-            </div>
-            <div className="absolute -top-1 right-4 bg-emerald-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-[0_15px_30px_-8px_rgba(6,78,59,0.45)]">+ 1000 fiches sourcées</div>
-            <div className="absolute bottom-4 right-0 bg-white text-xs font-bold text-emerald-950 px-4 py-2.5 rounded-xl shadow-[0_15px_30px_-8px_rgba(6,78,59,0.2)] flex items-center gap-2">
-              <div className="flex"><div className="w-5 h-5 rounded-full bg-emerald-600 border-2 border-white" /><div className="w-5 h-5 rounded-full bg-amber-600 border-2 border-white -ml-2" /><div className="w-5 h-5 rounded-full bg-violet-600 border-2 border-white -ml-2" /></div>
-              Utilisé en EHPAD &amp; à domicile
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Phrase d'accroche */}
-      <div className="text-center px-12 pb-16">
-        <h2 className="text-[28px] font-extrabold text-emerald-950 tracking-tight max-w-2xl mx-auto leading-snug">Parce qu'une situation difficile ne nécessite pas toujours une réponse médicamenteuse.</h2>
-      </div>
-
-      {/* Galerie illustrations */}
-      <section className="bg-white py-20">
-        <div className="max-w-[1180px] mx-auto px-12">
-          <div className="text-center mb-11">
-            <h2 className="text-[30px] font-extrabold text-emerald-950 tracking-tight mb-3">Une bibliothèque richement illustrée.</h2>
-            <p className="text-[15px] text-stone-500 max-w-md mx-auto">Chaque outil spécifique est présenté avec un croquis original, pour se projeter immédiatement.</p>
-          </div>
-          <div className="grid grid-cols-4 gap-5">
-            {GALLERY_GATE.map((g) => (
-              <div key={g.label} className="rounded-2xl overflow-hidden bg-[#FBFAF7] shadow-[0_18px_40px_-14px_rgba(6,78,59,0.18)]">
-                <img src={g.src} alt={g.label} className="w-full h-44 object-cover" />
-                <div className="px-4 py-3 text-[12.5px] font-bold text-emerald-950">{g.label}</div>
-              </div>
-            ))}
+            <span className="inline-block text-[11px] font-bold tracking-wider text-emerald-700 bg-emerald-50 rounded-full px-3.5 py-1.5 mb-5">POUR LES PROFESSIONNELS</span>
+            <h2 className="text-[30px] font-extrabold text-emerald-950 tracking-tight leading-tight mb-5">Des ressources fiables pour enrichir votre pratique au quotidien.</h2>
+            <ul className="space-y-4 mb-9">
+              <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Plus de 1000 fiches</span>, sourcées et régulièrement enrichies, couvrant les situations les plus fréquentes en accompagnement.</li>
+              <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Un niveau Expert</span>, avec fondements cliniques et références documentaires, pour étayer vos décisions de terrain.</li>
+              <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Une recherche rapide</span> par trouble, par besoin ou par situation — pour trouver la bonne réponse en quelques secondes.</li>
+              <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Une gestion d'équipe intégrée</span>, pensée pour les établissements et les structures de soin.</li>
+            </ul>
+            <button onClick={() => onChoose("pro")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-emerald-900 text-white shadow-[0_12px_25px_-8px_rgba(6,78,59,0.4)] hover:bg-emerald-800 transition">Découvrir Apézeo Pro</button>
           </div>
         </div>
       </section>
 
-      {/* Fonctionnalités */}
-      <section className="py-20">
-        <div className="max-w-[1180px] mx-auto px-12">
-          <div className="text-center mb-11">
-            <h2 className="text-[30px] font-extrabold text-emerald-950 tracking-tight mb-3">Une bibliothèque pensée pour les situations réelles.</h2>
-            <p className="text-[15px] text-stone-500 max-w-md mx-auto">Apézeo transforme des techniques non médicamenteuses en ressources concrètes, faciles à comprendre et à explorer.</p>
+      {/* Pour les aidants — photo + texte bienveillant */}
+      <section className="bg-[#FBFAF7] py-16">
+        <div className="max-w-[1100px] mx-auto px-12 grid grid-cols-2 gap-14 items-center">
+          <div>
+            <span className="inline-block text-[11px] font-bold tracking-wider text-amber-700 bg-amber-50 rounded-full px-3.5 py-1.5 mb-5">POUR LES AIDANTS</span>
+            <h2 className="text-[30px] font-extrabold text-emerald-950 tracking-tight leading-tight mb-5">Vous n'êtes pas seul(e) face à ces moments difficiles.</h2>
+            <ul className="space-y-4 mb-9">
+              <li className="text-[15px] text-stone-600 leading-relaxed">Des idées simples et rassurantes, expliquées <span className="font-bold text-emerald-950">pas à pas</span>, sans jargon médical à déchiffrer.</li>
+              <li className="text-[15px] text-stone-600 leading-relaxed">Accessible <span className="font-bold text-emerald-950">gratuitement</span>, à tout moment, sans avoir besoin de créer un compte.</li>
+              <li className="text-[15px] text-stone-600 leading-relaxed">Parce que chaque petit geste compte, et que <span className="font-bold text-emerald-950">vous faites déjà de votre mieux</span>.</li>
+            </ul>
+            <button onClick={() => onChoose("aidant")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-amber-500 text-white shadow-[0_12px_25px_-8px_rgba(180,83,9,0.35)] hover:bg-amber-600 transition">Découvrir Apézeo pour les aidants</button>
           </div>
-          <div className="grid grid-cols-4 gap-5">
-            {[
-              { icon: PenLine, label: "Des techniques concrètes", desc: "Des fiches actionnables, pas de la théorie abstraite.", bg: "bg-emerald-50", color: "text-emerald-700" },
-              { icon: LayoutGrid, label: "Des fiches structurées", desc: "Même trame claire, du principe à la mise en pratique.", bg: "bg-violet-50", color: "text-violet-700" },
-              { icon: Search, label: "Une recherche par situation", desc: "Par trouble, par besoin, ou en quelques secondes.", bg: "bg-amber-50", color: "text-amber-700" },
-              { icon: Plus, label: "Ressources enrichies", desc: "La bibliothèque s'agrandit régulièrement.", bg: "bg-sky-50", color: "text-sky-700" },
-            ].map((f) => (
-              <div key={f.label} className="bg-white border border-emerald-900/[0.07] rounded-2xl p-7 shadow-[0_10px_30px_-18px_rgba(6,78,59,0.15)]">
-                <div className={`w-11 h-11 rounded-2xl ${f.bg} flex items-center justify-center mb-4.5`}><f.icon size={20} className={f.color} /></div>
-                <div className="text-[15.5px] font-bold text-emerald-950 mb-1.5">{f.label}</div>
-                <p className="text-[13px] text-stone-500 leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Situations */}
-      <section className="bg-white py-20">
-        <div className="max-w-[1180px] mx-auto px-12">
-          <div className="text-center mb-11">
-            <h2 className="text-[30px] font-extrabold text-emerald-950 tracking-tight">Des ressources pour différentes situations du quotidien.</h2>
-          </div>
-          <div className="grid grid-cols-5 gap-3.5">
-            {SITUATIONS_GATE.map((s) => (
-              <div key={s.label} className="bg-[#FBFAF7] rounded-2xl p-5 text-center">
-                <div className={`w-11 h-11 rounded-full ${s.bg} flex items-center justify-center mx-auto mb-3`}><s.icon size={20} className={s.color} /></div>
-                <span className="text-[12.5px] font-semibold text-stone-700">{s.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Comparaison Aidant / Pro */}
-      <section className="py-20">
-        <div className="max-w-[1180px] mx-auto px-12">
-          <div className="text-center mb-11"><h2 className="text-[30px] font-extrabold text-emerald-950 tracking-tight">Apézeo s'adapte à votre quotidien.</h2></div>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white border border-emerald-900/[0.08] rounded-[26px] p-9 shadow-[0_20px_50px_-20px_rgba(6,78,59,0.12)]">
-              <h3 className="text-xl font-extrabold text-emerald-950 mb-3">Pour les aidants</h3>
-              <p className="text-sm text-stone-500 leading-relaxed mb-5">Accompagner un proche, sans être seul face aux situations difficiles. Apézeo rassemble des techniques non médicamenteuses claires, présentées pas à pas.</p>
-              <ul className="text-sm text-stone-500 space-y-2.5 mb-6">
-                <li className="flex items-center gap-2"><CheckCircle2 size={15} className="text-emerald-600" /> Gagner du temps</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={15} className="text-emerald-600" /> Comprendre les approches</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={15} className="text-emerald-600" /> S'appuyer sur du concret</li>
-              </ul>
-              <button onClick={() => onChoose("aidant")} className="text-[14.5px] font-bold px-6 py-3.5 rounded-xl bg-emerald-900 text-white shadow-[0_12px_25px_-8px_rgba(6,78,59,0.4)] hover:bg-emerald-800 transition">Découvrir Apézeo pour les aidants</button>
-            </div>
-            <div className="rounded-[26px] p-9 text-white shadow-[0_30px_60px_-20px_rgba(6,78,59,0.4)]" style={{ background: "linear-gradient(135deg, #064e3b, #047857)" }}>
-              <h3 className="text-xl font-extrabold mb-3">Pour les professionnels</h3>
-              <p className="text-sm text-emerald-50/90 leading-relaxed mb-5">Des ressources pour enrichir les pratiques d'accompagnement. Apézeo transforme les techniques non médicamenteuses en ressources actionnables.</p>
-              <ul className="text-sm text-emerald-50/85 space-y-2.5 mb-6">
-                <li className="flex items-center gap-2"><CheckCircle2 size={15} /> Niveau Expert sourcé</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={15} /> Outils et soins spécifiques</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={15} /> Gestion d'équipe</li>
-              </ul>
-              <button onClick={() => onChoose("pro")} className="text-[14.5px] font-bold px-6 py-3.5 rounded-xl bg-white text-emerald-950 hover:bg-emerald-50 transition">Découvrir Apézeo pour les professionnels</button>
-            </div>
+          <div className="rounded-[28px] overflow-hidden shadow-[0_30px_70px_-24px_rgba(6,78,59,0.2)]">
+            <img src="/landing/photo-aidant.jpg" alt="Un fils partageant un moment avec son père âgé" className="w-full h-[420px] object-cover" />
           </div>
         </div>
       </section>
 
       {/* CTA finale */}
       <div className="py-20 text-center" style={{ background: "linear-gradient(135deg, #022c22, #064e3b)" }}>
-        <h2 className="text-[30px] font-extrabold text-white tracking-tight mb-10">Et vous, comment souhaitez-vous accompagner ?</h2>
-        <div className="grid grid-cols-2 gap-4 max-w-[660px] mx-auto px-12">
+        <h2 className="text-[28px] font-extrabold text-white tracking-tight mb-10">Et vous, comment souhaitez-vous accompagner ?</h2>
+        <div className="grid grid-cols-2 gap-4 max-w-[620px] mx-auto px-12">
           <button onClick={() => onChoose("aidant")} className="text-left bg-white/[0.08] border border-white/15 rounded-2xl p-6 hover:bg-white/[0.12] transition">
             <div className="text-[15px] font-bold text-white mb-1.5">Je suis aidant</div>
             <p className="text-xs text-white/75 leading-relaxed mb-4">Des ressources pour accompagner un proche au quotidien.</p>
@@ -2235,6 +2134,7 @@ function GateDesktop({ onChoose }) {
     </div>
   );
 }
+
 
 function Gate({ onChoose }) {
   return (
