@@ -2047,7 +2047,28 @@ function FicheFormView({ initial, onBack, onSave }) {
 }
 
 /* ---------- ÉCRAN DE CHOIX DE PROFIL ---------- */
+const FAQ_ITEMS_GATE = [
+  { q: "Qu'est-ce qu'Apézeo, exactement ?", a: "Une bibliothèque de techniques non médicamenteuses pour accompagner les personnes atteintes d'Alzheimer et de maladies apparentées — pensée pour les aidants comme pour les professionnels." },
+  { q: "Est-ce gratuit pour les aidants familiaux ?", a: "Oui, entièrement gratuit et sans compte à créer. Vous accédez immédiatement à la bibliothèque adaptée aux familles, présentée pas à pas et sans jargon médical." },
+  { q: "Les fiches sont-elles validées scientifiquement ?", a: "Les fiches de niveau Expert s'appuient sur des sources documentées (recommandations HAS, littérature scientifique). Les fiches personnelles ou de partage d'expérience sont clairement signalées comme non sourcées." },
+  { q: "Apézeo remplace-t-il un avis médical ?", a: "Non. Apézeo propose des pistes d'accompagnement non médicamenteuses, en complément — jamais en remplacement — d'un suivi médical et paramédical adapté." },
+  { q: "Comment fonctionne la version Professionnels ?", a: "Un compte lié à votre structure ou établissement donne accès à la bibliothèque complète, au niveau Expert, aux outils spécifiques illustrés et à la gestion d'équipe." },
+];
+
+function FaqItemGate({ item, isOpen, onClick }) {
+  return (
+    <div className="border-b border-emerald-900/8 py-5">
+      <button onClick={onClick} className="w-full flex items-center justify-between text-left gap-4">
+        <span className="text-[15.5px] font-bold text-emerald-950">{item.q}</span>
+        <ChevronRight size={18} className={`text-emerald-700 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`} />
+      </button>
+      {isOpen && <p className="text-[14px] text-stone-500 leading-relaxed mt-3 pr-8">{item.a}</p>}
+    </div>
+  );
+}
+
 function GateDesktop({ onChoose }) {
+  const [openFaq, setOpenFaq] = useState(null);
   return (
     <div className="hidden lg:block bg-white text-[#1a2e28]">
       {/* En-tête */}
@@ -2059,9 +2080,17 @@ function GateDesktop({ onChoose }) {
         <button onClick={() => onChoose("pro")} className="text-sm font-semibold text-emerald-800 border border-emerald-900/15 bg-white rounded-full px-5 py-2 hover:bg-emerald-50 transition">Connexion</button>
       </header>
 
-      {/* Hero — sobre, texte seul */}
+      {/* Hero — sobre, avec volutes décoratives en fond */}
       <div className="relative overflow-hidden">
-        <div className="absolute -top-40 -right-32 w-[460px] h-[460px] rounded-full opacity-[0.18] blur-[80px]" style={{ background: "radial-gradient(circle, #10b981, transparent 70%)" }} />
+        <svg className="absolute -top-16 -right-24 w-[720px] h-[620px] opacity-[0.5] pointer-events-none" viewBox="0 0 720 620" fill="none">
+          <path d="M700 40C560 20 420 90 400 220C385 320 470 380 560 350C650 320 660 220 590 180C530 146 470 190 480 250C488 296 540 310 560 280" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" opacity="0.35"/>
+          <path d="M660 -20C520 -30 380 60 380 200C380 310 480 370 570 330C660 290 650 190 570 160C510 138 460 190 480 240" stroke="#047857" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
+          <path d="M600 500C500 560 380 540 340 450C310 380 360 320 430 330C490 338 510 400 470 430C440 452 400 435 400 405" stroke="#34d399" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
+          <circle cx="560" cy="280" r="4" fill="#10b981" opacity="0.4"/>
+          <circle cx="470" cy="430" r="3" fill="#047857" opacity="0.35"/>
+        </svg>
+        <div className="absolute -top-40 -right-32 w-[460px] h-[460px] rounded-full opacity-[0.14] blur-[80px]" style={{ background: "radial-gradient(circle, #10b981, transparent 70%)" }} />
+        <div className="absolute top-40 -left-20 w-[320px] h-[320px] rounded-full opacity-[0.10] blur-[70px]" style={{ background: "radial-gradient(circle, #047857, transparent 70%)" }} />
         <div className="relative max-w-[820px] mx-auto px-12 pt-16 pb-20 text-center">
           <span className="inline-block text-[11px] font-bold tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-1.5 mb-6">TECHNIQUES NON MÉDICAMENTEUSES</span>
           <h1 className="text-[58px] font-extrabold text-emerald-950 tracking-tight leading-[1.08] mb-7">Mieux accompagner.<br/>Autrement.</h1>
@@ -2073,6 +2102,8 @@ function GateDesktop({ onChoose }) {
         </div>
       </div>
 
+      {/* Volutes discrètes au-dessus de la CTA finale, pour reprendre le motif */}
+      
       {/* Pour les professionnels — photo + arguments concrets */}
       <section className="max-w-[1100px] mx-auto px-12 py-16">
         <div className="grid grid-cols-2 gap-14 items-center">
@@ -2108,6 +2139,20 @@ function GateDesktop({ onChoose }) {
           </div>
           <div className="rounded-[28px] overflow-hidden shadow-[0_30px_70px_-24px_rgba(6,78,59,0.2)]">
             <img src="/landing/photo-aidant.jpg" alt="Un fils partageant un moment avec son père âgé" className="w-full h-[420px] object-cover" />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-16">
+        <div className="max-w-[720px] mx-auto px-12">
+          <div className="text-center mb-10">
+            <h2 className="text-[28px] font-extrabold text-emerald-950 tracking-tight">Questions fréquentes</h2>
+          </div>
+          <div>
+            {FAQ_ITEMS_GATE.map((item, i) => (
+              <FaqItemGate key={i} item={item} isOpen={openFaq === i} onClick={() => setOpenFaq(openFaq === i ? null : i)} />
+            ))}
           </div>
         </div>
       </section>
