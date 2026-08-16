@@ -2053,8 +2053,8 @@ function GateDesktop({ onChoose }) {
       {/* En-tête */}
       <header className="max-w-[1100px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9" />
-          <span className="text-lg font-extrabold text-emerald-950 tracking-tight">Apézeo</span>
+          <img src="/logo-phoenix.png" alt="Apézeo" className="w-12 h-12" />
+          <span className="text-xl font-extrabold text-emerald-950 tracking-tight">Apézeo</span>
         </div>
         <button onClick={() => onChoose("pro")} className="text-sm font-semibold text-emerald-800 border border-emerald-900/15 bg-white rounded-full px-5 py-2 hover:bg-emerald-50 transition">Connexion</button>
       </header>
@@ -2064,13 +2064,12 @@ function GateDesktop({ onChoose }) {
         <div className="absolute -top-40 -right-32 w-[460px] h-[460px] rounded-full opacity-[0.18] blur-[80px]" style={{ background: "radial-gradient(circle, #10b981, transparent 70%)" }} />
         <div className="relative max-w-[820px] mx-auto px-12 pt-16 pb-20 text-center">
           <span className="inline-block text-[11px] font-bold tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-1.5 mb-6">TECHNIQUES NON MÉDICAMENTEUSES</span>
-          <h1 className="text-[46px] font-extrabold text-emerald-950 tracking-tight leading-[1.1] mb-6">Mieux accompagner.<br/>Autrement.</h1>
-          <p className="text-[17px] text-stone-500 leading-relaxed mb-9 max-w-lg mx-auto">Apézeo rassemble des techniques concrètes pour aider les aidants et les professionnels à mieux comprendre, apaiser et accompagner les situations difficiles liées à Alzheimer et aux maladies apparentées.</p>
+          <h1 className="text-[58px] font-extrabold text-emerald-950 tracking-tight leading-[1.08] mb-7">Mieux accompagner.<br/>Autrement.</h1>
+          <p className="text-2xl text-emerald-800 font-semibold leading-snug mb-9 max-w-lg mx-auto">Des réponses concrètes pour apaiser la relation de soin.</p>
           <div className="flex gap-3 justify-center mb-4">
             <button onClick={() => onChoose("aidant")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-emerald-900 text-white shadow-[0_12px_25px_-8px_rgba(6,78,59,0.4)] hover:bg-emerald-800 transition">Je suis aidant</button>
             <button onClick={() => onChoose("pro")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-white text-emerald-900 border border-emerald-900/15 hover:bg-emerald-50 transition">Je suis professionnel</button>
           </div>
-          <p className="text-xs text-stone-400">Une même bibliothèque. Deux expériences pensées pour vos besoins.</p>
         </div>
       </div>
 
