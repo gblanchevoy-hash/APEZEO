@@ -51,7 +51,7 @@ const HomeContext = createContext(() => {});
 function TopBar({ title, onBack, right }) {
   const goHome = useContext(HomeContext);
   return (
-    <div className="sticky top-0 z-30 bg-[#F4F6F2]/55 backdrop-blur-xl backdrop-saturate-150 px-5 py-4 lg:px-9 lg:py-5 flex items-center gap-3">
+    <div className="sticky top-0 z-30 bg-[#F4F6F2]/35 backdrop-blur-lg backdrop-saturate-150 px-5 py-4 lg:px-9 lg:py-5 flex items-center gap-3">
       {onBack ? (
         <>
           <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-emerald-900/8 active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200" aria-label="Retour">
@@ -809,7 +809,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
       <div className="px-5 lg:px-8 mt-6 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
         <NavCard icon={AlertTriangle} label="Choisir un trouble" sub="Agitation, cris, refus de soins…" onClick={onOpenTroubles} accent="emerald" />
         <NavCard icon={Filter} label="Rechercher par besoin" sub="Communication, musique, toucher…" onClick={onOpenBesoins} accent="emerald" />
-        <NavCard icon={Box} label="Outils spécifiques" sub="Poupées, luminothérapie, objets sensoriels…" onClick={onOpenOutils} accent="violet" />
+        <NavCard icon={Box} label="Outils et soins spécifiques" sub="Poupées, luminothérapie, objets sensoriels…" onClick={onOpenOutils} accent="violet" />
         <NavCard icon={Search} label="Recherche libre" onClick={onOpenSearch} accent="emerald" />
         <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="emerald" />
         <NavCard icon={FileText} label="Mes fiches" sub="Toutes vos créations personnelles" onClick={onOpenMesFiches} accent="emerald" />
@@ -858,7 +858,7 @@ function TroublesView({ fiches, onBack, onOpenTrouble }) {
 function OutilsView({ fiches, onBack, onOpenType }) {
   return (
     <div className="pb-10">
-      <TopBar title="Outils spécifiques" onBack={onBack} />
+      <TopBar title="Outils et soins spécifiques" onBack={onBack} />
       <div className="p-5 lg:px-9">
         <p className="text-sm text-stone-500 mb-5">Des objets et dispositifs matériels utilisés en soutien des approches non médicamenteuses — indications, contre-indications et précautions pour chacun.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -1727,7 +1727,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           {!simple && <SourcesLine sources={f.sources} dateMaj={f.dateMaj} />}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/55 backdrop-blur-xl backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(88,28,135,0.12)]">
+        <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/35 backdrop-blur-lg backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(88,28,135,0.12)]">
           <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-violet-100 text-violet-800 hover:bg-violet-200"}`}>
             <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
           </button>
@@ -1808,7 +1808,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           )}
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/55 backdrop-blur-xl backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+        <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/35 backdrop-blur-lg backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
           <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-emerald-700 text-white hover:bg-emerald-800"}`}>
             <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
           </button>
@@ -1971,7 +1971,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/55 backdrop-blur-xl backdrop-saturate-150 p-4 lg:px-9 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
+      <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/35 backdrop-blur-lg backdrop-saturate-150 p-4 lg:px-9 flex justify-center shadow-[0_-4px_24px_-8px_rgba(6,78,59,0.12)]">
         <button onClick={onToggleLike} className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-8 text-sm font-semibold transition-all duration-200 active:scale-95 ${liked ? "bg-rose-500 text-white shadow-md" : "bg-stone-100 text-stone-600 hover:bg-stone-200"}`}>
           <Heart size={17} className={liked ? "fill-white" : ""} /> {liked ? "Dans vos favoris" : "Ajouter aux favoris"}
         </button>
