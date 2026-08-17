@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, createContext, useContext } from "react";
+import jsPDF from "jspdf";
 import {
   Search, Heart, HeartOff, History, Plus, ArrowLeft, Star, ChevronRight,
   Sparkles, Clock, AlertTriangle, Filter, Leaf, Save, Info, RefreshCw,
@@ -305,7 +306,7 @@ function AuthView({ onChangeMode }) {
           <svg className="absolute inset-x-0 bottom-0 w-full h-14 pointer-events-none" viewBox="0 0 400 60" preserveAspectRatio="none">
             <path d="M0,35 C90,55 160,15 240,32 C310,47 350,25 400,38 L400,60 L0,60 Z" fill="rgba(255,255,255,0.05)" />
           </svg>
-          <p className="relative text-3xl font-bold mb-1 tracking-tight">800+ fiches</p>
+          <p className="relative text-3xl font-bold mb-1 tracking-tight">1000+ fiches</p>
           <p className="relative text-sm text-emerald-100 mb-4">d'aides non médicamenteuses pour les professionnels accompagnant des personnes atteintes d'Alzheimer et maladies apparentées.</p>
           <ul className="relative space-y-2 text-sm text-emerald-50">
             <li className="flex gap-2"><CheckCircle2 size={16} className="shrink-0 mt-0.5 text-amber-300" /> Recherche instantanée par symptôme</li>
@@ -653,6 +654,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           isAdmin={profile?.role === "admin"}
           isSuperAdmin={profile?.super_admin === true}
           canToggleExpert={profile?.plan === "structure"}
+          onLockedExpertClick={() => showToast("La Bibliothèque Expert est réservée aux comptes Structure — contactez votre établissement pour en bénéficier.")}
           modeExpert={modeExpert}
           onToggleAffichage={toggleAffichage}
           onOpenCreateStructure={() => push({ view: "create-structure" })}
@@ -743,7 +745,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <AdminTeamView structureId={profile?.structure_id} onBack={pop} />
       )}
       {current.view === "compte" && (
-        <MonCompteView email={session?.user?.email} profile={profile} onProfileUpdated={(patch) => setProfile((p) => ({ ...p, ...patch }))} onBack={pop} />
+        <MonCompteView email={session?.user?.email} profile={profile} onProfileUpdated={(patch) => setProfile((p) => ({ ...p, ...patch }))} onBack={pop} ficheById={ficheById} />
       )}
       {current.view === "create-structure" && (
         <CreateStructureView onBack={pop} />
@@ -763,7 +765,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
 }
 
 /* ---------- HOME ---------- */
-function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
+function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
@@ -787,12 +789,16 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
           </div>
         </div>
 
-        {canToggleExpert && (
-          <div className="relative flex mb-4 bg-white/10 rounded-full p-0.5 w-fit">
-            <button onClick={() => modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${!modeExpert ? "bg-white text-emerald-800" : "text-emerald-100"}`}>Bibliothèque Standard</button>
+        <div className="relative flex mb-4 bg-white/10 rounded-full p-0.5 w-fit">
+          <button onClick={() => modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${!modeExpert ? "bg-white text-emerald-800" : "text-emerald-100"}`}>Bibliothèque Standard</button>
+          {canToggleExpert ? (
             <button onClick={() => !modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${modeExpert ? "bg-emerald-950 text-amber-300" : "text-emerald-100"}`}>Bibliothèque Expert</button>
-          </div>
-        )}
+          ) : (
+            <button onClick={onLockedExpertClick} className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full text-emerald-100/50" aria-label="Bibliothèque Expert — accès réservé">
+              <Lock size={11} /> Bibliothèque Expert
+            </button>
+          )}
+        </div>
 
         <h1 className="relative text-2xl lg:text-3xl font-bold mb-1.5 tracking-tight">Un geste apaisant, tout de suite.</h1>
         {profession && <p className="relative text-emerald-200 text-xs mb-2.5">Connecté en tant que {profession}</p>}
@@ -1225,7 +1231,7 @@ function CreateStructureView({ onBack }) {
 
 
 /* ---------- MON COMPTE (suppression en libre-service) ---------- */
-function MonCompteView({ email, profile, onProfileUpdated, onBack }) {
+function MonCompteView({ email, profile, onProfileUpdated, onBack, ficheById }) {
   const [structureNom, setStructureNom] = useState(null);
   const [profession, setProfession] = useState(profile?.profession || PROFESSIONS[0]);
   const [savingProfession, setSavingProfession] = useState(false);
@@ -1278,24 +1284,145 @@ function MonCompteView({ email, profile, onProfileUpdated, onBack }) {
 
   const downloadMyData = async () => {
     setExporting(true);
-    const [{ data: favoris }, { data: historique }, { data: fiches }] = await Promise.all([
-      supabase.from("favoris").select("*"),
-      supabase.from("historique").select("*"),
-      supabase.from("fiches_personnelles").select("*"),
+    const [{ data: favoris }, { data: historique }, { data: fichesPerso }] = await Promise.all([
+      supabase.from("favoris").select("*").order("created_at", { ascending: false }),
+      supabase.from("historique").select("*").order("created_at", { ascending: false }),
+      supabase.from("fiches_personnelles").select("*").order("created_at", { ascending: false }),
     ]);
-    const payload = {
-      export_genere_le: new Date().toISOString(),
-      profil: { email, profession: profile?.profession, plan: profile?.plan, structure: structureNom },
-      favoris: favoris || [],
-      historique: historique || [],
-      fiches_personnelles: fiches || [],
+
+    // Charge le logo en base64 pour l'intégrer au PDF
+    let logoBase64 = null;
+    try {
+      const res = await fetch("/logo-phoenix.png");
+      const blob = await res.blob();
+      logoBase64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch { /* pas bloquant si le logo ne charge pas */ }
+
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const pageWidth = 210, pageHeight = 297, marginX = 18;
+    let y = 20;
+
+    const addHeader = () => {
+      if (logoBase64) doc.addImage(logoBase64, "PNG", marginX, 10, 14, 14);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(15);
+      doc.setTextColor(2, 44, 34);
+      doc.text("Apézeo", marginX + (logoBase64 ? 18 : 0), 17);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(120, 113, 108);
+      doc.text("Bibliothèque de techniques non médicamenteuses — Version Pro", marginX + (logoBase64 ? 18 : 0), 22.5);
+      doc.setDrawColor(225, 225, 218);
+      doc.setLineWidth(0.3);
+      doc.line(marginX, 28, pageWidth - marginX, 28);
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = "apezeo-mes-donnees.json";
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+
+    const addFooter = (pageNum, totalPages) => {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(165, 160, 155);
+      doc.text("Document généré automatiquement par Apézeo — usage interne et traçabilité professionnelle.", marginX, pageHeight - 12);
+      doc.text(`Page ${pageNum} / ${totalPages}`, pageWidth - marginX, pageHeight - 12, { align: "right" });
+    };
+
+    addHeader();
+    y = 40;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(15);
+    doc.setTextColor(2, 44, 34);
+    doc.text("Export de mes données", marginX, y);
+    y += 7;
+
+    const now = new Date();
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(110, 105, 100);
+    doc.text(`Document généré le ${now.toLocaleDateString("fr-FR")} à ${now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`, marginX, y);
+    y += 10;
+
+    // Bloc informations professionnelles
+    const blockH = 28;
+    doc.setFillColor(246, 247, 244);
+    doc.roundedRect(marginX, y, pageWidth - marginX * 2, blockH, 2, 2, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(4, 78, 59);
+    doc.text("Informations du compte", marginX + 6, y + 8);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(70, 65, 60);
+    doc.text(`E-mail : ${email || "—"}`, marginX + 6, y + 14.5);
+    doc.text(`Profession : ${profile?.profession || "—"}`, marginX + 6, y + 19.5);
+    doc.text(`Plan : ${profile?.plan === "structure" ? "Structure" : profile?.plan === "solo" ? "Solo" : "Gratuit"}${structureNom ? " — " + structureNom : ""}`, marginX + 6, y + 24.5);
+    y += blockH + 10;
+
+    let pageNum = 1;
+    const checkPageBreak = (needed) => {
+      if (y + needed > pageHeight - 20) {
+        doc.addPage();
+        pageNum += 1;
+        addHeader();
+        y = 40;
+      }
+    };
+
+    const addSection = (title, items, renderLine) => {
+      checkPageBreak(16);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(4, 78, 59);
+      doc.text(`${title} (${items.length})`, marginX, y);
+      y += 6.5;
+      if (items.length === 0) {
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(9);
+        doc.setTextColor(160, 155, 150);
+        doc.text("Aucune donnée enregistrée.", marginX + 2, y);
+        y += 9;
+        return;
+      }
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(55, 50, 45);
+      items.forEach((it) => {
+        checkPageBreak(6);
+        renderLine(it);
+      });
+      y += 6;
+    };
+
+    addSection("Mes favoris", favoris || [], (f) => {
+      const fiche = ficheById ? ficheById(f.fiche_id) : null;
+      const titre = fiche?.titre || f.fiche_id || "Fiche introuvable";
+      doc.text(`•  ${titre}`, marginX + 2, y, { maxWidth: pageWidth - marginX * 2 - 4 });
+      y += 5.5;
+    });
+
+    addSection("Historique de consultation", historique || [], (h) => {
+      const fiche = ficheById ? ficheById(h.fiche_id) : null;
+      const titre = fiche?.titre || h.fiche_id || "Fiche introuvable";
+      const date = h.created_at ? new Date(h.created_at).toLocaleDateString("fr-FR") : "—";
+      doc.text(`•  ${titre}  —  ${date}`, marginX + 2, y, { maxWidth: pageWidth - marginX * 2 - 4 });
+      y += 5.5;
+    });
+
+    addSection("Mes fiches personnelles", fichesPerso || [], (p) => {
+      doc.text(`•  ${p.titre || "Sans titre"}`, marginX + 2, y, { maxWidth: pageWidth - marginX * 2 - 4 });
+      y += 5.5;
+    });
+
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      addFooter(i, totalPages);
+    }
+
+    doc.save("apezeo-mes-donnees.pdf");
     setExporting(false);
   };
 
@@ -1410,18 +1537,21 @@ function AdminTeamView({ structureId, onBack }) {
   const [attaching, setAttaching] = useState(false);
   const [attachMsg, setAttachMsg] = useState(null); // {ok: bool, text: string}
   const [topFiches, setTopFiches] = useState([]);
+  const [weeklyStats, setWeeklyStats] = useState([]);
 
   const load = useCallback(async () => {
     if (!structureId) { setLoading(false); return; }
     setLoading(true);
-    const [{ data: structData }, { data: memberData }, { data: topData }] = await Promise.all([
+    const [{ data: structData }, { data: memberData }, { data: topData }, { data: weekData }] = await Promise.all([
       supabase.from("structures").select("*").eq("id", structureId).single(),
       supabase.from("profiles").select("*").eq("structure_id", structureId).order("created_at", { ascending: true }),
       supabase.rpc("top_fiches_structure"),
+      supabase.rpc("vues_semaine_structure"),
     ]);
     setStructure(structData || null);
     setMembers(memberData || []);
     setTopFiches(topData || []);
+    setWeeklyStats(weekData || []);
     setLoading(false);
   }, [structureId]);
 
@@ -1509,6 +1639,26 @@ function AdminTeamView({ structureId, onBack }) {
             <p className={`text-xs mt-2 ${attachMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{attachMsg.text}</p>
           )}
         </div>
+
+        {weeklyStats.length > 0 && (() => {
+          const thisWeek = weeklyStats[0]?.total_vues || 0;
+          const lastWeek = weeklyStats[1]?.total_vues || 0;
+          const diff = thisWeek - lastWeek;
+          return (
+            <div className="bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm mb-4">
+              <div className="font-semibold text-emerald-950 text-sm mb-0.5">Consultations cette semaine</div>
+              <p className="text-xs text-stone-400 mb-3">Nombre total de fiches ouvertes par votre équipe, semaine en cours.</p>
+              <div className="flex items-end gap-2.5">
+                <span className="text-2xl font-bold text-emerald-950">{thisWeek}</span>
+                {lastWeek > 0 && (
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full mb-1 ${diff >= 0 ? "text-emerald-700 bg-emerald-50" : "text-rose-700 bg-rose-50"}`}>
+                    {diff >= 0 ? "+" : ""}{diff} vs semaine dernière
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         {topFiches.length > 0 && (
           <div className="bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm mb-4">
@@ -2091,14 +2241,12 @@ function GateDesktop({ onChoose }) {
         </svg>
         <div className="absolute -top-40 -right-32 w-[460px] h-[460px] rounded-full opacity-[0.14] blur-[80px]" style={{ background: "radial-gradient(circle, #10b981, transparent 70%)" }} />
         <div className="absolute top-40 -left-20 w-[320px] h-[320px] rounded-full opacity-[0.10] blur-[70px]" style={{ background: "radial-gradient(circle, #047857, transparent 70%)" }} />
-        <div className="relative max-w-[820px] mx-auto px-12 pt-16 pb-20 text-center">
+        <div className="relative max-w-[820px] mx-auto px-12 pt-20 pb-24 text-center">
+          <img src="/logo-phoenix.png" alt="Apézeo" className="w-24 h-24 mx-auto mb-5 drop-shadow-lg" />
+          <div className="text-2xl font-extrabold text-emerald-950 tracking-tight mb-7">Apézeo</div>
           <span className="inline-block text-[11px] font-bold tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-1.5 mb-6">TECHNIQUES NON MÉDICAMENTEUSES</span>
           <h1 className="text-[58px] font-extrabold text-emerald-950 tracking-tight leading-[1.08] mb-7">Mieux accompagner.<br/>Autrement.</h1>
-          <p className="text-2xl text-emerald-800 font-semibold leading-snug mb-9 max-w-lg mx-auto">Des réponses concrètes pour apaiser la relation de soin.</p>
-          <div className="flex gap-3 justify-center mb-4">
-            <button onClick={() => onChoose("aidant")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-emerald-900 text-white shadow-[0_12px_25px_-8px_rgba(6,78,59,0.4)] hover:bg-emerald-800 transition">Je suis aidant</button>
-            <button onClick={() => onChoose("pro")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-white text-emerald-900 border border-emerald-900/15 hover:bg-emerald-50 transition">Je suis professionnel</button>
-          </div>
+          <p className="text-2xl text-emerald-800 font-semibold leading-snug max-w-lg mx-auto">Des réponses concrètes pour apaiser la relation de soin.</p>
         </div>
       </div>
 

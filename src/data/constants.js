@@ -17,7 +17,7 @@ export const FAMILLES = [
   "Hydratation", "Gestion des besoins", "Environnement", "Sommeil", "Routine",
   "Sécurité", "Techniques d'urgence", "Compréhension des comportements",
   "Activités cognitives adaptées", "Soutien aux aidants",
-  "Activités favorisant l'autonomie", "Technique personnelle", "Autres",
+  "Activités favorisant l'autonomie", "Autres",
 ];
 
 export const OUTILS_TYPES = [

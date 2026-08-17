@@ -714,6 +714,19 @@ create table if not exists fiche_vues (
 );
 alter table fiche_vues enable row level security;
 
+-- Même principe que fiche_vues, mais agrégé par semaine ISO plutôt
+-- que par mois — permet un suivi de tendance plus rapproché
+-- (nombre de clics par semaine) sans recalculer l'historique.
+create table if not exists fiche_vues_semaine (
+  id bigint generated always as identity primary key,
+  fiche_ref text not null,
+  structure_id bigint references structures(id) on delete cascade,
+  semaine text not null, -- format ISO 'YYYY-"W"WW', ex. '2026-W33'
+  vues int not null default 0,
+  unique (fiche_ref, structure_id, semaine)
+);
+alter table fiche_vues_semaine enable row level security;
+
 -- Enregistre une consultation. Ne fait rien si le compte n'est
 -- rattaché à aucune structure (comptes gratuits) : pas de collecte
 -- inutile dans ce cas.
@@ -730,6 +743,10 @@ begin
   insert into public.fiche_vues (fiche_ref, structure_id, mois, vues)
   values (p_fiche_ref, v_structure_id, to_char(now(), 'YYYY-MM'), 1)
   on conflict (fiche_ref, structure_id, mois) do update set vues = fiche_vues.vues + 1;
+
+  insert into public.fiche_vues_semaine (fiche_ref, structure_id, semaine, vues)
+  values (p_fiche_ref, v_structure_id, to_char(now(), 'IYYY-"S"IW'), 1)
+  on conflict (fiche_ref, structure_id, semaine) do update set vues = fiche_vues_semaine.vues + 1;
 end;
 $$;
 grant execute on function public.enregistrer_vue(text) to authenticated;
@@ -748,6 +765,22 @@ set search_path = public, pg_temp as $$
   limit 5;
 $$;
 grant execute on function public.top_fiches_structure() to authenticated;
+
+-- Renvoie le nombre total de consultations cette semaine et la
+-- semaine précédente, pour la structure de l'administrateur —
+-- utilisé pour afficher une tendance hebdomadaire simple.
+create or replace function public.vues_semaine_structure()
+returns table(semaine text, total_vues bigint)
+language sql security definer stable
+set search_path = public, pg_temp as $$
+  select fvs.semaine, sum(fvs.vues) as total_vues
+  from public.fiche_vues_semaine fvs
+  where fvs.structure_id = public.my_structure_id(auth.uid())
+    and fvs.semaine in (to_char(now(), 'IYYY-"S"IW'), to_char(now() - interval '7 days', 'IYYY-"S"IW'))
+  group by fvs.semaine
+  order by fvs.semaine desc;
+$$;
+grant execute on function public.vues_semaine_structure() to authenticated;
 
 -- ============================================================
 -- OUTILS SPÉCIFIQUES

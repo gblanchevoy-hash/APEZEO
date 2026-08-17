@@ -290,7 +290,7 @@ Apézeo affiche des messages de rappel à cet effet dans son interface, mais ce 
 
 L'éditeur d'Apézeo s'efforce de proposer un contenu s'appuyant, lorsque cela est indiqué, sur les recommandations de bonnes pratiques professionnelles (HAS, littérature gériatrique, sociétés savantes). Cependant :
 
-- Certaines fiches, identifiées sous la catégorie **« Recettes maison »**, sont explicitement non sourcées et correspondent à des partages d'expérience de terrain, non validés scientifiquement. Elles sont signalées comme telles dans l'application et ne doivent jamais être utilisées comme référence de bonne pratique lors d'un audit ou d'une évaluation qualité.
+- Certaines fiches, identifiées sous la catégorie **« Mes fiches »**, sont explicitement non sourcées et correspondent à des partages d'expérience de terrain, non validés scientifiquement. Elles sont signalées comme telles dans l'application et ne doivent jamais être utilisées comme référence de bonne pratique lors d'un audit ou d'une évaluation qualité.
 - L'éditeur ne garantit pas l'exhaustivité, l'actualité permanente ni l'adéquation de chaque fiche à toute situation individuelle.
 - Les connaissances scientifiques et les recommandations professionnelles évoluent ; il appartient à l'utilisateur professionnel de maintenir son propre niveau de vigilance et de formation continue au-delà du contenu d'Apézeo.
 
@@ -309,7 +309,7 @@ Dans les limites permises par la loi applicable, l'éditeur d'Apézeo ne saurait
 
 - des conséquences directes ou indirectes résultant de l'application d'une technique proposée dans l'application,
 - d'un dommage résultant d'une décision prise sur le seul fondement du contenu d'Apézeo, sans jugement professionnel complémentaire,
-- de l'usage qui serait fait d'une fiche « Recettes maison » non sourcée comme s'il s'agissait d'une recommandation validée.
+- de l'usage qui serait fait d'une fiche « Mes fiches » non sourcée comme s'il s'agissait d'une recommandation validée.
 
 Cette limitation ne s'applique pas en cas de faute lourde ou intentionnelle de l'éditeur, conformément au droit applicable.
 
