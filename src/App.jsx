@@ -1037,12 +1037,31 @@ function generateCode(nom) {
   return `${base}-${suffix}`;
 }
 
+function essaiJoursRestants(s) {
+  if (s.essai_duree_semaines == null) return null;
+  const fin = new Date(s.created_at);
+  fin.setDate(fin.getDate() + s.essai_duree_semaines * 7);
+  return Math.ceil((fin - new Date()) / 86400000);
+}
+
+function StructureStatusBadge({ s }) {
+  const jours = essaiJoursRestants(s);
+  if (s.suspended) {
+    return <Badge tone="rose">{jours != null && jours <= 0 ? "Essai terminé" : "Suspendue"}</Badge>;
+  }
+  if (jours == null) return <Badge tone="emerald">Abonnement actif</Badge>;
+  if (jours <= 0) return <Badge tone="rose">Essai terminé</Badge>;
+  if (jours <= 3) return <Badge tone="rose">Essai : {jours} j restant{jours > 1 ? "s" : ""}</Badge>;
+  return <Badge tone="amber">Essai : {jours} j restants</Badge>;
+}
+
 function CreateStructureView({ onBack }) {
   const [nom, setNom] = useState("");
   const [quota, setQuota] = useState(30);
   const [code, setCode] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
   const [essaiSemaines, setEssaiSemaines] = useState("");
+  const [confirmNoAdmin, setConfirmNoAdmin] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [created, setCreated] = useState(null);
@@ -1067,6 +1086,10 @@ function CreateStructureView({ onBack }) {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (!adminEmail.trim() && !confirmNoAdmin) {
+      setConfirmNoAdmin(true);
+      return;
+    }
     setBusy(true);
     setError("");
     const finalCode = code.trim() || generateCode(nom);
@@ -1092,7 +1115,7 @@ function CreateStructureView({ onBack }) {
     }
 
     setCreated(newStructure);
-    setNom(""); setQuota(30); setCode(""); setAdminEmail(""); setEssaiSemaines("");
+    setNom(""); setQuota(30); setCode(""); setAdminEmail(""); setEssaiSemaines(""); setConfirmNoAdmin(false);
     setBusy(false);
     loadStructures();
   };
@@ -1162,7 +1185,7 @@ function CreateStructureView({ onBack }) {
             </div>
           </Field>
           <Field label="E-mail du premier admin (optionnel)">
-            <input type="email" className={inputCls} value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="directeur@etablissement.fr" />
+            <input type="email" className={inputCls} value={adminEmail} onChange={(e) => { setAdminEmail(e.target.value); setConfirmNoAdmin(false); }} placeholder="directeur@etablissement.fr" />
             <p className="text-xs text-stone-400 mt-1">Doit déjà avoir un compte créé dans l'app (avec ou sans code) pour être promu.</p>
           </Field>
           <Field label="Durée d'essai en semaines (optionnel)">
@@ -1175,14 +1198,20 @@ function CreateStructureView({ onBack }) {
           </Field>
 
           {error && <div className="bg-rose-50 border border-rose-200 rounded-lg p-2.5 text-sm text-rose-700 mb-3">{error}</div>}
+          {confirmNoAdmin && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-sm text-amber-800 mb-3 flex items-start gap-2">
+              <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+              <span>Aucun e-mail d'admin renseigné — personne ne pourra gérer cette structure tant que vous n'en promouvez pas un manuellement. Cliquez à nouveau pour confirmer.</span>
+            </div>
+          )}
           {created && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 text-sm text-emerald-800 mb-3">
               Structure "{created.nom}" créée — code : <span className="font-mono font-semibold">{created.code_invitation}</span>
             </div>
           )}
 
-          <button type="submit" disabled={busy} className="w-full bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3 flex items-center justify-center gap-2">
-            <Plus size={17} /> Créer la structure
+          <button type="submit" disabled={busy} className={`w-full ${confirmNoAdmin ? "bg-amber-600 hover:bg-amber-700" : "bg-emerald-700 hover:bg-emerald-800"} hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-3 flex items-center justify-center gap-2`}>
+            <Plus size={17} /> {confirmNoAdmin ? "Confirmer sans admin" : "Créer la structure"}
           </button>
         </form>
 
@@ -1197,10 +1226,7 @@ function CreateStructureView({ onBack }) {
               <div key={s.id} className={`bg-white rounded-xl p-3 border shadow-sm ${s.suspended ? "border-rose-300" : "border-emerald-900/5"}`}>
                 <div className="flex items-center gap-2 mb-1">
                   <div className="font-medium text-emerald-950 text-sm flex-1">{s.nom}</div>
-                  {s.suspended && <Badge tone="rose">Suspendue</Badge>}
-                  {!s.suspended && s.essai_duree_semaines != null && (
-                    <Badge tone="amber">Essai {s.essai_duree_semaines} sem.</Badge>
-                  )}
+                  <StructureStatusBadge s={s} />
                 </div>
                 <div className="flex items-center justify-between bg-stone-50 rounded-lg px-2.5 py-1.5 mb-2">
                   <span className="text-xs text-stone-600 font-mono">{s.code_invitation}</span>
@@ -1754,9 +1780,8 @@ function AdminTeamView({ structureId, onBack }) {
 }
 
 function QuizView({ onBack, onSubmit }) {
-  const [q, setQ] = useState({ troubleIds: [], besoin: "", stade: "", contexte: "", tempsDispo: 10, materielDispo: false });
+  const [q, setQ] = useState({ troubleIds: [], besoin: "", stade: "", contexte: "", materielDispo: true });
   const toggleTrouble = (t) => setQ((s) => ({ ...s, troubleIds: s.troubleIds.includes(t) ? s.troubleIds.filter((x) => x !== t) : [...s.troubleIds, t] }));
-  const sliderPct = Math.round(((q.tempsDispo - 1) / 39) * 100);
   return (
     <div className="pb-10">
       <TopBar title="Trouver la meilleure technique" onBack={onBack} />
@@ -1807,25 +1832,8 @@ function QuizView({ onBack, onSubmit }) {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] p-5">
-          <div className="flex items-center gap-2.5 mb-1">
-            <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">4</div>
-            <span className="font-semibold text-emerald-950">Temps disponible</span>
-            <span className="ml-auto text-sm font-bold text-emerald-700">{q.tempsDispo} min</span>
-          </div>
-          <p className="text-xs text-stone-400 mb-3 ml-9">Les fiches plus longues que ce temps ne seront pas proposées.</p>
-          <div className="ml-9">
-            <input
-              type="range" min={1} max={40} value={q.tempsDispo}
-              onChange={(e) => setQ({ ...q, tempsDispo: Number(e.target.value) })}
-              className="w-full h-2 rounded-full appearance-none cursor-pointer accent-emerald-700"
-              style={{ background: `linear-gradient(to right, #047857 ${sliderPct}%, #e7e5e4 ${sliderPct}%)` }}
-            />
-          </div>
-        </div>
-
         <label className="flex items-center gap-3 bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] px-5 py-4 cursor-pointer">
-          <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">5</div>
+          <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">4</div>
           <span className="text-sm font-medium text-stone-700 flex-1">J'ai du matériel disponible</span>
           <input type="checkbox" checked={q.materielDispo} onChange={(e) => setQ({ ...q, materielDispo: e.target.checked })} className="w-5 h-5 accent-emerald-700" />
         </label>
