@@ -425,6 +425,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const [toast, setToast] = useState(null);
   const [stack, setStack] = useState([{ view: "home" }]);
   const [profile, setProfile] = useState(null);
+  const [essaiTermine, setEssaiTermine] = useState(false);
 
   const current = stack[stack.length - 1];
   const push = (frame) => setStack((s) => [...s, frame]);
@@ -518,7 +519,21 @@ function AuthenticatedApp({ session, onChangeMode }) {
       })));
     }
 
-    if (!profileRow.error) setProfile(profileRow.data);
+    if (!profileRow.error) {
+      const p = profileRow.data;
+      setProfile(p);
+      // Vérifie paresseusement, à chaque chargement, si l'essai de la
+      // structure vient d'expirer — et verrouille réellement l'accès
+      // (côté base, via la fonction) si c'est le cas.
+      if (p?.structure_id) {
+        const { data: essaiCheck } = await supabase.rpc("verifier_essai", { p_structure_id: p.structure_id });
+        const res = essaiCheck && essaiCheck[0];
+        if (res?.expire) {
+          setEssaiTermine(true);
+          setProfile((prev) => (prev ? { ...prev, actif: false } : prev));
+        }
+      }
+    }
 
     setLoading(false);
   }, [userId, fetchAllRows]);
@@ -624,8 +639,12 @@ function AuthenticatedApp({ session, onChangeMode }) {
       <div className="min-h-screen flex items-center justify-center bg-[#F4F6F2] p-6">
         <div className="max-w-sm text-center">
           <UserX className="mx-auto mb-3 text-rose-600" size={32} />
-          <h1 className="text-lg font-semibold text-emerald-950 mb-2">Compte désactivé</h1>
-          <p className="text-sm text-stone-600 mb-4">Votre accès a été désactivé par l'administrateur de votre structure. Contactez-le pour plus d'informations.</p>
+          <h1 className="text-lg font-semibold text-emerald-950 mb-2">{essaiTermine ? "Essai terminé" : "Compte désactivé"}</h1>
+          <p className="text-sm text-stone-600 mb-4">
+            {essaiTermine
+              ? "La période d'essai gratuite de votre structure est arrivée à son terme, pour toute l'équipe. Contactez Apézeo pour passer à un abonnement et retrouver l'accès complet."
+              : "Votre accès a été désactivé par l'administrateur de votre structure. Contactez-le pour plus d'informations."}
+          </p>
           <button onClick={() => supabase.auth.signOut()} className="text-sm text-emerald-700 underline">Se déconnecter</button>
         </div>
       </div>
@@ -1023,6 +1042,7 @@ function CreateStructureView({ onBack }) {
   const [quota, setQuota] = useState(30);
   const [code, setCode] = useState("");
   const [adminEmail, setAdminEmail] = useState("");
+  const [essaiSemaines, setEssaiSemaines] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [created, setCreated] = useState(null);
@@ -1052,7 +1072,12 @@ function CreateStructureView({ onBack }) {
     const finalCode = code.trim() || generateCode(nom);
     const { data: newStructure, error: structError } = await supabase
       .from("structures")
-      .insert({ nom: nom.trim(), code_invitation: finalCode, quota: Number(quota) })
+      .insert({
+        nom: nom.trim(),
+        code_invitation: finalCode,
+        quota: Number(quota),
+        essai_duree_semaines: essaiSemaines.trim() ? Number(essaiSemaines) : null,
+      })
       .select()
       .single();
 
@@ -1067,7 +1092,7 @@ function CreateStructureView({ onBack }) {
     }
 
     setCreated(newStructure);
-    setNom(""); setQuota(30); setCode(""); setAdminEmail("");
+    setNom(""); setQuota(30); setCode(""); setAdminEmail(""); setEssaiSemaines("");
     setBusy(false);
     loadStructures();
   };
@@ -1140,6 +1165,14 @@ function CreateStructureView({ onBack }) {
             <input type="email" className={inputCls} value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} placeholder="directeur@etablissement.fr" />
             <p className="text-xs text-stone-400 mt-1">Doit déjà avoir un compte créé dans l'app (avec ou sans code) pour être promu.</p>
           </Field>
+          <Field label="Durée d'essai en semaines (optionnel)">
+            <input
+              type="number" min={1} className={inputCls} value={essaiSemaines}
+              onChange={(e) => setEssaiSemaines(e.target.value)}
+              placeholder="Laisser vide = pas de limite d'essai"
+            />
+            <p className="text-xs text-stone-400 mt-1">Décompte automatique depuis aujourd'hui. À l'échéance, l'accès de toute l'équipe (admin compris) se verrouille automatiquement — laissez vide pour une structure déjà payante.</p>
+          </Field>
 
           {error && <div className="bg-rose-50 border border-rose-200 rounded-lg p-2.5 text-sm text-rose-700 mb-3">{error}</div>}
           {created && (
@@ -1165,6 +1198,9 @@ function CreateStructureView({ onBack }) {
                 <div className="flex items-center gap-2 mb-1">
                   <div className="font-medium text-emerald-950 text-sm flex-1">{s.nom}</div>
                   {s.suspended && <Badge tone="rose">Suspendue</Badge>}
+                  {!s.suspended && s.essai_duree_semaines != null && (
+                    <Badge tone="amber">Essai {s.essai_duree_semaines} sem.</Badge>
+                  )}
                 </div>
                 <div className="flex items-center justify-between bg-stone-50 rounded-lg px-2.5 py-1.5 mb-2">
                   <span className="text-xs text-stone-600 font-mono">{s.code_invitation}</span>
@@ -1606,10 +1642,25 @@ function AdminTeamView({ structureId, onBack }) {
 
   const activeCount = members.filter((m) => m.actif).length;
 
+  let joursRestants = null;
+  if (structure.essai_duree_semaines != null) {
+    const fin = new Date(structure.created_at);
+    fin.setDate(fin.getDate() + structure.essai_duree_semaines * 7);
+    joursRestants = Math.ceil((fin - new Date()) / 86400000);
+  }
+
   return (
     <div className="pb-10">
       <TopBar title="Gérer mon équipe" onBack={onBack} />
       <div className="p-4">
+        {joursRestants !== null && (
+          <div className={`rounded-xl p-3 text-sm font-medium mb-4 flex items-center gap-2 ${joursRestants <= 3 ? "bg-rose-50 border border-rose-200 text-rose-700" : "bg-amber-50 border border-amber-200 text-amber-800"}`}>
+            <Clock size={15} className="shrink-0" />
+            {joursRestants > 0
+              ? `Essai gratuit : ${joursRestants} jour${joursRestants > 1 ? "s" : ""} restant${joursRestants > 1 ? "s" : ""}${joursRestants <= 3 ? " — contactez Apézeo pour continuer au-delà" : ""}`
+              : "Essai gratuit terminé — l'accès de toute l'équipe est actuellement verrouillé."}
+          </div>
+        )}
         <div className="bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm mb-4">
           <div className="font-semibold text-emerald-950 mb-1">{structure.nom}</div>
           <div className="text-sm text-stone-500 mb-3">{activeCount} / {structure.quota} comptes actifs</div>

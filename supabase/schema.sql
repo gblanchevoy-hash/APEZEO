@@ -805,3 +805,52 @@ alter table interventions add column if not exists precautions_particulieres tex
 alter table interventions add column if not exists croquis_svg text; -- code SVG du croquis, généré par Claude, jamais un produit de marque
 alter table interventions add column if not exists croquis_url text; -- image réelle du croquis (base64 ou URL hébergée), prioritaire sur croquis_svg si les deux sont présents
 alter table interventions add column if not exists alerte_outil text; -- alerte réglementaire/sécuritaire mise en avant (ex. statut de contention physique passive), affichée en évidence, distincte des précautions habituelles
+
+-- ============================================================
+-- ESSAI GRATUIT À DURÉE LIMITÉE POUR LES STRUCTURES
+-- ============================================================
+-- essai_duree_semaines = NULL : pas d'essai en cours (structure payante
+-- confirmée, ou durée pas encore fixée) -> jamais verrouillée automatiquement.
+-- essai_duree_semaines = 6, par exemple : décompte automatique depuis
+-- created_at, pas de nouvelle date à saisir séparément.
+alter table structures add column if not exists essai_duree_semaines int;
+
+-- Vérifie l'état de l'essai d'une structure et, s'il vient d'expirer,
+-- verrouille réellement l'accès : réutilise le même mécanisme que la
+-- suspension manuelle (suspended = true + actif = false sur TOUS les
+-- membres, y compris l'admin, car l'essai concerne toute la structure).
+-- Idempotent : si déjà expiré/suspendu, ne refait rien mais continue de
+-- renvoyer expire = true pour que l'app affiche le bon message.
+create or replace function public.verifier_essai(p_structure_id bigint)
+returns table(expire boolean, jours_restants int)
+language plpgsql security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_structure public.structures;
+  v_fin timestamptz;
+  v_jours int;
+begin
+  select * into v_structure from public.structures where id = p_structure_id;
+
+  if not found or v_structure.essai_duree_semaines is null then
+    return query select false, null::int;
+    return;
+  end if;
+
+  v_fin := v_structure.created_at + (v_structure.essai_duree_semaines || ' weeks')::interval;
+  v_jours := ceil(extract(epoch from (v_fin - now())) / 86400)::int;
+
+  if now() >= v_fin then
+    if not v_structure.suspended then
+      update public.structures set suspended = true where id = p_structure_id;
+      update public.profiles set actif = false where structure_id = p_structure_id;
+    end if;
+    return query select true, greatest(v_jours, 0);
+  else
+    return query select false, v_jours;
+  end if;
+end;
+$$;
+
+grant execute on function public.verifier_essai(bigint) to authenticated;
