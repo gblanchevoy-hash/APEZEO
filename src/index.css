@@ -10,6 +10,13 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+/* Police display pour les titres de la landing page — sort du "tout Inter"
+   sans toucher au reste de l'app, qui garde Inter partout ailleurs. */
+.font-serif {
+  font-family: "Fraunces", serif;
+  font-optical-sizing: auto;
+}
+
 /* Reflet lumineux intermittent sur les boutons principaux — un trait de
    lumière balaie le bouton toutes les quelques secondes, puis disparaît,
    plutôt qu'un halo flou permanent. */
