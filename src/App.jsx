@@ -2258,7 +2258,7 @@ function FicheFormView({ initial, onBack, onSave }) {
 /* ---------- ÉCRAN DE CHOIX DE PROFIL ---------- */
 const FAQ_ITEMS_GATE = [
   { q: "Qu'est-ce qu'Apézeo, exactement ?", a: "Une bibliothèque de techniques non médicamenteuses pour accompagner les personnes atteintes d'Alzheimer et de maladies apparentées — pensée pour les aidants comme pour les professionnels." },
-  { q: "Est-ce gratuit pour les aidants familiaux ?", a: "Oui, entièrement gratuit et sans compte à créer. Vous accédez immédiatement à la bibliothèque adaptée aux familles, présentée pas à pas et sans jargon médical." },
+  { q: "Est-ce gratuit pour les aidants familiaux ?", a: "Oui, entièrement gratuit et sans compte à créer. Vous accédez immédiatement à la bibliothèque adaptée aux familles, présentée pas à pas et sans contenu professionnel médical." },
   { q: "Les fiches sont-elles validées scientifiquement ?", a: "Les fiches de niveau Expert s'appuient sur des sources documentées (recommandations HAS, littérature scientifique). Les fiches personnelles ou de partage d'expérience sont clairement signalées comme non sourcées." },
   { q: "Apézeo remplace-t-il un avis médical ?", a: "Non. Apézeo propose des pistes d'accompagnement non médicamenteuses, en complément — jamais en remplacement — d'un suivi médical et paramédical adapté." },
   { q: "Comment fonctionne la version Professionnels ?", a: "Un compte lié à votre structure ou établissement donne accès à la bibliothèque complète, au niveau Expert, aux outils spécifiques illustrés et à la gestion d'équipe." },
@@ -2351,11 +2351,7 @@ function GateDesktop({ onChoose }) {
               <img src="/landing/photo-pro.jpg" alt="Professionnelle accompagnant une personne âgée" className="w-full h-[260px] object-cover" />
             </div>
             <div className="absolute bottom-4 right-2 w-[260px] rounded-[22px] overflow-hidden shadow-[0_30px_60px_-20px_rgba(6,78,59,0.3)] rotate-[3deg] border-4 border-white">
-              <img src="/landing/photo-aidant.jpg" alt="Un fils partageant un moment avec son père âgé" className="w-full h-[210px] object-cover" />
-            </div>
-            <div className="absolute top-[190px] left-[250px] bg-white rounded-2xl shadow-[0_20px_45px_-15px_rgba(6,78,59,0.3)] px-4 py-3 flex items-center gap-2.5 border border-emerald-900/5">
-              <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0"><Heart size={15} className="text-amber-600" /></div>
-              <div className="text-xs font-bold text-emerald-950 leading-tight">Validation<br/>émotionnelle</div>
+              <img src="/landing/photo-aidant.jpg" alt="Un aidant partageant un moment au jardin avec un proche âgé" className="w-full h-[210px] object-cover" />
             </div>
           </div>
         </div>
@@ -2382,7 +2378,7 @@ function GateDesktop({ onChoose }) {
       <section id="professionnels" className="max-w-[1100px] mx-auto px-12 py-16">
         <div className="grid grid-cols-2 gap-14 items-center">
           <div className="rounded-[28px] overflow-hidden shadow-[0_30px_70px_-24px_rgba(6,78,59,0.3)]">
-            <img src="/landing/photo-pro.jpg" alt="Professionnelle accompagnant une personne âgée" className="w-full h-[420px] object-cover" />
+            <img src="/landing/photo-pro.jpg" alt="Une professionnelle partageant un moment de mots croisés avec une résidente" className="w-full h-[420px] object-cover" />
           </div>
           <div>
             <span className="inline-block text-[11px] font-bold tracking-wider text-emerald-700 bg-emerald-50 rounded-full px-3.5 py-1.5 mb-5">POUR LES PROFESSIONNELS</span>
@@ -2405,14 +2401,14 @@ function GateDesktop({ onChoose }) {
             <span className="inline-block text-[11px] font-bold tracking-wider text-amber-700 bg-amber-50 rounded-full px-3.5 py-1.5 mb-5">POUR LES AIDANTS</span>
             <h2 className="font-serif text-[28px] font-semibold text-emerald-950 tracking-tight leading-tight mb-5">Vous n'êtes pas seul(e) face à ces moments difficiles.</h2>
             <ul className="space-y-4 mb-9">
-              <li className="text-[15px] text-stone-600 leading-relaxed">Des idées simples et rassurantes, expliquées <span className="font-bold text-emerald-950">pas à pas</span>, sans jargon médical à déchiffrer.</li>
+              <li className="text-[15px] text-stone-600 leading-relaxed">Des idées simples et rassurantes, expliquées <span className="font-bold text-emerald-950">pas à pas</span>, sans contenu professionnel médical à déchiffrer.</li>
               <li className="text-[15px] text-stone-600 leading-relaxed">Accessible <span className="font-bold text-emerald-950">gratuitement</span>, à tout moment, sans avoir besoin de créer un compte.</li>
               <li className="text-[15px] text-stone-600 leading-relaxed">Parce que chaque petit geste compte, et que <span className="font-bold text-emerald-950">vous faites déjà de votre mieux</span>.</li>
             </ul>
             <button onClick={() => onChoose("aidant")} className="text-[14.5px] font-bold px-7 py-3.5 rounded-xl bg-amber-500 text-white shadow-[0_12px_25px_-8px_rgba(180,83,9,0.35)] hover:bg-amber-600 transition">Découvrir l'espace aidant</button>
           </div>
           <div className="rounded-[28px] overflow-hidden shadow-[0_30px_70px_-24px_rgba(6,78,59,0.2)]">
-            <img src="/landing/photo-aidant.jpg" alt="Un fils partageant un moment avec son père âgé" className="w-full h-[420px] object-cover" />
+            <img src="/landing/photo-aidant.jpg" alt="Un aidant partageant un moment au jardin avec un proche âgé" className="w-full h-[420px] object-cover" />
           </div>
         </div>
       </section>
