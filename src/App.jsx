@@ -2295,7 +2295,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
                         <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{e.etape}</div>
                         <div>
                           <div className="text-sm font-semibold text-emerald-950">{e.titre}</div>
-                          {e.description && !isDuplicate && <div className="text-sm text-stone-600">{e.description}</div>}
+                          {e.description && !isDuplicate && <div className="text-sm text-stone-600 whitespace-pre-line">{e.description}</div>}
                         </div>
                       </div>
                     );
@@ -2344,7 +2344,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
             {(f.fondementPrincipe || f.fondementApplication) && (
               <Section title="Fondements">
                 {f.fondementPrincipe && <p className="text-sm text-stone-700 leading-relaxed mb-2"><span className="font-semibold text-emerald-800">Principe — </span>{f.fondementPrincipe}</p>}
-                {f.fondementApplication && <p className="text-sm text-stone-700 leading-relaxed"><span className="font-semibold text-emerald-800">Application — </span>{f.fondementApplication}</p>}
+                {f.fondementApplication && <p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line"><span className="font-semibold text-emerald-800">Application — </span>{f.fondementApplication}</p>}
               </Section>
             )}
             <Section title="Comment évaluer l'efficacité"><BulletList items={f.commentEvaluerEfficacite} /></Section>
