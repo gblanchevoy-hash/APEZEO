@@ -677,6 +677,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           modeExpert={modeExpert}
           onToggleAffichage={toggleAffichage}
           onOpenCreateStructure={() => push({ view: "create-structure" })}
+          onOpenSuperAdminStats={() => push({ view: "super-admin-stats" })}
           onOpenMesFiches={() => push({ view: "mes-fiches" })}
           onOpenLegal={(doc) => push({ view: "legal", doc })}
           onOpenCompte={() => push({ view: "compte" })}
@@ -769,6 +770,9 @@ function AuthenticatedApp({ session, onChangeMode }) {
       {current.view === "create-structure" && (
         <CreateStructureView onBack={pop} />
       )}
+      {current.view === "super-admin-stats" && (
+        <SuperAdminStatsView onBack={pop} />
+      )}
       {current.view === "legal" && (
         <LegalView doc={current.doc} onBack={pop} />
       )}
@@ -784,7 +788,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
 }
 
 /* ---------- HOME ---------- */
-function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
+function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
@@ -842,6 +846,7 @@ function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleEx
         <NavCard icon={FileText} label="Mes fiches" sub="Toutes vos créations personnelles" onClick={onOpenMesFiches} accent="emerald" />
         {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="admin" badge="Admin" />}
         {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="admin" badge="Admin" />}
+        {isSuperAdmin && <NavCard icon={Activity} label="Statistiques" sub="Vue d'ensemble de la plateforme" onClick={onOpenSuperAdminStats} accent="admin" badge="Admin" />}
       </div>
       <div className="px-5 lg:px-8 mt-5">
         <button onClick={onOpenAdd} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-stone-300 hover:border-emerald-700/40 hover:bg-emerald-50/50 text-stone-500 hover:text-emerald-800 rounded-2xl py-4 font-medium transition-colors">
@@ -1053,6 +1058,198 @@ function StructureStatusBadge({ s }) {
   if (jours <= 0) return <Badge tone="rose">Essai terminé</Badge>;
   if (jours <= 3) return <Badge tone="rose">Essai : {jours} j restant{jours > 1 ? "s" : ""}</Badge>;
   return <Badge tone="amber">Essai : {jours} j restants</Badge>;
+}
+
+function StatBlock({ label, value, sub, tone = "stone" }) {
+  const tones = { stone: "text-emerald-950", rose: "text-rose-600", amber: "text-amber-700", emerald: "text-emerald-700" };
+  return (
+    <div className="bg-white rounded-2xl p-4 border border-emerald-900/5">
+      <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-1">{label}</div>
+      <div className={`text-2xl font-extrabold ${tones[tone]}`}>{value}</div>
+      {sub && <div className="text-xs text-stone-400 mt-0.5">{sub}</div>}
+    </div>
+  );
+}
+
+function SuperAdminStatsView({ onBack }) {
+  const [loading, setLoading] = useState(true);
+  const [structures, setStructures] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+  const [fiches, setFiches] = useState([]);
+  const [usage, setUsage] = useState(null);
+  const [error, setError] = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    const [structRes, profRes, fichesRes, usageRes] = await Promise.all([
+      supabase.from("structures").select("id, nom, quota, suspended, essai_duree_semaines, created_at"),
+      supabase.from("profiles").select("id, structure_id, plan, actif, created_at"),
+      supabase.from("interventions").select("categorie, niveau_detail"),
+      supabase.rpc("stats_usage_bibliotheque"),
+    ]);
+    if (structRes.error || profRes.error || fichesRes.error || usageRes.error) {
+      setError((structRes.error || profRes.error || fichesRes.error || usageRes.error).message);
+    }
+    setStructures(structRes.data || []);
+    setProfiles(profRes.data || []);
+    setFiches(fichesRes.data || []);
+    setUsage(usageRes.data || null);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  // --- Croissance & comptes ---
+  const structStatus = useMemo(() => structures.map((s) => {
+    const jours = essaiJoursRestants(s);
+    if (s.suspended) return jours != null && jours <= 0 ? "essai_termine" : "suspendue";
+    if (jours == null) return "actif";
+    if (jours <= 0) return "essai_termine";
+    return "essai_cours";
+  }), [structures]);
+  const nbActif = structStatus.filter((s) => s === "actif").length;
+  const nbEssaiCours = structStatus.filter((s) => s === "essai_cours").length;
+  const nbEssaiTermine = structStatus.filter((s) => s === "essai_termine").length;
+  const nbSuspendue = structStatus.filter((s) => s === "suspendue").length;
+  const comptesActifs = profiles.filter((p) => p.actif).length;
+
+  const evolutionMois = useMemo(() => {
+    const byMonth = {};
+    structures.forEach((s) => {
+      const key = new Date(s.created_at).toLocaleDateString("fr-FR", { month: "short", year: "2-digit" });
+      byMonth[key] = (byMonth[key] || 0) + 1;
+    });
+    // ordre chronologique
+    return Object.entries(byMonth).sort((a, b) => new Date("1 " + a[0]) - new Date("1 " + b[0])).slice(-6);
+  }, [structures]);
+
+  // --- Santé commerciale ---
+  const essaisBientotFinis = useMemo(() => structures
+    .map((s) => ({ ...s, jours: essaiJoursRestants(s) }))
+    .filter((s) => !s.suspended && s.jours != null && s.jours > 0 && s.jours <= 7)
+    .sort((a, b) => a.jours - b.jours), [structures]);
+
+  const quotasProches = useMemo(() => structures.map((s) => {
+    const nb = profiles.filter((p) => p.structure_id === s.id && p.actif).length;
+    return { ...s, nbComptes: nb, pct: s.quota > 0 ? Math.round((nb / s.quota) * 100) : 0 };
+  }).filter((s) => s.pct >= 80).sort((a, b) => b.pct - a.pct), [structures, profiles]);
+
+  // --- Contenu bibliothèque ---
+  const parCategorie = useMemo(() => {
+    const map = {};
+    fiches.forEach((f) => { map[f.categorie] = (map[f.categorie] || 0) + 1; });
+    return Object.entries(map).sort((a, b) => b[1] - a[1]);
+  }, [fiches]);
+  const nbExpert = fiches.filter((f) => f.niveau_detail === "expert").length;
+  const nbStandard = fiches.length - nbExpert;
+
+  return (
+    <div className="pb-10">
+      <TopBar title="Statistiques" onBack={onBack} right={<button onClick={load} className="p-2 text-emerald-700"><RefreshCw size={17} /></button>} />
+      <div className="p-4 space-y-8">
+        {loading && <div className="text-center text-stone-400 text-sm py-10">Chargement…</div>}
+        {error && <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 text-sm text-rose-700">{error}</div>}
+
+        {!loading && !error && (
+          <>
+            {/* Croissance & comptes */}
+            <section>
+              <h2 className="text-sm font-bold text-emerald-950 mb-3">Croissance & comptes</h2>
+              <div className="grid grid-cols-4 gap-3 mb-3">
+                <StatBlock label="Actives" value={nbActif} tone="emerald" />
+                <StatBlock label="En essai" value={nbEssaiCours} tone="amber" />
+                <StatBlock label="Essai terminé" value={nbEssaiTermine} tone="rose" />
+                <StatBlock label="Suspendues" value={nbSuspendue} tone="rose" />
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <StatBlock label="Structures au total" value={structures.length} />
+                <StatBlock label="Comptes actifs" value={comptesActifs} sub={`${profiles.length} comptes créés au total`} />
+              </div>
+              {evolutionMois.length > 0 && (
+                <div className="bg-white rounded-2xl p-4 border border-emerald-900/5">
+                  <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-3">Nouvelles structures par mois</div>
+                  <div className="flex items-end gap-3 h-24">
+                    {evolutionMois.map(([mois, n]) => (
+                      <div key={mois} className="flex-1 flex flex-col items-center gap-1.5">
+                        <div className="text-xs font-bold text-emerald-800">{n}</div>
+                        <div className="w-full bg-emerald-600 rounded-t-md" style={{ height: `${Math.max(8, (n / Math.max(...evolutionMois.map((e) => e[1]))) * 60)}px` }} />
+                        <div className="text-[10px] text-stone-400">{mois}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </section>
+
+            {/* Santé commerciale */}
+            <section>
+              <h2 className="text-sm font-bold text-emerald-950 mb-3">Santé commerciale</h2>
+              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5 mb-3">
+                <div className="px-4 py-2.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Essais se terminant sous 7 jours</div>
+                {essaisBientotFinis.length === 0 && <div className="px-4 py-3 text-sm text-stone-400">Aucun essai proche de l'échéance.</div>}
+                {essaisBientotFinis.map((s) => (
+                  <div key={s.id} className="px-4 py-3 flex items-center justify-between">
+                    <span className="text-sm font-medium text-emerald-950">{s.nom}</span>
+                    <Badge tone={s.jours <= 3 ? "rose" : "amber"}>{s.jours} j restants</Badge>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
+                <div className="px-4 py-2.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Quotas presque atteints (≥ 80%)</div>
+                {quotasProches.length === 0 && <div className="px-4 py-3 text-sm text-stone-400">Aucune structure proche de son quota.</div>}
+                {quotasProches.map((s) => (
+                  <div key={s.id} className="px-4 py-3 flex items-center justify-between">
+                    <span className="text-sm font-medium text-emerald-950">{s.nom}</span>
+                    <Badge tone={s.pct >= 100 ? "rose" : "amber"}>{s.nbComptes} / {s.quota} ({s.pct}%)</Badge>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Usage de la bibliothèque */}
+            <section>
+              <h2 className="text-sm font-bold text-emerald-950 mb-3">Usage de la bibliothèque</h2>
+              <div className="grid grid-cols-3 gap-3 mb-3">
+                <StatBlock label="Vues ce mois" value={usage?.total_vues_mois ?? 0} sub="toutes structures confondues" />
+                <StatBlock label="Jamais consultées" value={usage?.fiches_jamais_consultees ?? 0} tone={usage?.fiches_jamais_consultees > 0 ? "amber" : "stone"} />
+                <StatBlock label="Fiches au total" value={usage?.total_fiches ?? 0} />
+              </div>
+              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
+                <div className="px-4 py-2.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Top 10 fiches — ce mois, toutes structures</div>
+                {(!usage?.top_fiches || usage.top_fiches.length === 0) && <div className="px-4 py-3 text-sm text-stone-400">Aucune consultation ce mois-ci.</div>}
+                {usage?.top_fiches?.map((t, i) => (
+                  <div key={i} className="px-4 py-3 flex items-center gap-3">
+                    <span className="text-xs font-bold text-stone-300 w-4">{i + 1}</span>
+                    <span className="text-sm text-emerald-950 flex-1">{t.titre}</span>
+                    <span className="text-xs font-bold text-emerald-700">{t.vues} vues</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Contenu de la bibliothèque */}
+            <section>
+              <h2 className="text-sm font-bold text-emerald-950 mb-3">Contenu de la bibliothèque</h2>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <StatBlock label="Fiches standard" value={nbStandard} />
+                <StatBlock label="Fiches Expert" value={nbExpert} tone="emerald" />
+              </div>
+              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
+                <div className="px-4 py-2.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Répartition par catégorie</div>
+                {parCategorie.map(([cat, n]) => (
+                  <div key={cat} className="px-4 py-2.5 flex items-center justify-between">
+                    <span className="text-sm text-emerald-950">{cat}</span>
+                    <span className="text-xs font-bold text-stone-500">{n}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function CreateStructureView({ onBack }) {

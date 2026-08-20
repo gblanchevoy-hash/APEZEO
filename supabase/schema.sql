@@ -854,3 +854,46 @@ end;
 $$;
 
 grant execute on function public.verifier_essai(bigint) to authenticated;
+
+-- ============================================================
+-- STATISTIQUES SUPER-ADMIN — usage de la bibliothèque
+-- ============================================================
+-- fiche_vues a RLS activée sans aucune policy (lecture bloquée par
+-- défaut), donc seule cette fonction security definer peut l'agréger,
+-- et seulement pour un super-admin.
+create or replace function public.stats_usage_bibliotheque()
+returns jsonb
+language plpgsql security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_mois text := to_char(now(), 'YYYY-MM');
+  result jsonb;
+begin
+  if not public.is_super_admin(auth.uid()) then
+    raise exception 'Accès réservé au super-admin';
+  end if;
+
+  select jsonb_build_object(
+    'total_vues_mois', coalesce((select sum(vues) from fiche_vues where mois = v_mois), 0),
+    'top_fiches', (
+      select coalesce(jsonb_agg(t), '[]'::jsonb) from (
+        select fiche_ref as titre, sum(vues) as vues
+        from fiche_vues
+        where mois = v_mois
+        group by fiche_ref
+        order by sum(vues) desc
+        limit 10
+      ) t
+    ),
+    'fiches_jamais_consultees', (
+      select count(*) from interventions i
+      where not exists (select 1 from fiche_vues fv where fv.fiche_ref = i.titre)
+    ),
+    'total_fiches', (select count(*) from interventions)
+  ) into result;
+
+  return result;
+end;
+$$;
+grant execute on function public.stats_usage_bibliotheque() to authenticated;
