@@ -46,6 +46,7 @@ function Badge({ children, tone = "stone" }) {
     orangeDark: "bg-orange-800 text-white",
     expert: "bg-emerald-950 text-amber-300",
     outil: "bg-violet-100 text-violet-800",
+    concept: "bg-sky-100 text-sky-800",
   };
   return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${tones[tone]}`}>{children}</span>;
 }
@@ -102,11 +103,13 @@ function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge })
 function FicheCard({ f, onClick, favState }) {
   const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie
   const isOutil = f.typeFiche === "outil";
+  const isConcept = f.typeFiche === "concept";
   return (
-    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : "focus-visible:outline-emerald-600"}`}>
+    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : isConcept ? "border-l-[3px] border-sky-400 focus-visible:outline-sky-500" : "focus-visible:outline-emerald-600"}`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
           {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>}
+          {isConcept && <Badge tone="concept">Repère de compréhension</Badge>}
           {f.alerteOutil && <span className="flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 rounded-full px-2 py-0.5"><AlertTriangle size={11} /> Vigilance</span>}
           {f.niveauDetail === "expert" && <Badge tone="expert">Expert</Badge>}
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
@@ -114,7 +117,7 @@ function FicheCard({ f, onClick, favState }) {
           {f.isLocal && <Badge tone="amber">Personnelle</Badge>}
           {favState === "liked" && <Heart size={14} className="fill-rose-500 text-rose-500" />}
         </div>
-        <div className={`font-semibold truncate tracking-tight ${isOutil ? "text-violet-950" : "text-emerald-950"}`}>{f.titre}</div>
+        <div className={`font-semibold truncate tracking-tight ${isOutil ? "text-violet-950" : isConcept ? "text-sky-950" : "text-emerald-950"}`}>{f.titre}</div>
         <div className="text-sm text-stone-500 line-clamp-2 mt-0.5">{f.description}</div>
         {!isOutil && f.niveauDetail !== "expert" && <div className="mt-1.5"><Stars n={f.niveauPreuve} /></div>}
       </div>
@@ -2011,10 +2014,12 @@ function QuizView({ onBack, onSubmit }) {
             <span className="font-semibold text-emerald-950">Type de besoin</span>
             <span className="text-xs text-stone-400">(optionnel)</span>
           </div>
-          <select className={inputCls + " ml-9 w-[calc(100%-2.25rem)]"} value={q.besoin} onChange={(e) => setQ({ ...q, besoin: e.target.value })}>
-            <option value="">Tous types</option>
-            {FAMILLES.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
+          <div className="ml-9">
+            <select className={inputCls} value={q.besoin} onChange={(e) => setQ({ ...q, besoin: e.target.value })}>
+              <option value="">Tous types</option>
+              {FAMILLES.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
         </div>
 
         <div className="bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] p-5">
@@ -2080,6 +2085,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
   const liked = favoris.liked.includes(f.id);
   const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie
   const isExpert = f.niveauDetail === "expert";
+  const isConceptDetail = f.typeFiche === "concept";
   const techniquesAssociees = (allFiches && f.techniquesLiees && f.techniquesLiees.length)
     ? f.techniquesLiees.map((tid) => allFiches.find((x) => x.techniqueId === tid)).filter(Boolean)
     : [];
@@ -2231,6 +2237,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
       <div className="p-5 lg:p-9 lg:max-w-5xl">
         <div className="flex items-center gap-2 mb-2">
           {isExpert && <Badge tone="expert">Expert</Badge>}
+          {isConceptDetail && <Badge tone="concept">Repère de compréhension</Badge>}
         </div>
         <h2 className="text-2xl font-bold text-emerald-950 mb-5 tracking-tight leading-tight">{f.titre}</h2>
 
@@ -2260,6 +2267,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           {f.dureeMinutes > 0 ? <Badge><Clock size={11} className="inline mr-1" />{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {!simple && !isExpert && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
+          {f.typeFiche === "concept" && <Badge tone="concept">Repère de compréhension</Badge>}
         </div>
         <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
 
