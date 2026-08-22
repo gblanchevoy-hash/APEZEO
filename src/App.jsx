@@ -103,7 +103,7 @@ function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge })
 // Certains croquis d'outils sont des scènes complètes (pas un objet
 // isolé sur fond uni) — ils s'affichent en pleine largeur plutôt que
 // "pinglés" sur la page de carnet, qui n'a de sens que pour un objet seul.
-const CROQUIS_PLEINE_LARGEUR = ["Diffuseur de lumière chromatique"];
+const CROQUIS_PLEINE_LARGEUR = [];
 
 function FicheCard({ f, onClick, favState }) {
   const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie
@@ -150,7 +150,8 @@ function CheckGroup({ options, selected, onToggle }) {
   );
 }
 function Section({ title, children }) {
-  if (!children || (Array.isArray(children) && children.length === 0)) return null;
+  const isEmptyBulletList = React.isValidElement(children) && children.type === BulletList && (!children.props.items || children.props.items.length === 0);
+  if (!children || isEmptyBulletList || (Array.isArray(children) && children.length === 0)) return null;
   return <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">{title}</div>{children}</div>;
 }
 function BulletList({ items }) {
@@ -602,7 +603,8 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const ficheById = (id) => fichesRecherchables.find((f) => f.id === id);
 
   const scoreFiche = (f, q) => {
-    if (f.typeFiche === "concept") return null; // pas actionnable directement dans un quiz
+    const typeVoulu = q.typeVoulu || "technique";
+    if (typeVoulu !== "tous" && f.typeFiche !== typeVoulu && !(typeVoulu === "technique" && f.typeFiche == null)) return null;
     if (q.troubleIds && q.troubleIds.length > 0 && !q.troubleIds.every((t) => f.troubles.includes(t))) return null;
     if (q.besoin && f.categorie !== q.besoin) return null;
     if (q.tempsDispo != null && f.dureeMinutes > 0 && f.dureeMinutes > q.tempsDispo) return null;
@@ -2003,7 +2005,7 @@ function AdminTeamView({ structureId, onBack }) {
 }
 
 function QuizView({ onBack, onSubmit }) {
-  const [q, setQ] = useState({ troubleIds: [], besoin: "", stade: "", contexte: "", materielDispo: true });
+  const [q, setQ] = useState({ troubleIds: [], besoin: "", stade: "", contexte: "", materielDispo: true, typeVoulu: "technique" });
   const toggleTrouble = (t) => setQ((s) => ({ ...s, troubleIds: s.troubleIds.includes(t) ? s.troubleIds.filter((x) => x !== t) : [...s.troubleIds, t] }));
   return (
     <div className="pb-10">
@@ -2062,6 +2064,22 @@ function QuizView({ onBack, onSubmit }) {
           <span className="text-sm font-medium text-stone-700 flex-1">J'ai du matériel disponible</span>
           <input type="checkbox" checked={q.materielDispo} onChange={(e) => setQ({ ...q, materielDispo: e.target.checked })} className="w-5 h-5 accent-emerald-700" />
         </label>
+
+        <div className="bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] p-5">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">5</div>
+            <span className="font-semibold text-emerald-950">Type de fiche</span>
+          </div>
+          <div className="ml-9 flex gap-1.5 bg-stone-100 rounded-xl p-1">
+            {[["technique", "Techniques"], ["tous", "Tout"], ["concept", "Explicatifs"]].map(([val, lab]) => (
+              <button
+                key={val} type="button" onClick={() => setQ({ ...q, typeVoulu: val })}
+                className={`flex-1 text-xs font-semibold py-1.5 rounded-lg transition-colors ${q.typeVoulu === val ? "bg-white text-emerald-900 shadow-sm" : "text-stone-500"}`}
+              >{lab}</button>
+            ))}
+          </div>
+          <p className="text-[11px] text-stone-400 mt-2 ml-9">Explicatif = comprendre une situation, pas une action à appliquer directement.</p>
+        </div>
 
         <button onClick={() => onSubmit(q)} disabled={q.troubleIds.length === 0} className="relative overflow-hidden w-full mt-2 bg-emerald-700 hover:bg-emerald-800 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:scale-[0.98] disabled:bg-stone-300 disabled:hover:translate-y-0 disabled:hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 focus-visible:outline-offset-2 text-white font-semibold rounded-2xl transition-all duration-200 py-4 flex items-center justify-center gap-2">
           {q.troubleIds.length > 0 && <span className="cta-shine" />}
@@ -2155,7 +2173,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
 
           <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="outil">{t}</Badge>)}</div>
 
-          <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-violet-700 mb-2">Description</div><p className="text-sm text-stone-700 leading-relaxed">{f.description}</p></div>
+          <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-violet-700 mb-2">Description</div><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></div>
 
           {f.indication && <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-violet-700 mb-2">Indication</div><p className="text-sm text-stone-700 leading-relaxed">{f.indication}</p></div>}
 
@@ -2194,7 +2212,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
         </div>
 
         <div className="px-6 pt-6 pb-8">
-          <p className="text-stone-600 text-[15px] leading-relaxed mb-6">{f.description}</p>
+          <p className="text-stone-600 text-[15px] leading-relaxed mb-6 whitespace-pre-line">{f.description}</p>
 
           {f.pourquoi && (
             <div className="bg-amber-50 rounded-2xl p-4 flex gap-3 mb-7">
@@ -2307,7 +2325,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           </div>
         )}
 
-        <Section title="Description"><p className="text-sm text-stone-700 leading-relaxed">{f.description}</p></Section>
+        <Section title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></Section>
 
         {isExpert ? (
           <>
@@ -2790,7 +2808,8 @@ function AidantApp({ onChangeMode }) {
   const ficheById = (id) => fiches.find((f) => f.id === id);
 
   const scoreFiche = (f, q) => {
-    if (f.typeFiche === "concept") return null;
+    const typeVoulu = q.typeVoulu || "technique";
+    if (typeVoulu !== "tous" && f.typeFiche !== typeVoulu && !(typeVoulu === "technique" && f.typeFiche == null)) return null;
     if (q.troubleIds && q.troubleIds.length > 0 && !q.troubleIds.every((t) => f.troubles.includes(t))) return null;
     if (q.besoin && f.categorie !== q.besoin) return null;
     if (q.tempsDispo != null && f.dureeMinutes > 0 && f.dureeMinutes > q.tempsDispo) return null;
