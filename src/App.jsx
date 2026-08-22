@@ -109,8 +109,9 @@ function FicheCard({ f, onClick, favState }) {
   const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie
   const isOutil = f.typeFiche === "outil";
   const isConcept = f.typeFiche === "concept";
+  const isTechnique = !isOutil && !isConcept;
   return (
-    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : isConcept ? "border-l-[3px] border-sky-400 focus-visible:outline-sky-500" : "focus-visible:outline-emerald-600"}`}>
+    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : isConcept ? "border-l-[3px] border-sky-400 focus-visible:outline-sky-500" : "border-l-[3px] border-emerald-300 focus-visible:outline-emerald-600"}`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
           {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>}
@@ -146,6 +147,40 @@ function CheckGroup({ options, selected, onToggle }) {
           </button>
         );
       })}
+    </div>
+  );
+}
+// Découpe un texte du type "Label :\n- item\n- item\n\nAutre label :\n..."
+// (généré pour les fiches à champs multiples) en blocs propres, avec
+// un petit titre discret par bloc et de vraies puces — plutôt qu'un
+// unique pavé de texte dense.
+function StructuredText({ text }) {
+  if (!text) return null;
+  const blocks = text.split(/\n\n+/).map((block) => {
+    const lines = block.split("\n");
+    const isLabel = lines[0].trim().endsWith(":") && lines.length > 1;
+    return isLabel
+      ? { label: lines[0].trim().replace(/:$/, ""), lines: lines.slice(1) }
+      : { label: null, lines };
+  });
+  return (
+    <div className="space-y-4">
+      {blocks.map((b, i) => (
+        <div key={i}>
+          {b.label && <div className="text-[13px] font-bold text-emerald-800 mb-1.5">{b.label}</div>}
+          {b.lines.every((l) => l.trim().startsWith("- ")) ? (
+            <ul className="space-y-1">
+              {b.lines.map((l, j) => (
+                <li key={j} className="text-sm text-stone-600 flex gap-2 leading-relaxed">
+                  <span className="text-emerald-500 mt-0.5">•</span><span>{l.replace(/^- /, "")}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-stone-600 leading-relaxed whitespace-pre-line">{b.lines.join("\n")}</p>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -945,18 +980,19 @@ function FicheListView({ title, items, onBack, onOpenFiche, favoris, emptyLabel 
     <div className="pb-10">
       <TopBar title={title} onBack={onBack} />
       {hasConcept && (
-        <div className="px-4 pt-3">
-          <div className="flex gap-1.5 bg-stone-100 rounded-xl p-1">
-            {[["tous", "Tout"], ["technique", "Techniques"], ["concept", "Explicatifs"]].map(([val, label]) => (
-              <button
-                key={val} onClick={() => setTypeFilter(val)}
-                className={`flex-1 text-xs font-semibold py-1.5 rounded-lg transition-colors ${typeFilter === val ? "bg-white text-emerald-900 shadow-sm" : "text-stone-500"}`}
-              >{label}</button>
-            ))}
+        <div className="px-4 pt-3 pb-1">
+          <div className="flex gap-2">
+            {[["tous", "Tout", "stone"], ["technique", "Techniques", "emerald"], ["concept", "Explicatifs", "sky"]].map(([val, lab, color]) => {
+              const active = typeFilter === val;
+              const activeCls = { stone: "bg-emerald-950 text-white border-emerald-950", emerald: "bg-emerald-600 text-white border-emerald-600", sky: "bg-sky-500 text-white border-sky-500" }[color];
+              return (
+                <button
+                  key={val} onClick={() => setTypeFilter(val)}
+                  className={`flex-1 text-sm font-bold py-2.5 rounded-xl border-2 transition-all ${active ? activeCls + " shadow-md" : "bg-white text-stone-500 border-stone-200"}`}
+                >{lab}</button>
+              );
+            })}
           </div>
-          <p className="text-[11px] text-stone-400 mt-1.5 px-1">
-            <span className="inline-block w-2 h-2 rounded-full bg-sky-400 mr-1 align-middle" /> Explicatif = comprendre une situation (pas une action à appliquer directement)
-          </p>
         </div>
       )}
       <div className="p-4 flex flex-col gap-2.5">
@@ -2070,13 +2106,17 @@ function QuizView({ onBack, onSubmit }) {
             <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">5</div>
             <span className="font-semibold text-emerald-950">Type de fiche</span>
           </div>
-          <div className="ml-9 flex gap-1.5 bg-stone-100 rounded-xl p-1">
-            {[["technique", "Techniques"], ["tous", "Tout"], ["concept", "Explicatifs"]].map(([val, lab]) => (
-              <button
-                key={val} type="button" onClick={() => setQ({ ...q, typeVoulu: val })}
-                className={`flex-1 text-xs font-semibold py-1.5 rounded-lg transition-colors ${q.typeVoulu === val ? "bg-white text-emerald-900 shadow-sm" : "text-stone-500"}`}
-              >{lab}</button>
-            ))}
+          <div className="ml-9 flex gap-2">
+            {[["technique", "Techniques", "emerald"], ["tous", "Tout", "stone"], ["concept", "Explicatifs", "sky"]].map(([val, lab, color]) => {
+              const active = q.typeVoulu === val;
+              const activeCls = { stone: "bg-emerald-950 text-white border-emerald-950", emerald: "bg-emerald-600 text-white border-emerald-600", sky: "bg-sky-500 text-white border-sky-500" }[color];
+              return (
+                <button
+                  key={val} type="button" onClick={() => setQ({ ...q, typeVoulu: val })}
+                  className={`flex-1 text-sm font-bold py-2.5 rounded-xl border-2 transition-all ${active ? activeCls + " shadow-md" : "bg-white text-stone-500 border-stone-200"}`}
+                >{lab}</button>
+              );
+            })}
           </div>
           <p className="text-[11px] text-stone-400 mt-2 ml-9">Explicatif = comprendre une situation, pas une action à appliquer directement.</p>
         </div>
@@ -2398,8 +2438,8 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
             <Section title="Précautions"><BulletList items={f.precautions} /></Section>
             {(f.fondementPrincipe || f.fondementApplication) && (
               <Section title="Fondements">
-                {f.fondementPrincipe && <p className="text-sm text-stone-700 leading-relaxed mb-2"><span className="font-semibold text-emerald-800">Principe — </span>{f.fondementPrincipe}</p>}
-                {f.fondementApplication && <p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line"><span className="font-semibold text-emerald-800">Application — </span>{f.fondementApplication}</p>}
+                {f.fondementPrincipe && <p className="text-sm text-stone-700 leading-relaxed mb-4"><span className="font-semibold text-emerald-800">Principe — </span>{f.fondementPrincipe}</p>}
+                {f.fondementApplication && <StructuredText text={f.fondementApplication} />}
               </Section>
             )}
             <Section title="Comment évaluer l'efficacité"><BulletList items={f.commentEvaluerEfficacite} /></Section>
