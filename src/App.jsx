@@ -100,6 +100,11 @@ function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge })
     </button>
   );
 }
+// Certains croquis d'outils sont des scènes complètes (pas un objet
+// isolé sur fond uni) — ils s'affichent en pleine largeur plutôt que
+// "pinglés" sur la page de carnet, qui n'a de sens que pour un objet seul.
+const CROQUIS_PLEINE_LARGEUR = ["Diffuseur de lumière chromatique"];
+
 function FicheCard({ f, onClick, favState }) {
   const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie
   const isOutil = f.typeFiche === "outil";
@@ -109,7 +114,7 @@ function FicheCard({ f, onClick, favState }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
           {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>}
-          {isConcept && <Badge tone="concept">Repère de compréhension</Badge>}
+          {isConcept && <Badge tone="concept">Explicatif</Badge>}
           {f.alerteOutil && <span className="flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 rounded-full px-2 py-0.5"><AlertTriangle size={11} /> Vigilance</span>}
           {f.niveauDetail === "expert" && <Badge tone="expert">Expert</Badge>}
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
@@ -931,12 +936,30 @@ function FamillesView({ fiches, onBack, onOpenFamille }) {
 }
 function FicheListView({ title, items, onBack, onOpenFiche, favoris, emptyLabel }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
+  const [typeFilter, setTypeFilter] = useState("tous");
+  const hasConcept = items.some((f) => f.typeFiche === "concept");
+  const filtered = typeFilter === "tous" ? items : items.filter((f) => f.typeFiche === typeFilter);
   return (
     <div className="pb-10">
       <TopBar title={title} onBack={onBack} />
+      {hasConcept && (
+        <div className="px-4 pt-3">
+          <div className="flex gap-1.5 bg-stone-100 rounded-xl p-1">
+            {[["tous", "Tout"], ["technique", "Techniques"], ["concept", "Explicatifs"]].map(([val, label]) => (
+              <button
+                key={val} onClick={() => setTypeFilter(val)}
+                className={`flex-1 text-xs font-semibold py-1.5 rounded-lg transition-colors ${typeFilter === val ? "bg-white text-emerald-900 shadow-sm" : "text-stone-500"}`}
+              >{label}</button>
+            ))}
+          </div>
+          <p className="text-[11px] text-stone-400 mt-1.5 px-1">
+            <span className="inline-block w-2 h-2 rounded-full bg-sky-400 mr-1 align-middle" /> Explicatif = comprendre une situation (pas une action à appliquer directement)
+          </p>
+        </div>
+      )}
       <div className="p-4 flex flex-col gap-2.5">
-        {items.length === 0 && <div className="text-center text-stone-400 text-sm py-10">{emptyLabel}</div>}
-        {items.map((f) => <FicheCard key={f.id} f={f} favState={favState(f.id)} onClick={() => onOpenFiche(f)} />)}
+        {filtered.length === 0 && <div className="text-center text-stone-400 text-sm py-10">{emptyLabel}</div>}
+        {filtered.map((f) => <FicheCard key={f.id} f={f} favState={favState(f.id)} onClick={() => onOpenFiche(f)} />)}
       </div>
     </div>
   );
@@ -2109,6 +2132,11 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           )}
 
           {f.croquisUrl ? (
+            CROQUIS_PLEINE_LARGEUR.includes(f.titre) ? (
+              <div className="rounded-2xl overflow-hidden mb-6 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.15)]">
+                <img src={f.croquisUrl} alt={f.titre} className="w-full h-auto" />
+              </div>
+            ) : (
             <div className="relative mb-6" style={{ aspectRatio: "900 / 560" }}>
               <img src="/images/notebook-page-bg.png" alt="" className="absolute inset-0 w-full h-full" />
               <div className="absolute flex items-center justify-center" style={{ left: "11%", right: "3%", top: "4%", bottom: "4%" }}>
@@ -2120,6 +2148,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
                 />
               </div>
             </div>
+            )
           ) : f.croquisSvg ? (
             <div className="bg-violet-50/60 rounded-2xl p-6 mb-5 flex items-center justify-center" dangerouslySetInnerHTML={{ __html: f.croquisSvg }} />
           ) : null}
@@ -2237,7 +2266,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
       <div className="p-5 lg:p-9 lg:max-w-5xl">
         <div className="flex items-center gap-2 mb-2">
           {isExpert && <Badge tone="expert">Expert</Badge>}
-          {isConceptDetail && <Badge tone="concept">Repère de compréhension</Badge>}
+          {isConceptDetail && <Badge tone="concept">Explicatif</Badge>}
         </div>
         <h2 className="text-2xl font-bold text-emerald-950 mb-5 tracking-tight leading-tight">{f.titre}</h2>
 
@@ -2267,7 +2296,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           {f.dureeMinutes > 0 ? <Badge><Clock size={11} className="inline mr-1" />{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {!simple && !isExpert && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
-          {f.typeFiche === "concept" && <Badge tone="concept">Repère de compréhension</Badge>}
+          {f.typeFiche === "concept" && <Badge tone="concept">Explicatif</Badge>}
         </div>
         <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
 
