@@ -781,11 +781,17 @@ function AuthenticatedApp({ session, onChangeMode }) {
           const max = 134;
           const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));
           const label = [q.troubleIds.join(", "), q.besoin].filter(Boolean).join(" · ");
-          push({ view: "recommandations", results, trouble: label });
+          let suggestions = [];
+          if (results.length === 0 && q.troubleIds.length > 0) {
+            suggestions = [...fiches, ...outilsFiches]
+              .map((f) => ({ f, n: (f.troubles || []).filter((t) => q.troubleIds.includes(t)).length }))
+              .filter((x) => x.n > 0).sort((a, b) => b.n - a.n).slice(0, 4).map((x) => x.f);
+          }
+          push({ view: "recommandations", results, trouble: label, suggestions });
         }} />
       )}
       {current.view === "recommandations" && (
-        <RecommandationsView title={current.trouble} results={current.results} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "fiche" && (
         <FicheDetailView
@@ -1019,6 +1025,23 @@ function SearchView({ fiches, onBack, onOpenFiche, favoris }) {
       match(f.indication) || matchArr(f.contreIndicationOutil) || matchArr(f.precautionsParticulieres)
     );
   }, [q, fiches]);
+
+  // Aucun résultat exact : suggère les fiches les plus proches, en
+  // comptant combien de mots de la recherche apparaissent quelque
+  // part dans chaque fiche (correspondance partielle, pas exacte).
+  const suggestions = useMemo(() => {
+    if (!q.trim() || results.length > 0) return [];
+    const words = q.toLowerCase().split(/\s+/).filter((w) => w.length >= 3);
+    if (words.length === 0) return [];
+    const scored = fiches.map((f) => {
+      const blob = [f.titre, f.description, f.categorie, ...(f.troubles || []), ...(f.motsCles || [])].filter(Boolean).join(" ").toLowerCase();
+      const score = words.reduce((acc, w) => acc + (blob.includes(w) ? 1 : 0), 0);
+      return { f, score };
+    }).filter((x) => x.score > 0);
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, 4).map((x) => x.f);
+  }, [q, results, fiches]);
+
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   return (
     <div className="pb-10">
@@ -1030,7 +1053,22 @@ function SearchView({ fiches, onBack, onOpenFiche, favoris }) {
             className="w-full rounded-xl border border-stone-300 pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600" />
         </div>
         <div className="flex flex-col gap-2.5">
-          {q.trim() && results.length === 0 && <div className="text-center text-stone-400 text-sm py-10">Aucun résultat.</div>}
+          {q.trim() && results.length === 0 && (
+            <div className="text-center text-stone-400 text-sm py-6">Aucun résultat exact.</div>
+          )}
+          {suggestions.length > 0 && (
+            <div className="bg-emerald-50 border border-emerald-800/10 shadow-sm rounded-2xl p-4 mb-2">
+              <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Ces fiches peuvent peut-être vous intéresser</div>
+              <div className="flex flex-col gap-1.5">
+                {suggestions.map((t) => (
+                  <button key={t.id} onClick={() => onOpenFiche(t)} className="flex items-center gap-2 text-left text-sm text-emerald-900 hover:text-emerald-700 bg-white/60 hover:bg-white rounded-xl px-3 py-2 transition-colors">
+                    <span className="flex-1">{t.titre}</span>
+                    <ChevronRight size={14} className="shrink-0 text-emerald-400" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {results.map((f) => <FicheCard key={f.id} f={f} favState={favState(f.id)} onClick={() => onOpenFiche(f)} />)}
         </div>
       </div>
@@ -2131,13 +2169,26 @@ function QuizView({ onBack, onSubmit }) {
     </div>
   );
 }
-function RecommandationsView({ title, results, favoris, onBack, onOpenFiche }) {
+function RecommandationsView({ title, results, suggestions, favoris, onBack, onOpenFiche }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   return (
     <div className="pb-10">
       <TopBar title={`Pour : ${title}`} onBack={onBack} />
       <div className="p-4 flex flex-col gap-2.5">
-        {results.length === 0 && <div className="text-center text-stone-400 text-sm py-10">Aucune fiche ne correspond, essayez d'élargir vos critères.</div>}
+        {results.length === 0 && <div className="text-center text-stone-400 text-sm py-6">Aucune fiche ne correspond exactement à ces critères.</div>}
+        {results.length === 0 && suggestions && suggestions.length > 0 && (
+          <div className="bg-emerald-50 border border-emerald-800/10 shadow-sm rounded-2xl p-4 mb-2">
+            <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2.5">Ces fiches peuvent peut-être vous intéresser</div>
+            <div className="flex flex-col gap-1.5">
+              {suggestions.map((f) => (
+                <button key={f.id} onClick={() => onOpenFiche(f)} className="flex items-center gap-2 text-left text-sm text-emerald-900 hover:text-emerald-700 bg-white/60 hover:bg-white rounded-xl px-3 py-2 transition-colors">
+                  <span className="flex-1">{f.titre}</span>
+                  <ChevronRight size={14} className="shrink-0 text-emerald-400" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {results.map(({ f, pct }) => {
           const isOutil = f.typeFiche === "outil";
           return (
@@ -2946,11 +2997,17 @@ function AidantApp({ onChangeMode }) {
           const max = 100;
           const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));
           const label = [q.troubleIds.join(", "), q.besoin].filter(Boolean).join(" · ");
-          push({ view: "recommandations", results, trouble: label });
+          let suggestions = [];
+          if (results.length === 0 && q.troubleIds.length > 0) {
+            suggestions = fiches
+              .map((f) => ({ f, n: (f.troubles || []).filter((t) => q.troubleIds.includes(t)).length }))
+              .filter((x) => x.n > 0).sort((a, b) => b.n - a.n).slice(0, 4).map((x) => x.f);
+          }
+          push({ view: "recommandations", results, trouble: label, suggestions });
         }} />
       )}
       {current.view === "recommandations" && (
-        <RecommandationsView title={current.trouble} results={current.results} favoris={{ liked: favoris, disliked: [] }} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={{ liked: favoris, disliked: [] }} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "fiche" && (
         <FicheDetailView
