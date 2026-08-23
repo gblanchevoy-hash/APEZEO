@@ -111,11 +111,12 @@ function FicheCard({ f, onClick, favState }) {
   const isConcept = f.typeFiche === "concept";
   const isTechnique = !isOutil && !isConcept;
   return (
-    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : isConcept ? "border-l-[3px] border-sky-400 focus-visible:outline-sky-500" : "border-l-[3px] border-emerald-300 focus-visible:outline-emerald-600"}`}>
+    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : isConcept ? "border-l-[3px] border-sky-400 focus-visible:outline-sky-500" : "border-l-[3px] border-amber-400 focus-visible:outline-emerald-600"}`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
           {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>}
           {isConcept && <Badge tone="concept">Explicatif</Badge>}
+          {isTechnique && <Badge tone="amber">Technique</Badge>}
           {f.alerteOutil && <span className="flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 rounded-full px-2 py-0.5"><AlertTriangle size={11} /> Vigilance</span>}
           {f.niveauDetail === "expert" && <Badge tone="expert">Expert</Badge>}
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
@@ -984,7 +985,7 @@ function FicheListView({ title, items, onBack, onOpenFiche, favoris, emptyLabel 
           <div className="flex gap-2">
             {[["tous", "Tout", "stone"], ["technique", "Techniques", "emerald"], ["concept", "Explicatifs", "sky"]].map(([val, lab, color]) => {
               const active = typeFilter === val;
-              const activeCls = { stone: "bg-emerald-950 text-white border-emerald-950", emerald: "bg-emerald-600 text-white border-emerald-600", sky: "bg-sky-500 text-white border-sky-500" }[color];
+              const activeCls = { stone: "bg-emerald-950 text-white border-emerald-950", emerald: "bg-amber-500 text-white border-amber-500", sky: "bg-sky-500 text-white border-sky-500" }[color];
               return (
                 <button
                   key={val} onClick={() => setTypeFilter(val)}
@@ -2109,7 +2110,7 @@ function QuizView({ onBack, onSubmit }) {
           <div className="ml-9 flex gap-2">
             {[["technique", "Techniques", "emerald"], ["tous", "Tout", "stone"], ["concept", "Explicatifs", "sky"]].map(([val, lab, color]) => {
               const active = q.typeVoulu === val;
-              const activeCls = { stone: "bg-emerald-950 text-white border-emerald-950", emerald: "bg-emerald-600 text-white border-emerald-600", sky: "bg-sky-500 text-white border-sky-500" }[color];
+              const activeCls = { stone: "bg-emerald-950 text-white border-emerald-950", emerald: "bg-amber-500 text-white border-amber-500", sky: "bg-sky-500 text-white border-sky-500" }[color];
               return (
                 <button
                   key={val} type="button" onClick={() => setQ({ ...q, typeVoulu: val })}
@@ -2167,6 +2168,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
   const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie
   const isExpert = f.niveauDetail === "expert";
   const isConceptDetail = f.typeFiche === "concept";
+  const isTechniqueDetail = f.typeFiche !== "concept" && f.typeFiche !== "outil";
   const techniquesAssociees = (allFiches && f.techniquesLiees && f.techniquesLiees.length)
     ? f.techniquesLiees.map((tid) => allFiches.find((x) => x.techniqueId === tid)).filter(Boolean)
     : [];
@@ -2325,6 +2327,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
         <div className="flex items-center gap-2 mb-2">
           {isExpert && <Badge tone="expert">Expert</Badge>}
           {isConceptDetail && <Badge tone="concept">Explicatif</Badge>}
+          {isTechniqueDetail && <Badge tone="amber">Technique</Badge>}
         </div>
         <h2 className="text-2xl font-bold text-emerald-950 mb-5 tracking-tight leading-tight">{f.titre}</h2>
 
@@ -2355,6 +2358,7 @@ function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDisl
           {!simple && !isExpert && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
           {f.typeFiche === "concept" && <Badge tone="concept">Explicatif</Badge>}
+          {f.typeFiche !== "concept" && f.typeFiche !== "outil" && <Badge tone="amber">Technique</Badge>}
         </div>
         <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
 
