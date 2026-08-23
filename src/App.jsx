@@ -187,7 +187,8 @@ function StructuredText({ text }) {
 }
 function Section({ title, children }) {
   const isEmptyBulletList = React.isValidElement(children) && children.type === BulletList && (!children.props.items || children.props.items.length === 0);
-  if (!children || isEmptyBulletList || (Array.isArray(children) && children.length === 0)) return null;
+  const isEmptyParagraph = React.isValidElement(children) && children.type === "p" && (!children.props.children || (typeof children.props.children === "string" && children.props.children.trim() === ""));
+  if (!children || isEmptyBulletList || isEmptyParagraph || (Array.isArray(children) && children.length === 0)) return null;
   return <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">{title}</div>{children}</div>;
 }
 function BulletList({ items }) {
