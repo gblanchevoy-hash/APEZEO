@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, createContext, useContext } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef, createContext, useContext } from "react";
 import jsPDF from "jspdf";
 import {
   Search, Heart, HeartOff, History, Plus, ArrowLeft, Star, ChevronRight,
@@ -472,6 +472,8 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const [stack, setStack] = useState([{ view: "home" }]);
   const [profile, setProfile] = useState(null);
   const [essaiTermine, setEssaiTermine] = useState(false);
+  const [sessionReplaced, setSessionReplaced] = useState(false);
+  const mySessionToken = useRef(null);
 
   const current = stack[stack.length - 1];
   const push = (frame) => setStack((s) => [...s, frame]);
@@ -579,12 +581,37 @@ function AuthenticatedApp({ session, onChangeMode }) {
           setProfile((prev) => (prev ? { ...prev, actif: false } : prev));
         }
       }
+      // Verrou de session : écrit un nouveau jeton, ce qui invalide
+      // (via l'abonnement temps réel ci-dessous) toute autre session
+      // déjà ouverte avec ce compte.
+      if (p?.actif !== false) {
+        const token = crypto.randomUUID();
+        mySessionToken.current = token;
+        await supabase.from("profiles").update({ session_token: token }).eq("id", userId);
+      }
     }
 
     setLoading(false);
   }, [userId, fetchAllRows]);
 
   useEffect(() => { loadFromSupabase(); }, [loadFromSupabase]);
+
+  // Écoute les changements sur sa propre ligne de profil : si le jeton
+  // de session change pour une valeur différente de la sienne, c'est
+  // qu'une connexion a eu lieu ailleurs — on se déconnecte localement.
+  useEffect(() => {
+    const channel = supabase
+      .channel(`session-lock-${userId}`)
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "profiles", filter: `id=eq.${userId}` }, (payload) => {
+        const newToken = payload.new?.session_token;
+        if (newToken && mySessionToken.current && newToken !== mySessionToken.current) {
+          setSessionReplaced(true);
+          supabase.auth.signOut({ scope: "local" });
+        }
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [userId]);
 
   const addLocalFiche = async (f) => {
     const payload = ficheToPersonalRow(f, userId);
@@ -676,6 +703,21 @@ function AuthenticatedApp({ session, onChangeMode }) {
             <img src="/logo-phoenix-large.png" alt="Apézeo" className="w-44 h-44 rounded-full" />
           </div>
           <span className="text-sm">Chargement d'Apézeo…</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (sessionReplaced) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F6F2] p-6">
+        <div className="max-w-sm text-center">
+          <UserX className="mx-auto mb-3 text-amber-600" size={32} />
+          <h1 className="text-lg font-semibold text-emerald-950 mb-2">Session ouverte ailleurs</h1>
+          <p className="text-sm text-stone-600 mb-4">
+            Votre compte vient d'être utilisé pour se connecter sur un autre appareil. Pour la sécurité de votre compte, un seul appareil peut être connecté à la fois. Si ce n'était pas vous, changez votre mot de passe.
+          </p>
+          <button onClick={() => window.location.reload()} className="text-sm text-emerald-700 underline">Se reconnecter</button>
         </div>
       </div>
     );
@@ -3056,7 +3098,22 @@ function AidantApp({ onChangeMode }) {
                 <span className="font-semibold text-rose-900">Numéro d'urgence européen</span>
                 <span className="font-bold text-rose-700 text-lg">112</span>
               </a>
+              <a href="tel:114" className="flex items-center justify-between bg-rose-50 hover:bg-rose-100 rounded-2xl px-4 py-3.5 transition">
+                <div>
+                  <div className="font-semibold text-rose-900">Urgence par SMS</div>
+                  <div className="text-xs text-rose-600/80">Si la personne ne peut pas parler</div>
+                </div>
+                <span className="font-bold text-rose-700 text-lg">114</span>
+              </a>
             </div>
+            <div className="h-px bg-stone-100 my-4" />
+            <a href="tel:3133" className="flex items-center justify-between bg-amber-50 hover:bg-amber-100 rounded-2xl px-4 py-3.5 transition">
+              <div>
+                <div className="font-semibold text-amber-900">Suspicion de maltraitance</div>
+                <div className="text-xs text-amber-700/80">Écoute et conseil, pas un numéro d'urgence — 9h-20h, 7j/7</div>
+              </div>
+              <span className="font-bold text-amber-700 text-lg">3133</span>
+            </a>
             <button onClick={() => setShowUrgence(false)} className="w-full mt-5 text-sm text-stone-400 py-2">Fermer</button>
           </div>
         </div>
