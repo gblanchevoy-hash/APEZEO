@@ -209,8 +209,6 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
           {f.dureeMinutes > 0 ? <Badge><Clock size={11} className="inline mr-1" />{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {!simple && !isExpert && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
-          {f.typeFiche === "concept" && <Badge tone="concept">Explicatif</Badge>}
-          {f.typeFiche !== "concept" && f.typeFiche !== "outil" && <Badge tone="amber">Technique</Badge>}
         </div>
         <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
 
