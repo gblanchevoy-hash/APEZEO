@@ -1,0 +1,32 @@
+name: Tests et build
+
+# Lance les tests de fumée et vérifie que le build passe à chaque
+# push et à chaque pull request — indépendamment de ce qui a été
+# vérifié (ou oublié) avant l'envoi.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Lancer les tests
+        run: npm run test
+
+      - name: Vérifier que le build passe
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
