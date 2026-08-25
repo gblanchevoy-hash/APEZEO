@@ -238,13 +238,26 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
                 <div className="flex flex-col gap-3">
                   {f.deroulement.map((e) => {
                     const norm = (s) => (s || "").trim().replace(/[.!?…]+$/, "").toLowerCase();
-                    const isDuplicate = norm(e.description) === norm(e.titre);
+                    const titre = (e.titre || "").trim();
+                    const description = (e.description || "").trim();
+                    const isDuplicate = norm(description) === norm(titre);
+                    // Le titre a parfois été extrait du tout début de la
+                    // description (pour rester ancré dans le contenu réel) —
+                    // sans retirer cette portion de la description elle-même,
+                    // ce qui donnait un titre suivi d'une explication qui
+                    // recommence par les mêmes mots. On n'affiche alors que
+                    // la partie réellement nouvelle.
+                    let displayDescription = description;
+                    if (!isDuplicate && titre && description.toLowerCase().startsWith(titre.toLowerCase())) {
+                      displayDescription = description.slice(titre.length).replace(/^[\s:.,;–—-]+/, "").trim();
+                    }
+                    const showDescription = displayDescription && !isDuplicate;
                     return (
                       <div key={e.etape} className="flex gap-3">
                         <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{e.etape}</div>
                         <div>
                           <div className="text-sm font-semibold text-emerald-950">{e.titre}</div>
-                          {e.description && !isDuplicate && <div className="text-sm text-stone-600 whitespace-pre-line">{e.description}</div>}
+                          {showDescription && <div className="text-sm text-stone-600 whitespace-pre-line">{displayDescription}</div>}
                         </div>
                       </div>
                     );
