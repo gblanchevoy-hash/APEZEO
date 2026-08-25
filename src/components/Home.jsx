@@ -6,7 +6,7 @@ import {
 import { NavCard } from "./ui.jsx";
 import { LegalFooterLinks } from "./legal.jsx";
 
-export function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
+export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
@@ -44,9 +44,15 @@ export function Home_({ fiches, dbCount, profession, isAdmin, isSuperAdmin, canT
         <h1 className="relative text-2xl lg:text-3xl font-bold mb-1.5 tracking-tight">Un geste apaisant, tout de suite.</h1>
         {profession && <p className="relative text-emerald-200 text-xs mb-2.5">Connecté en tant que {profession}</p>}
         <div className="relative flex items-center gap-3 text-emerald-100 text-sm mb-7">
-          <span className="flex items-center gap-1.5"><BookOpen size={15} className="text-emerald-300" /> {fiches.length} techniques</span>
-          <span className="text-emerald-400/50">|</span>
-          <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> Bibliothèque complète : {dbCount}</span>
+          {libraryLoading ? (
+            <span className="flex items-center gap-1.5 text-emerald-200/80"><RefreshCw size={13} className="animate-spin" /> Chargement de la bibliothèque…</span>
+          ) : (
+            <>
+              <span className="flex items-center gap-1.5"><BookOpen size={15} className="text-emerald-300" /> {fiches.length} techniques</span>
+              <span className="text-emerald-400/50">|</span>
+              <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> Bibliothèque complète : {dbCount}</span>
+            </>
+          )}
         </div>
         <div className="relative">
           <button onClick={onOpenQuiz} className="relative w-full overflow-hidden bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">

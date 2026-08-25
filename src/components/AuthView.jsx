@@ -15,22 +15,9 @@ export function AuthView({ onChangeMode }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [profession, setProfession] = useState(PROFESSIONS[0]);
-  const [codeInvitation, setCodeInvitation] = useState("");
-  const [codeCheck, setCodeCheck] = useState(null); // null | {valid, structure_nom, places_restantes}
-  const [checkingCode, setCheckingCode] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
-
-  const verifyCode = async () => {
-    const code = codeInvitation.trim();
-    if (!code) { setCodeCheck(null); return; }
-    setCheckingCode(true);
-    const { data, error } = await supabase.rpc("check_invitation_code", { p_code: code });
-    setCheckingCode(false);
-    if (error || !data || !data[0]) { setCodeCheck({ valid: false }); return; }
-    setCodeCheck(data[0]);
-  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -44,10 +31,10 @@ export function AuthView({ onChangeMode }) {
     if (mode === "signup") {
       const { error } = await supabase.auth.signUp({
         email, password,
-        options: { data: { profession, code_invitation: codeInvitation.trim() || null } },
+        options: { data: { profession } },
       });
       if (error) setError(error.message);
-      else setInfo("Compte créé. Vérifiez votre boîte mail pour confirmer votre inscription si demandé, puis connectez-vous.");
+      else setInfo("Compte créé. Vérifiez votre boîte mail pour confirmer votre inscription si demandé, puis connectez-vous. Votre administrateur devra ensuite rattacher votre compte à votre structure.");
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
@@ -140,23 +127,7 @@ export function AuthView({ onChangeMode }) {
                     {PROFESSIONS.map((p) => <option key={p}>{p}</option>)}
                   </select>
                 </Field>
-                <Field label="Code d'invitation de votre établissement (optionnel)">
-                  <input
-                    className={inputCls}
-                    placeholder="Laissez vide pour un accès découverte"
-                    value={codeInvitation}
-                    onChange={(e) => { setCodeInvitation(e.target.value); setCodeCheck(null); }}
-                    onBlur={verifyCode}
-                  />
-                  {checkingCode && <p className="text-xs text-stone-400 mt-1">Vérification…</p>}
-                  {codeCheck && codeCheck.valid && (
-                    <p className="text-xs text-emerald-700 mt-1">✓ {codeCheck.structure_nom} — {codeCheck.places_restantes} place(s) disponible(s)</p>
-                  )}
-                  {codeCheck && !codeCheck.valid && (
-                    <p className="text-xs text-rose-600 mt-1">Code invalide.</p>
-                  )}
-                  <p className="text-xs text-stone-400 mt-1">Sans code, votre compte donne accès à un échantillon de la bibliothèque.</p>
-                </Field>
+                <p className="text-xs text-stone-400 mb-4">Votre compte donne accès à un échantillon de la bibliothèque. Pour un accès complet via votre établissement, votre administrateur rattachera votre compte après cette inscription.</p>
                 <label className="flex items-start gap-2 mb-4 text-xs text-stone-600">
                   <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} className="mt-0.5" required />
                   <span>

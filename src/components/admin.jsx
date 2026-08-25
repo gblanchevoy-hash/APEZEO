@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../lib/supabase.js";
 import { PROFESSIONS } from "../data/constants.js";
-import { Badge, TopBar, Field, inputCls, CheckGroup } from "./ui.jsx";
+import { Badge, TopBar, Field, inputCls } from "./ui.jsx";
 
 export function generateCode(nom) {
   const base = (nom || "STRUCTURE")
@@ -520,6 +520,7 @@ export function MonCompteView({ email, profile, onProfileUpdated, onBack, ficheB
 
   const downloadMyData = async () => {
     setExporting(true);
+    const { default: jsPDF } = await import("jspdf");
     const [{ data: favoris }, { data: historique }, { data: fichesPerso }] = await Promise.all([
       supabase.from("favoris").select("*").order("created_at", { ascending: false }),
       supabase.from("historique").select("*").order("created_at", { ascending: false }),

@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef, createContext, useContext } from "react";
-import jsPDF from "jspdf";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   Search, Heart, Plus, AlertTriangle, Info, DatabaseZap, ArrowLeftRight,
-  UserX, FileText, Home, PhoneCall,
+  UserX, FileText, PhoneCall,
 } from "lucide-react";
 import { FAMILLES } from "./data/constants.js";
 import { AIDANT_FICHES } from "./data/aidantFiches.js";
@@ -10,7 +9,6 @@ import { supabase, supabaseReady, rowToFiche, rowToPersonalFiche, ficheToPersona
 import { getLocal, setLocal } from "./lib/localStore.js";
 
 import { NavCard, HomeContext } from "./components/ui.jsx";
-import { FicheCard } from "./components/FicheCard.jsx";
 import { LegalView, LegalFooterLinks } from "./components/legal.jsx";
 import { TroublesView, OutilsView, FamillesView, FicheListView, SearchView, FavorisView, MesFichesView, HistoriqueView, AidantFavorisView } from "./components/browse.jsx";
 import { QuizView, RecommandationsView } from "./components/quiz.jsx";
@@ -38,6 +36,7 @@ const emptyLocalFiche = () => ({
 function AuthenticatedApp({ session, onChangeMode }) {
   const userId = session.user.id;
   const [loading, setLoading] = useState(true);
+  const [libraryLoading, setLibraryLoading] = useState(true);
   const [dbError, setDbError] = useState(null);
   const [dbFiches, setDbFiches] = useState([]);
   const [localFiches, setLocalFiches] = useState([]);
@@ -114,18 +113,23 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const loadFromSupabase = useCallback(async () => {
     if (!supabaseReady) { setLoading(false); return; }
     setLoading(true);
+    setLibraryLoading(true);
 
-    const [interv, personal, favRows, histRows, profileRow] = await Promise.all([
-      fetchAllRows("interventions", "id"),
+    // La bibliothèque complète (le plus gros volume) charge en arrière-
+    // plan, sans bloquer le reste : profil, favoris et historique sont
+    // minuscules et peuvent débloquer l'écran d'accueil bien avant.
+    fetchAllRows("interventions", "id").then((interv) => {
+      if (interv.error) { setDbError(interv.error.message); }
+      else { setDbFiches((interv.data || []).map(rowToFiche)); setDbError(null); }
+      setLibraryLoading(false);
+    });
+
+    const [personal, favRows, histRows, profileRow] = await Promise.all([
       supabase.from("fiches_personnelles").select("*").eq("user_id", userId).order("id", { ascending: true }),
       supabase.from("favoris").select("*").eq("user_id", userId),
       supabase.from("historique").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       supabase.from("profiles").select("*").eq("id", userId).single(),
     ]);
-
-    if (interv.error) { setDbError(interv.error.message); setLoading(false); return; }
-    setDbFiches((interv.data || []).map(rowToFiche));
-    setDbError(null);
 
     if (!personal.error) setLocalFiches((personal.data || []).map(rowToPersonalFiche));
 
@@ -314,7 +318,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
       <div className={`lg:max-w-5xl xl:max-w-6xl lg:mx-auto ${modeExpert ? "theme-expert" : ""}`}>
       {current.view === "home" && (
         <Home_
-          fiches={fiches} dbCount={visibleDbFiches.length} profession={session?.user?.user_metadata?.profession}
+          fiches={fiches} dbCount={visibleDbFiches.length} libraryLoading={libraryLoading} profession={session?.user?.user_metadata?.profession}
           isAdmin={profile?.role === "admin"}
           isSuperAdmin={profile?.super_admin === true}
           canToggleExpert={profile?.plan === "structure"}

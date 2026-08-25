@@ -7,7 +7,7 @@ import { FAMILLES, TROUBLES, STADES } from "../data/constants.js";
 import { supabase } from "../lib/supabase.js";
 import { linesToArray, arrayToLines } from "../lib/utils.js";
 import { Badge, TopBar, Field, inputCls, CheckGroup, StructuredText, Section, BulletList, Stars } from "./ui.jsx";
-import { FicheCard, CROQUIS_PLEINE_LARGEUR } from "./FicheCard.jsx";
+import { CROQUIS_PLEINE_LARGEUR } from "./FicheCard.jsx";
 import { SourcesLine } from "./legal.jsx";
 
 export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche }) {

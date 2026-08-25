@@ -8,6 +8,23 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.js"],
     globals: true,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Sépare les bibliothèques externes du code de l'app : elles
+        // changent rarement, donc le navigateur peut les garder en
+        // cache même quand on met à jour App.jsx. jsPDF n'est pas ici
+        // exprès — il est chargé à la demande (voir admin.jsx), pas
+        // au démarrage.
+        manualChunks: {
+          "vendor-react": ["react", "react-dom"],
+          "vendor-supabase": ["@supabase/supabase-js"],
+          "vendor-icons": ["lucide-react"],
+          "vendor-sentry": ["@sentry/react"],
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
