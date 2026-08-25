@@ -27,6 +27,34 @@ de mode à tout moment).
   dans son navigateur (`localStorage`) — jamais partagés, jamais écrasés par
   vos mises à jour de la bibliothèque partagée.
 
+### Organisation des fichiers (`src/`)
+
+`App.jsx` ne contient plus que les deux "chefs d'orchestre" — `AuthenticatedApp`
+(version Pro) et `AidantApp` (version grand public) — qui gèrent la navigation
+et l'état, et assemblent les écrans ci-dessous. Tout le reste est découpé par
+domaine dans `src/components/` :
+
+| Fichier | Contenu |
+|---|---|
+| `ui.jsx` | Briques génériques réutilisées partout (Badge, TopBar, Section, BulletList...) |
+| `FicheCard.jsx` | La carte de fiche affichée dans toutes les listes |
+| `legal.jsx` | Mentions légales, CGU, confidentialité |
+| `browse.jsx` | Écrans de parcours : troubles, familles, recherche, favoris, historique |
+| `quiz.jsx` | Formulaire "Trouver la meilleure technique" + résultats |
+| `ficheDetail.jsx` | Détail d'une fiche, journal d'essai, formulaire de création/édition |
+| `admin.jsx` | Statistiques super-admin, création de structure, gestion d'équipe, mon compte |
+| `AuthView.jsx` | Écran de connexion (version Pro) |
+| `gate.jsx` | Page d'accueil publique (choix Professionnel / Aidant) |
+| `Home.jsx` | Écran d'accueil une fois connecté (version Pro) |
+
+`src/lib/` regroupe les fonctions sans dépendance à React (`scoreFiche`,
+formatage de texte, accès Supabase). `src/data/` regroupe les constantes et
+textes statiques (troubles, catégories, mentions légales).
+
+**Convention pour la suite** : tout nouvel écran devient un nouveau fichier
+dans `src/components/`, pas un ajout dans `App.jsx`. Si un fichier dépasse
+~400 lignes, c'est probablement le signe qu'il devrait être scindé.
+
 ## 1. Créer le projet Supabase
 
 1. Allez sur [supabase.com](https://supabase.com), créez un compte gratuit,
