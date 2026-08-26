@@ -2,7 +2,7 @@
 // journal d'essai ("avant/après"), et le formulaire de création/
 // modification d'une fiche personnelle.
 import { useState, useEffect } from "react";
-import { AlertTriangle, Heart, Leaf, Lightbulb, Clock, ChevronRight, Trash2, Save } from "lucide-react";
+import { AlertTriangle, Heart, Leaf, Lightbulb, Clock, ChevronRight, Trash2, Save, Download, Flag, Star } from "lucide-react";
 import { FAMILLES, TROUBLES, STADES } from "../data/constants.js";
 import { supabase } from "../lib/supabase.js";
 import { linesToArray, arrayToLines } from "../lib/utils.js";
@@ -10,8 +10,93 @@ import { Badge, TopBar, Field, inputCls, CheckGroup, StructuredText, Section, Bu
 import { CROQUIS_PLEINE_LARGEUR } from "./FicheCard.jsx";
 import { SourcesLine } from "./legal.jsx";
 
-export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche }) {
+export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche, teamAdminStructureId }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [showSignal, setShowSignal] = useState(false);
+  const [signalMessage, setSignalMessage] = useState("");
+  const [signalStatus, setSignalStatus] = useState(null); // null | "sending" | "sent" | "error"
+  const [teamFavId, setTeamFavId] = useState(undefined); // undefined = pas encore vérifié, null = pas favori, sinon son id
+
+  useEffect(() => {
+    if (!teamAdminStructureId) return;
+    let cancelled = false;
+    supabase.from("favoris_equipe").select("id").eq("structure_id", teamAdminStructureId).eq("fiche_id", f.id).maybeSingle()
+      .then(({ data }) => { if (!cancelled) setTeamFavId(data?.id || null); });
+    return () => { cancelled = true; };
+  }, [teamAdminStructureId, f.id]);
+
+  const toggleTeamFavori = async () => {
+    if (!teamAdminStructureId) return;
+    if (teamFavId) {
+      await supabase.from("favoris_equipe").delete().eq("id", teamFavId);
+      setTeamFavId(null);
+    } else {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data } = await supabase.from("favoris_equipe").insert({
+        structure_id: teamAdminStructureId, fiche_id: f.id, fiche_titre: f.titre, ajoute_par: user?.id,
+      }).select("id").single();
+      setTeamFavId(data?.id || null);
+    }
+  };
+
+  const exportFichePdf = async () => {
+    setExportingPdf(true);
+    const { default: jsPDF } = await import("jspdf");
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const marginX = 18, pageWidth = 210;
+    let y = 20;
+
+    const wrap = (text, size, weight = "normal", color = [40, 40, 40], gap = 5) => {
+      doc.setFont("helvetica", weight);
+      doc.setFontSize(size);
+      doc.setTextColor(...color);
+      const lines = doc.splitTextToSize(text, pageWidth - marginX * 2);
+      lines.forEach((line) => {
+        if (y > 280) { doc.addPage(); y = 20; }
+        doc.text(line, marginX, y);
+        y += gap;
+      });
+      y += 2;
+    };
+
+    doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(2, 44, 34);
+    doc.text("Apézeo", marginX, 14);
+    doc.setDrawColor(220, 220, 220); doc.line(marginX, 17, pageWidth - marginX, 17);
+    y = 26;
+
+    wrap(f.titre, 16, "bold", [2, 44, 34], 7);
+    wrap(f.categorie + (f.niveauDetail === "expert" ? "  ·  Expert" : ""), 10, "normal", [110, 110, 110]);
+    if (f.troubles?.length) wrap("Troubles : " + f.troubles.join(", "), 10, "normal", [80, 80, 80]);
+    y += 2;
+
+    if (f.description) { wrap("Description", 12, "bold", [4, 120, 87]); wrap(f.description, 10); }
+    if (f.deroulement?.length) {
+      wrap("Déroulement", 12, "bold", [4, 120, 87]);
+      f.deroulement.forEach((e, i) => wrap(`${i + 1}. ${e.titre}${e.description && e.description !== e.titre ? " — " + e.description : ""}`, 10));
+    }
+    if (f.pointsVigilance?.length) {
+      wrap("Points de vigilance", 12, "bold", [180, 100, 20]);
+      f.pointsVigilance.forEach((p) => wrap(`• ${p.point}${p.explication ? " — " + p.explication : ""}`, 10));
+    }
+    if (f.precautions?.length) { wrap("Précautions", 12, "bold", [180, 60, 60]); f.precautions.forEach((p) => wrap(`• ${p}`, 10)); }
+    if (f.fondementPrincipe) { wrap("Fondement", 12, "bold", [4, 120, 87]); wrap(f.fondementPrincipe, 10); }
+    if (f.sources?.length) { wrap("Sources", 12, "bold", [4, 120, 87]); f.sources.forEach((s) => wrap(`• ${s}`, 9, "normal", [120, 120, 120])); }
+
+    doc.save(`Apezeo - ${f.titre.slice(0, 60)}.pdf`);
+    setExportingPdf(false);
+  };
+
+  const submitSignal = async () => {
+    if (!signalMessage.trim()) return;
+    setSignalStatus("sending");
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase.from("signalements").insert({
+      user_id: user?.id, technique_id: f.techniqueId || null, fiche_titre: f.titre, message: signalMessage.trim(),
+    });
+    setSignalStatus(error ? "error" : "sent");
+    if (!error) setSignalMessage("");
+  };
   useEffect(() => { window.scrollTo(0, 0); }, [f.id]);
   useEffect(() => {
     if (!simple) supabase.rpc("enregistrer_vue", { p_fiche_ref: f.titre }).then(() => {}).catch(() => {});
@@ -80,6 +165,36 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
           )}
 
           {!simple && <SourcesLine sources={f.sources} dateMaj={f.dateMaj} />}
+
+          {!simple && (
+            <div className="flex items-center gap-4 mt-6 pt-4 border-t border-stone-100">
+              <button onClick={exportFichePdf} disabled={exportingPdf} className="flex items-center gap-1.5 text-xs font-medium text-stone-500 hover:text-violet-700 transition-colors">
+                <Download size={14} /> {exportingPdf ? "Export en cours…" : "Exporter en PDF"}
+              </button>
+              <button onClick={() => setShowSignal((s) => !s)} className="flex items-center gap-1.5 text-xs font-medium text-stone-500 hover:text-amber-700 transition-colors">
+                <Flag size={14} /> Signaler un problème
+              </button>
+            </div>
+          )}
+          {showSignal && (
+            <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+              {signalStatus === "sent" ? (
+                <p className="text-sm text-emerald-800">Merci, votre signalement a bien été transmis.</p>
+              ) : (
+                <>
+                  <textarea
+                    rows={3} value={signalMessage} onChange={(e) => setSignalMessage(e.target.value)}
+                    placeholder="Décrivez le problème (erreur, contenu peu clair, doublon…)"
+                    className="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  />
+                  <button onClick={submitSignal} disabled={!signalMessage.trim() || signalStatus === "sending"} className="text-xs font-semibold bg-amber-600 disabled:bg-stone-300 text-white rounded-lg px-3 py-1.5">
+                    {signalStatus === "sending" ? "Envoi…" : "Envoyer"}
+                  </button>
+                  {signalStatus === "error" && <p className="text-xs text-rose-600 mt-1.5">Une erreur est survenue, réessayez.</p>}
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#F4F6F2]/35 backdrop-blur-lg backdrop-saturate-150 p-4 flex justify-center shadow-[0_-4px_24px_-8px_rgba(88,28,135,0.12)]">
@@ -338,6 +453,39 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
         ) : (
           <button onClick={() => setConfirmDelete(true)} className="mt-6 text-xs text-stone-400 flex items-center gap-1"><Trash2 size={13} /> Supprimer cette fiche</button>
         ))}
+
+        <div className="flex items-center gap-4 mt-6 pt-4 border-t border-stone-100">
+          <button onClick={exportFichePdf} disabled={exportingPdf} className="flex items-center gap-1.5 text-xs font-medium text-stone-500 hover:text-emerald-700 transition-colors">
+            <Download size={14} /> {exportingPdf ? "Export en cours…" : "Exporter en PDF"}
+          </button>
+          <button onClick={() => setShowSignal((s) => !s)} className="flex items-center gap-1.5 text-xs font-medium text-stone-500 hover:text-amber-700 transition-colors">
+            <Flag size={14} /> Signaler un problème
+          </button>
+          {teamAdminStructureId && (
+            <button onClick={toggleTeamFavori} className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${teamFavId ? "text-emerald-700" : "text-stone-500 hover:text-emerald-700"}`}>
+              <Star size={14} className={teamFavId ? "fill-emerald-600 text-emerald-600" : ""} /> {teamFavId ? "Dans les favoris de l'équipe" : "Ajouter aux favoris de l'équipe"}
+            </button>
+          )}
+        </div>
+        {showSignal && (
+          <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+            {signalStatus === "sent" ? (
+              <p className="text-sm text-emerald-800">Merci, votre signalement a bien été transmis.</p>
+            ) : (
+              <>
+                <textarea
+                  rows={3} value={signalMessage} onChange={(e) => setSignalMessage(e.target.value)}
+                  placeholder="Décrivez le problème (erreur, contenu peu clair, doublon…)"
+                  className="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                />
+                <button onClick={submitSignal} disabled={!signalMessage.trim() || signalStatus === "sending"} className="text-xs font-semibold bg-amber-600 disabled:bg-stone-300 text-white rounded-lg px-3 py-1.5">
+                  {signalStatus === "sending" ? "Envoi…" : "Envoyer"}
+                </button>
+                {signalStatus === "error" && <p className="text-xs text-rose-600 mt-1.5">Une erreur est survenue, réessayez.</p>}
+              </>
+            )}
+          </div>
+        )}
           </div>
         </div>
       </div>

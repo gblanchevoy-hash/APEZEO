@@ -54,16 +54,18 @@ export function SuperAdminStatsView({ onBack }) {
   const [profiles, setProfiles] = useState([]);
   const [fiches, setFiches] = useState([]);
   const [usage, setUsage] = useState(null);
+  const [signalements, setSignalements] = useState([]);
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
-    const [structRes, profRes, fichesRes, usageRes] = await Promise.all([
+    const [structRes, profRes, fichesRes, usageRes, signalRes] = await Promise.all([
       supabase.from("structures").select("id, nom, quota, suspended, essai_duree_semaines, created_at"),
       supabase.from("profiles").select("id, structure_id, plan, actif, created_at"),
       supabase.from("interventions").select("categorie, niveau_detail"),
       supabase.rpc("stats_usage_bibliotheque"),
+      supabase.from("signalements").select("*").order("created_at", { ascending: false }),
     ]);
     if (structRes.error || profRes.error || fichesRes.error || usageRes.error) {
       setError((structRes.error || profRes.error || fichesRes.error || usageRes.error).message);
@@ -72,8 +74,14 @@ export function SuperAdminStatsView({ onBack }) {
     setProfiles(profRes.data || []);
     setFiches(fichesRes.data || []);
     setUsage(usageRes.data || null);
+    setSignalements(signalRes.data || []);
     setLoading(false);
   }, []);
+
+  const toggleResolu = async (id, current) => {
+    setSignalements((s) => s.map((x) => (x.id === id ? { ...x, resolu: !current } : x)));
+    await supabase.from("signalements").update({ resolu: !current }).eq("id", id);
+  };
 
   useEffect(() => { load(); }, [load]);
 
@@ -218,6 +226,29 @@ export function SuperAdminStatsView({ onBack }) {
                   <div key={cat} className="px-4 py-2.5 flex items-center justify-between">
                     <span className="text-sm text-emerald-950">{cat}</span>
                     <span className="text-xs font-bold text-stone-500">{n}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Signalements */}
+            <section>
+              <h2 className="text-sm font-bold text-emerald-950 mb-3 flex items-center gap-2">
+                Signalements
+                {signalements.filter((s) => !s.resolu).length > 0 && <Badge tone="rose">{signalements.filter((s) => !s.resolu).length} à traiter</Badge>}
+              </h2>
+              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
+                {signalements.length === 0 && <div className="px-4 py-3 text-sm text-stone-400">Aucun signalement pour l'instant.</div>}
+                {signalements.map((s) => (
+                  <div key={s.id} className={`px-4 py-3 ${s.resolu ? "opacity-50" : ""}`}>
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <span className="text-sm font-semibold text-emerald-950">{s.fiche_titre}</span>
+                      <button onClick={() => toggleResolu(s.id, s.resolu)} className={`shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full ${s.resolu ? "bg-stone-100 text-stone-500" : "bg-amber-100 text-amber-800"}`}>
+                        {s.resolu ? "Résolu" : "Marquer résolu"}
+                      </button>
+                    </div>
+                    <p className="text-sm text-stone-600 mb-1">{s.message}</p>
+                    <p className="text-[11px] text-stone-400">{s.technique_id ? s.technique_id + " · " : ""}{new Date(s.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}</p>
                   </div>
                 ))}
               </div>
@@ -775,20 +806,29 @@ export function AdminTeamView({ structureId, onBack }) {
   const [attachMsg, setAttachMsg] = useState(null); // {ok: bool, text: string}
   const [topFiches, setTopFiches] = useState([]);
   const [weeklyStats, setWeeklyStats] = useState([]);
+  const [invitations, setInvitations] = useState([]);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviting, setInviting] = useState(false);
+  const [inviteMsg, setInviteMsg] = useState(null);
+  const [favorisEquipe, setFavorisEquipe] = useState([]);
 
   const load = useCallback(async () => {
     if (!structureId) { setLoading(false); return; }
     setLoading(true);
-    const [{ data: structData }, { data: memberData }, { data: topData }, { data: weekData }] = await Promise.all([
+    const [{ data: structData }, { data: memberData }, { data: topData }, { data: weekData }, { data: inviteData }, { data: favData }] = await Promise.all([
       supabase.from("structures").select("*").eq("id", structureId).single(),
       supabase.from("profiles").select("*").eq("structure_id", structureId).order("created_at", { ascending: true }),
       supabase.rpc("top_fiches_structure"),
       supabase.rpc("vues_semaine_structure"),
+      supabase.from("invitations_structure").select("*").eq("structure_id", structureId).eq("utilisee", false).order("created_at", { ascending: false }),
+      supabase.from("favoris_equipe").select("*").eq("structure_id", structureId).order("created_at", { ascending: false }),
     ]);
     setStructure(structData || null);
     setMembers(memberData || []);
     setTopFiches(topData || []);
     setWeeklyStats(weekData || []);
+    setInvitations(inviteData || []);
+    setFavorisEquipe(favData || []);
     setLoading(false);
   }, [structureId]);
 
@@ -815,6 +855,35 @@ export function AdminTeamView({ structureId, onBack }) {
       if (result.success) { setAttachEmail(""); load(); }
     }
   };
+
+  const inviteAccount = async (e) => {
+    e.preventDefault();
+    setInviting(true);
+    setInviteMsg(null);
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase.from("invitations_structure").insert({
+      email: inviteEmail.trim().toLowerCase(), structure_id: structureId, invite_par: user?.id,
+    });
+    setInviting(false);
+    if (error) {
+      setInviteMsg({ ok: false, text: error.code === "23505" ? "Cette adresse a déjà une invitation en attente." : error.message });
+      return;
+    }
+    setInviteMsg({ ok: true, text: "En attente — rattachement automatique dès l'inscription. Pensez à prévenir la personne par vos propres moyens." });
+    setInviteEmail("");
+    load();
+  };
+
+  const cancelInvitation = async (id) => {
+    await supabase.from("invitations_structure").delete().eq("id", id);
+    load();
+  };
+
+  const removeFavoriEquipe = async (id) => {
+    await supabase.from("favoris_equipe").delete().eq("id", id);
+    setFavorisEquipe((f) => f.filter((x) => x.id !== id));
+  };
+
 
   const copyCode = () => {
     if (!structure) return;
@@ -891,6 +960,50 @@ export function AdminTeamView({ structureId, onBack }) {
             <p className={`text-xs mt-2 ${attachMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{attachMsg.text}</p>
           )}
         </div>
+
+        <div className="bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm mb-4">
+          <div className="font-semibold text-emerald-950 text-sm mb-1">Pré-inviter par e-mail</div>
+          <p className="text-xs text-stone-400 mb-3">Rattachement automatique dès que la personne crée son compte — aucun e-mail n'est envoyé, prévenez-la vous-même.</p>
+          <form onSubmit={inviteAccount} className="flex gap-2">
+            <input
+              type="email" required placeholder="email@exemple.fr"
+              value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)}
+              className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm"
+            />
+            <button type="submit" disabled={inviting} className="bg-emerald-700 disabled:bg-stone-300 text-white text-sm font-medium rounded-lg px-4">
+              {inviting ? "…" : "Inviter"}
+            </button>
+          </form>
+          {inviteMsg && (
+            <p className={`text-xs mt-2 ${inviteMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{inviteMsg.text}</p>
+          )}
+          {invitations.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-stone-100 flex flex-col gap-1.5">
+              <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-1">En attente</div>
+              {invitations.map((inv) => (
+                <div key={inv.id} className="flex items-center justify-between text-sm">
+                  <span className="text-stone-600">{inv.email}</span>
+                  <button onClick={() => cancelInvitation(inv.id)} className="text-xs text-stone-400 hover:text-rose-600">Annuler</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {favorisEquipe.length > 0 && (
+          <div className="bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm mb-4">
+            <div className="font-semibold text-emerald-950 text-sm mb-0.5">Favoris de l'équipe</div>
+            <p className="text-xs text-stone-400 mb-3">Techniques recommandées, visibles par toute votre équipe. Ajoutez-en depuis le détail d'une fiche.</p>
+            <div className="flex flex-col gap-1.5">
+              {favorisEquipe.map((fav) => (
+                <div key={fav.id} className="flex items-center justify-between text-sm">
+                  <span className="text-emerald-950">{fav.fiche_titre}</span>
+                  <button onClick={() => removeFavoriEquipe(fav.id)} className="text-xs text-stone-400 hover:text-rose-600">Retirer</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {weeklyStats.length > 0 && (() => {
           const thisWeek = weeklyStats[0]?.total_vues || 0;

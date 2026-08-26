@@ -405,6 +405,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           onLog={() => push({ view: "log", fiche: current.fiche })}
           onEdit={current.fiche.isLocal ? () => push({ view: "form", fiche: ficheById(current.fiche.id) || current.fiche }) : null}
           onDelete={current.fiche.isLocal ? async () => { await deleteLocalFiche(current.fiche.id); pop(); } : null}
+          teamAdminStructureId={profile?.role === "admin" ? profile?.structure_id : null}
         />
       )}
       {current.view === "log" && (

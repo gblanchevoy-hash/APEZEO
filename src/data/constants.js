@@ -6,7 +6,6 @@ export const TROUBLES = [
   "Comportements sexuels inadaptés", "Refus alimentaire",
   "Troubles pendant la toilette", "Troubles pendant les repas",
   "Troubles pendant l'habillage", "Troubles nocturnes", "Stress de l'aidant",
-  "Routine", "Sécurité", "Relaxation", "Respiration",
   "Autre",
 ];
 
