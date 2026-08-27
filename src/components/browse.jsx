@@ -2,9 +2,10 @@
 // familles de besoin, listes de fiches, recherche libre, favoris,
 // mes fiches, historique. Tous partagent FicheCard et ne dépendent
 // d'aucun état propre à AuthenticatedApp/AidantApp.
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, ChevronRight, Heart } from "lucide-react";
 import { TROUBLES, FAMILLES, OUTILS_TYPES } from "../data/constants.js";
+import { supabase } from "../lib/supabase.js";
 import { TopBar, Badge } from "./ui.jsx";
 import { FicheCard } from "./FicheCard.jsx";
 
@@ -233,6 +234,37 @@ export function HistoriqueView({ historique, ficheById, onBack }) {
 // Favoris côté Aidant : favoris y est un simple tableau d'ids (pas
 // {liked, disliked} comme côté Pro), d'où ce petit écran dédié plutôt
 // que de réutiliser FavorisView tel quel.
+export function FavorisEquipeView({ structureId, fiches, onBack, onOpenFiche }) {
+  const [loading, setLoading] = useState(true);
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    if (!structureId) { setLoading(false); return; }
+    supabase.from("favoris_equipe").select("*").eq("structure_id", structureId).order("created_at", { ascending: false })
+      .then(({ data }) => { setRows(data || []); setLoading(false); });
+  }, [structureId]);
+
+  const resolved = rows.map((r) => ({ row: r, fiche: fiches.find((f) => f.id === r.fiche_id) }));
+
+  return (
+    <div className="pb-10">
+      <TopBar title="Favoris de l'équipe" onBack={onBack} />
+      <div className="p-4">
+        <p className="text-sm text-stone-500 mb-4">Techniques recommandées par votre administrateur, pour toute l'équipe.</p>
+        <div className="flex flex-col gap-2.5">
+          {!loading && rows.length === 0 && <div className="text-stone-400 text-sm py-8 text-center">Aucun favori d'équipe pour l'instant.</div>}
+          {resolved.map(({ row, fiche }) => (
+            fiche ? (
+              <FicheCard key={row.id} f={fiche} onClick={() => onOpenFiche(fiche)} />
+            ) : (
+              <div key={row.id} className="bg-stone-50 rounded-xl p-3.5 text-sm text-stone-400 italic">{row.fiche_titre} (fiche indisponible)</div>
+            )
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AidantFavorisView({ fiches, favoris, onBack, onOpenFiche }) {
   const liked = fiches.filter((f) => favoris.includes(f.id));
   return (

@@ -10,7 +10,7 @@ import { getLocal, setLocal } from "./lib/localStore.js";
 
 import { NavCard, HomeContext } from "./components/ui.jsx";
 import { LegalView, LegalFooterLinks } from "./components/legal.jsx";
-import { TroublesView, OutilsView, FamillesView, FicheListView, SearchView, FavorisView, MesFichesView, HistoriqueView, AidantFavorisView } from "./components/browse.jsx";
+import { TroublesView, OutilsView, FamillesView, FicheListView, SearchView, FavorisView, MesFichesView, HistoriqueView, AidantFavorisView, FavorisEquipeView } from "./components/browse.jsx";
 import { QuizView, RecommandationsView } from "./components/quiz.jsx";
 import { FicheDetailView, LogView, FicheFormView } from "./components/ficheDetail.jsx";
 import { SuperAdminStatsView, CreateStructureView, MonCompteView, AdminTeamView } from "./components/admin.jsx";
@@ -321,6 +321,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           fiches={fiches} dbCount={visibleDbFiches.length} libraryLoading={libraryLoading} profession={session?.user?.user_metadata?.profession}
           isAdmin={profile?.role === "admin"}
           isSuperAdmin={profile?.super_admin === true}
+          hasStructure={!!profile?.structure_id}
           canToggleExpert={profile?.plan === "structure"}
           onLockedExpertClick={() => showToast("La Bibliothèque Expert est réservée aux comptes Structure — contactez votre établissement pour en bénéficier.")}
           modeExpert={modeExpert}
@@ -336,6 +337,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           onOpenOutils={() => push({ view: "outils" })}
           onOpenSearch={() => push({ view: "search" })}
           onOpenFavoris={() => push({ view: "favoris" })}
+          onOpenFavorisEquipe={() => push({ view: "favoris-equipe" })}
           onOpenQuiz={() => push({ view: "quiz" })}
           onOpenAdd={() => push({ view: "form", fiche: emptyLocalFiche() })}
           onRefresh={loadFromSupabase}
@@ -373,6 +375,9 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
       {current.view === "favoris" && (
         <FavorisView fiches={fichesRecherchables} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+      )}
+      {current.view === "favoris-equipe" && (
+        <FavorisEquipeView structureId={profile?.structure_id} fiches={fichesRecherchables} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "historique" && (
         <HistoriqueView historique={historique} ficheById={ficheById} onBack={pop} />

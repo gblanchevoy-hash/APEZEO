@@ -1,12 +1,12 @@
 // Écran d'accueil de la version Pro (après connexion).
 import {
   ArrowLeftRight, BookOpen, Info, Lock, LogOut, Plus, RefreshCw, Users,
-  Activity, AlertTriangle, Box, FileText, Filter, Heart, Search, Stethoscope,
+  Activity, AlertTriangle, Box, FileText, Filter, Heart, Search, Stethoscope, Star,
 } from "lucide-react";
 import { NavCard } from "./ui.jsx";
 import { LegalFooterLinks } from "./legal.jsx";
 
-export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
+export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
@@ -68,6 +68,7 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
         <NavCard icon={Search} label="Recherche libre" onClick={onOpenSearch} accent="emerald" />
         <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="emerald" />
         <NavCard icon={FileText} label="Mes fiches" sub="Toutes vos créations personnelles" onClick={onOpenMesFiches} accent="emerald" />
+        {hasStructure && <NavCard icon={Star} label="Favoris de l'équipe" sub="Recommandées par votre établissement" onClick={onOpenFavorisEquipe} accent="emerald" />}
         {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="admin" badge="Admin" />}
         {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="admin" badge="Admin" />}
         {isSuperAdmin && <NavCard icon={Activity} label="Statistiques" sub="Vue d'ensemble de la plateforme" onClick={onOpenSuperAdminStats} accent="admin" badge="Admin" />}

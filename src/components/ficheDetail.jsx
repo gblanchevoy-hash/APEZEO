@@ -43,6 +43,18 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
   const exportFichePdf = async () => {
     setExportingPdf(true);
     const { default: jsPDF } = await import("jspdf");
+
+    let logoBase64 = null;
+    try {
+      const res = await fetch("/logo-phoenix.png");
+      const blob = await res.blob();
+      logoBase64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch { /* pas bloquant si le logo ne charge pas */ }
+
     const doc = new jsPDF({ unit: "mm", format: "a4" });
     const marginX = 18, pageWidth = 210;
     let y = 20;
@@ -60,8 +72,9 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
       y += 2;
     };
 
+    if (logoBase64) doc.addImage(logoBase64, "PNG", marginX, 6, 10, 10);
     doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(2, 44, 34);
-    doc.text("Apézeo", marginX, 14);
+    doc.text("Apézeo", marginX + (logoBase64 ? 13 : 0), 12);
     doc.setDrawColor(220, 220, 220); doc.line(marginX, 17, pageWidth - marginX, 17);
     y = 26;
 
