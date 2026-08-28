@@ -100,6 +100,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
     if (f.sources?.length) { wrap("Sources", 12, "bold", [4, 120, 87]); f.sources.forEach((s) => wrap(`• ${s}`, 9, "normal", [120, 120, 120])); }
 
     doc.save(`Apezeo - ${f.titre.slice(0, 60)}.pdf`);
+    supabase.rpc("enregistrer_telechargement", { p_fiche_ref: f.titre }).then(() => {}).catch(() => {});
     setExportingPdf(false);
   };
 

@@ -89,6 +89,7 @@ export function SuperAdminStatsView({ onBack }) {
   const [openTop, setOpenTop] = useState(true);
   const [openTopSemaine, setOpenTopSemaine] = useState(true);
   const [openContenu, setOpenContenu] = useState(true);
+  const [openParCategorie, setOpenParCategorie] = useState(true);
 
   // --- Croissance & comptes ---
   const structStatus = useMemo(() => structures.map((s) => {
@@ -200,10 +201,13 @@ export function SuperAdminStatsView({ onBack }) {
             {/* Usage de la bibliothèque */}
             <section>
               <h2 className="text-sm font-bold text-emerald-950 mb-3">Usage de la bibliothèque</h2>
-              <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="grid grid-cols-2 gap-3 mb-3">
                 <StatBlock label="Vues ce mois" value={usage?.total_vues_mois ?? 0} sub="toutes structures confondues" />
+                <StatBlock label="Vues cette semaine" value={usage?.total_vues_semaine ?? 0} tone="emerald" />
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <StatBlock label="PDF téléchargés ce mois" value={usage?.total_telechargements_mois ?? 0} />
                 <StatBlock label="Jamais consultées" value={usage?.fiches_jamais_consultees ?? 0} tone={usage?.fiches_jamais_consultees > 0 ? "amber" : "stone"} />
-                <StatBlock label="Fiches au total" value={usage?.total_fiches ?? 0} />
               </div>
               <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5 mb-3">
                 <button onClick={() => setOpenTop((o) => !o)} className="w-full px-4 py-2.5 flex items-center justify-between text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
@@ -248,8 +252,11 @@ export function SuperAdminStatsView({ onBack }) {
                     <StatBlock label="Fiches Expert" value={nbExpert} tone="emerald" />
                   </div>
                   <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
-                    <div className="px-4 py-2.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Répartition par catégorie</div>
-                    {parCategorie.map(([cat, n]) => (
+                    <button onClick={() => setOpenParCategorie((o) => !o)} className="w-full px-4 py-2.5 flex items-center justify-between text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
+                      Répartition par catégorie
+                      <span>{openParCategorie ? "▾" : "▸"}</span>
+                    </button>
+                    {openParCategorie && parCategorie.map(([cat, n]) => (
                       <div key={cat} className="px-4 py-2.5 flex items-center justify-between">
                         <span className="text-sm text-emerald-950">{cat}</span>
                         <span className="text-xs font-bold text-stone-500">{n}</span>

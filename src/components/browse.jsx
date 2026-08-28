@@ -74,7 +74,9 @@ export function FicheListView({ title, items, onBack, onOpenFiche, favoris, empt
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   const [typeFilter, setTypeFilter] = useState("tous");
   const hasConcept = items.some((f) => f.typeFiche === "concept");
-  const filtered = typeFilter === "tous" ? items : items.filter((f) => f.typeFiche === typeFilter);
+  const filtered = (typeFilter === "tous" ? items : items.filter((f) => f.typeFiche === typeFilter))
+    .slice()
+    .sort((a, b) => (a.typeFiche === "concept" ? 0 : 1) - (b.typeFiche === "concept" ? 0 : 1));
   return (
     <div className="pb-10">
       <TopBar title={title} onBack={onBack} />

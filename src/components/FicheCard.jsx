@@ -13,8 +13,14 @@ export function FicheCard({ f, onClick, favState }) {
   const isOutil = f.typeFiche === "outil";
   const isConcept = f.typeFiche === "concept";
   const isTechnique = !isOutil && !isConcept;
+  const isStandard = f.niveauDetail !== "expert";
+  const borderCls = isStandard
+    ? "border-l-[3px] border-emerald-300 focus-visible:outline-emerald-600"
+    : isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500"
+    : isConcept ? "border-l-[3px] border-sky-400 focus-visible:outline-sky-500"
+    : "border-l-[3px] border-amber-400 focus-visible:outline-emerald-600";
   return (
-    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500" : isConcept ? "border-l-[3px] border-sky-400 focus-visible:outline-sky-500" : "border-l-[3px] border-amber-400 focus-visible:outline-emerald-600"}`}>
+    <button onClick={onClick} className={`w-full text-left bg-white rounded-2xl p-4 shadow-[0_2px_12px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_20px_-6px_rgba(6,78,59,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 transition-all duration-200 flex items-start gap-3 ${borderCls}`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
           {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone={nonSourcee ? "orangeDark" : "emerald"}>{f.categorie}</Badge>}

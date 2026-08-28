@@ -122,7 +122,7 @@ export function StructuredText({ text }) {
     <div className="space-y-4">
       {blocks.map((b, i) => (
         <div key={i}>
-          {b.label && <div className="text-[13px] font-bold text-emerald-800 mb-1.5">{b.label}</div>}
+          {b.label && <div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1.5">{b.label}</div>}
           {b.lines.every((l) => l.trim().startsWith("- ")) ? (
             <ul className="space-y-1">
               {b.lines.map((l, j) => (
