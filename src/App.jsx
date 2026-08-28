@@ -13,7 +13,7 @@ import { LegalView, LegalFooterLinks } from "./components/legal.jsx";
 import { TroublesView, OutilsView, FamillesView, FicheListView, SearchView, FavorisView, MesFichesView, HistoriqueView, AidantFavorisView, FavorisEquipeView } from "./components/browse.jsx";
 import { QuizView, RecommandationsView } from "./components/quiz.jsx";
 import { FicheDetailView, LogView, FicheFormView } from "./components/ficheDetail.jsx";
-import { SuperAdminStatsView, CreateStructureView, MonCompteView, AdminTeamView } from "./components/admin.jsx";
+import { SuperAdminStatsView, CreateStructureView, MonCompteView, AdminTeamView, essaiJoursRestants } from "./components/admin.jsx";
 import { AuthView } from "./components/AuthView.jsx";
 import { Gate } from "./components/gate.jsx";
 import { Home_ } from "./components/Home.jsx";
@@ -45,6 +45,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const [toast, setToast] = useState(null);
   const [stack, setStack] = useState([{ view: "home" }]);
   const [profile, setProfile] = useState(null);
+  const [essaisExpires, setEssaisExpires] = useState([]);
   const [essaiTermine, setEssaiTermine] = useState(false);
   const [sessionReplaced, setSessionReplaced] = useState(false);
   const mySessionToken = useRef(null);
@@ -167,6 +168,16 @@ function AuthenticatedApp({ session, onChangeMode }) {
         const token = crypto.randomUUID();
         mySessionToken.current = token;
         await supabase.from("profiles").update({ session_token: token }).eq("id", userId);
+      }
+
+      // Alerte super-admin : structures dont l'essai est terminé mais
+      // toujours actives (pas suspendues) — protégée nativement, la
+      // policy RLS de `structures` ne renvoie ces lignes qu'à un vrai
+      // super-admin, quel que soit le moyen d'appel utilisé.
+      if (p?.super_admin) {
+        const { data: structs } = await supabase.from("structures").select("id, nom, essai_duree_semaines, created_at, suspended");
+        const expirees = (structs || []).filter((s) => !s.suspended && essaiJoursRestants(s) != null && essaiJoursRestants(s) <= 0);
+        setEssaisExpires(expirees);
       }
     }
 
@@ -321,6 +332,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           fiches={fiches} dbCount={visibleDbFiches.length} libraryLoading={libraryLoading} profession={session?.user?.user_metadata?.profession}
           isAdmin={profile?.role === "admin"}
           isSuperAdmin={profile?.super_admin === true}
+          essaisExpires={essaisExpires}
           hasStructure={!!profile?.structure_id}
           canToggleExpert={profile?.plan === "structure"}
           onLockedExpertClick={() => showToast("La Bibliothèque Expert est réservée aux comptes Structure — contactez votre établissement pour en bénéficier.")}

@@ -243,7 +243,10 @@ export function FavorisEquipeView({ structureId, fiches, onBack, onOpenFiche }) 
       .then(({ data }) => { setRows(data || []); setLoading(false); });
   }, [structureId]);
 
-  const resolved = rows.map((r) => ({ row: r, fiche: fiches.find((f) => f.id === r.fiche_id) }));
+  const resolved = rows.map((r) => ({
+    row: r,
+    fiche: fiches.find((f) => f.techniqueId === r.fiche_id || f.id === r.fiche_id),
+  }));
 
   return (
     <div className="pb-10">

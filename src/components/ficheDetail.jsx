@@ -17,14 +17,17 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
   const [signalMessage, setSignalMessage] = useState("");
   const [signalStatus, setSignalStatus] = useState(null); // null | "sending" | "sent" | "error"
   const [teamFavId, setTeamFavId] = useState(undefined); // undefined = pas encore vérifié, null = pas favori, sinon son id
+  // Identifiant stable : technique_id ne change jamais, contrairement à
+  // f.id (basé sur la ligne en base, qui change à chaque réimport).
+  const stableFicheId = f.techniqueId || f.id;
 
   useEffect(() => {
     if (!teamAdminStructureId) return;
     let cancelled = false;
-    supabase.from("favoris_equipe").select("id").eq("structure_id", teamAdminStructureId).eq("fiche_id", f.id).maybeSingle()
+    supabase.from("favoris_equipe").select("id").eq("structure_id", teamAdminStructureId).eq("fiche_id", stableFicheId).maybeSingle()
       .then(({ data }) => { if (!cancelled) setTeamFavId(data?.id || null); });
     return () => { cancelled = true; };
-  }, [teamAdminStructureId, f.id]);
+  }, [teamAdminStructureId, stableFicheId]);
 
   const toggleTeamFavori = async () => {
     if (!teamAdminStructureId) return;
@@ -34,7 +37,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
     } else {
       const { data: { user } } = await supabase.auth.getUser();
       const { data } = await supabase.from("favoris_equipe").insert({
-        structure_id: teamAdminStructureId, fiche_id: f.id, fiche_titre: f.titre, ajoute_par: user?.id,
+        structure_id: teamAdminStructureId, fiche_id: stableFicheId, fiche_titre: f.titre, ajoute_par: user?.id,
       }).select("id").single();
       setTeamFavId(data?.id || null);
     }

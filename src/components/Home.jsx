@@ -6,9 +6,17 @@ import {
 import { NavCard } from "./ui.jsx";
 import { LegalFooterLinks } from "./legal.jsx";
 
-export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
+export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, essaisExpires, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
+      {isSuperAdmin && essaisExpires?.length > 0 && (
+        <button onClick={onOpenCreateStructure} className="block w-[calc(100%-2rem)] mx-4 mt-4 lg:w-auto lg:mx-8 text-left bg-rose-50 border border-rose-200 rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-rose-100 transition-colors">
+          <span className="text-rose-600 text-lg">⚠</span>
+          <span className="text-sm text-rose-800">
+            <b>{essaisExpires.length} essai{essaisExpires.length > 1 ? "s" : ""} terminé{essaisExpires.length > 1 ? "s" : ""}</b> toujours actif{essaisExpires.length > 1 ? "s" : ""}, non suspendu{essaisExpires.length > 1 ? "s" : ""} — {essaisExpires.map((s) => s.nom).join(", ")}
+          </span>
+        </button>
+      )}
       <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
         {/* Motif de vague — plusieurs profondeurs, très discret, jamais agité */}
         <svg className="absolute inset-x-0 bottom-0 w-full h-24 lg:h-32 pointer-events-none" viewBox="0 0 400 100" preserveAspectRatio="none">

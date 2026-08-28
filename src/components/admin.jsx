@@ -29,10 +29,10 @@ export function essaiJoursRestants(s) {
 export function StructureStatusBadge({ s }) {
   const jours = essaiJoursRestants(s);
   if (s.suspended) {
-    return <Badge tone="rose">{jours != null && jours <= 0 ? "Essai terminé" : "Suspendue"}</Badge>;
+    return <Badge tone="rose">{jours != null && jours <= 0 ? "Suspendue (essai terminé)" : "Suspendue"}</Badge>;
   }
   if (jours == null) return <Badge tone="emerald">Abonnement actif</Badge>;
-  if (jours <= 0) return <Badge tone="rose">Essai terminé</Badge>;
+  if (jours <= 0) return <Badge tone="rose">⚠ Essai terminé, non suspendue</Badge>;
   if (jours <= 3) return <Badge tone="rose">Essai : {jours} j restant{jours > 1 ? "s" : ""}</Badge>;
   return <Badge tone="amber">Essai : {jours} j restants</Badge>;
 }
@@ -84,6 +84,10 @@ export function SuperAdminStatsView({ onBack }) {
   };
 
   useEffect(() => { load(); }, [load]);
+
+  const [openTop, setOpenTop] = useState(true);
+  const [openTopSemaine, setOpenTopSemaine] = useState(true);
+  const [openContenu, setOpenContenu] = useState(true);
 
   // --- Croissance & comptes ---
   const structStatus = useMemo(() => structures.map((s) => {
@@ -200,10 +204,27 @@ export function SuperAdminStatsView({ onBack }) {
                 <StatBlock label="Jamais consultées" value={usage?.fiches_jamais_consultees ?? 0} tone={usage?.fiches_jamais_consultees > 0 ? "amber" : "stone"} />
                 <StatBlock label="Fiches au total" value={usage?.total_fiches ?? 0} />
               </div>
+              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5 mb-3">
+                <button onClick={() => setOpenTop((o) => !o)} className="w-full px-4 py-2.5 flex items-center justify-between text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
+                  Top 10 fiches — ce mois, toutes structures
+                  <span>{openTop ? "▾" : "▸"}</span>
+                </button>
+                {openTop && (!usage?.top_fiches || usage.top_fiches.length === 0) && <div className="px-4 py-3 text-sm text-stone-400">Aucune consultation ce mois-ci.</div>}
+                {openTop && usage?.top_fiches?.map((t, i) => (
+                  <div key={i} className="px-4 py-3 flex items-center gap-3">
+                    <span className="text-xs font-bold text-stone-300 w-4">{i + 1}</span>
+                    <span className="text-sm text-emerald-950 flex-1">{t.titre}</span>
+                    <span className="text-xs font-bold text-emerald-700">{t.vues} vues</span>
+                  </div>
+                ))}
+              </div>
               <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
-                <div className="px-4 py-2.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Top 10 fiches — ce mois, toutes structures</div>
-                {(!usage?.top_fiches || usage.top_fiches.length === 0) && <div className="px-4 py-3 text-sm text-stone-400">Aucune consultation ce mois-ci.</div>}
-                {usage?.top_fiches?.map((t, i) => (
+                <button onClick={() => setOpenTopSemaine((o) => !o)} className="w-full px-4 py-2.5 flex items-center justify-between text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
+                  Top fiches — cette semaine, toutes structures
+                  <span>{openTopSemaine ? "▾" : "▸"}</span>
+                </button>
+                {openTopSemaine && (!usage?.top_fiches_semaine || usage.top_fiches_semaine.length === 0) && <div className="px-4 py-3 text-sm text-stone-400">Aucune consultation cette semaine.</div>}
+                {openTopSemaine && usage?.top_fiches_semaine?.map((t, i) => (
                   <div key={i} className="px-4 py-3 flex items-center gap-3">
                     <span className="text-xs font-bold text-stone-300 w-4">{i + 1}</span>
                     <span className="text-sm text-emerald-950 flex-1">{t.titre}</span>
@@ -215,20 +236,27 @@ export function SuperAdminStatsView({ onBack }) {
 
             {/* Contenu de la bibliothèque */}
             <section>
-              <h2 className="text-sm font-bold text-emerald-950 mb-3">Contenu de la bibliothèque</h2>
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <StatBlock label="Fiches standard" value={nbStandard} />
-                <StatBlock label="Fiches Expert" value={nbExpert} tone="emerald" />
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-bold text-emerald-950">Contenu de la bibliothèque</h2>
+                <button onClick={() => setOpenContenu((o) => !o)} className="text-xs text-stone-400 font-semibold">{openContenu ? "Réduire ▾" : "Développer ▸"}</button>
               </div>
-              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
-                <div className="px-4 py-2.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Répartition par catégorie</div>
-                {parCategorie.map(([cat, n]) => (
-                  <div key={cat} className="px-4 py-2.5 flex items-center justify-between">
-                    <span className="text-sm text-emerald-950">{cat}</span>
-                    <span className="text-xs font-bold text-stone-500">{n}</span>
+              {openContenu && (
+                <>
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <StatBlock label="Fiches standard" value={nbStandard} />
+                    <StatBlock label="Fiches Expert" value={nbExpert} tone="emerald" />
                   </div>
-                ))}
-              </div>
+                  <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
+                    <div className="px-4 py-2.5 text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Répartition par catégorie</div>
+                    {parCategorie.map(([cat, n]) => (
+                      <div key={cat} className="px-4 py-2.5 flex items-center justify-between">
+                        <span className="text-sm text-emerald-950">{cat}</span>
+                        <span className="text-xs font-bold text-stone-500">{n}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </section>
 
             {/* Signalements */}
