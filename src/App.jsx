@@ -86,6 +86,13 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const outilsFiches = useMemo(() => visibleDbFiches.filter((f) => f.typeFiche === "outil"), [visibleDbFiches]);
   // Recherche et favoris : toujours accessibles, y compris les outils, indépendamment du mode Standard/Expert.
   const fichesRecherchables = useMemo(() => [...fiches, ...outilsFiches], [fiches, outilsFiches]);
+  // Favoris d'équipe : toujours tous niveaux confondus -- un admin peut
+  // recommander une fiche Standard alors qu'un membre est en mode
+  // Expert, et inversement, il ne faut jamais qu'elle disparaisse.
+  const fichesTousNiveaux = useMemo(
+    () => [...visibleDbFiches.filter((f) => f.typeFiche !== "outil"), ...localFiches, ...outilsFiches],
+    [visibleDbFiches, localFiches, outilsFiches]
+  );
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200); };
 
@@ -367,7 +374,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <FavorisView fiches={fichesRecherchables} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "favoris-equipe" && (
-        <FavorisEquipeView structureId={profile?.structure_id} fiches={fichesRecherchables} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+        <FavorisEquipeView structureId={profile?.structure_id} fiches={fichesTousNiveaux} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "historique" && (
         <HistoriqueView historique={historique} ficheById={ficheById} onBack={pop} />
