@@ -64,7 +64,7 @@ export function SuperAdminStatsView({ onBack }) {
     const [structRes, profRes, fichesRes, usageRes, signalRes] = await Promise.all([
       fetchAllRows(supabase, "structures", "id, nom, quota, suspended, essai_duree_semaines, created_at"),
       fetchAllRows(supabase, "profiles", "id, structure_id, plan, actif, created_at"),
-      fetchAllRows(supabase, "interventions", "categorie, niveau_detail"),
+      fetchAllRows(supabase, "interventions", "categorie, niveau_detail, type_fiche"),
       supabase.rpc("stats_usage_bibliotheque"),
       supabase.from("signalements").select("*").order("created_at", { ascending: false }),
     ]);
@@ -94,7 +94,7 @@ export function SuperAdminStatsView({ onBack }) {
   // --- Croissance & comptes ---
   const structStatus = useMemo(() => structures.map((s) => {
     const jours = essaiJoursRestants(s);
-    if (s.suspended) return jours != null && jours <= 0 ? "essai_termine" : "suspendue";
+    if (s.suspended) return "suspendue";
     if (jours == null) return "actif";
     if (jours <= 0) return "essai_termine";
     return "essai_cours";
@@ -127,13 +127,18 @@ export function SuperAdminStatsView({ onBack }) {
   }).filter((s) => s.pct >= 80).sort((a, b) => b.pct - a.pct), [structures, profiles]);
 
   // --- Contenu bibliothèque ---
+  // Les outils spécifiques sont exclus du calcul Standard/Expert, comme
+  // sur l'accueil ("X techniques" y exclut aussi les outils) -- comptés
+  // à part ci-dessous pour rester cohérent entre les deux écrans.
+  const fichesNonOutils = useMemo(() => fiches.filter((f) => f.type_fiche !== "outil"), [fiches]);
+  const nbOutils = fiches.length - fichesNonOutils.length;
   const parCategorie = useMemo(() => {
     const map = {};
-    fiches.forEach((f) => { map[f.categorie] = (map[f.categorie] || 0) + 1; });
+    fichesNonOutils.forEach((f) => { map[f.categorie] = (map[f.categorie] || 0) + 1; });
     return Object.entries(map).sort((a, b) => b[1] - a[1]);
-  }, [fiches]);
-  const nbExpert = fiches.filter((f) => f.niveau_detail === "expert").length;
-  const nbStandard = fiches.length - nbExpert;
+  }, [fichesNonOutils]);
+  const nbExpert = fichesNonOutils.filter((f) => f.niveau_detail === "expert").length;
+  const nbStandard = fichesNonOutils.length - nbExpert;
 
   return (
     <div className="pb-10">
@@ -250,6 +255,9 @@ export function SuperAdminStatsView({ onBack }) {
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <StatBlock label="Fiches standard" value={nbStandard} />
                     <StatBlock label="Fiches Expert" value={nbExpert} tone="emerald" />
+                  </div>
+                  <div className="grid grid-cols-1 gap-3 mb-3">
+                    <StatBlock label="Outils spécifiques" value={nbOutils} sub="comptés à part, comme sur l'accueil" />
                   </div>
                   <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
                     <button onClick={() => setOpenParCategorie((o) => !o)} className="w-full px-4 py-2.5 flex items-center justify-between text-[11px] font-semibold text-stone-400 uppercase tracking-wide">

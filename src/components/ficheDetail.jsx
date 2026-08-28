@@ -87,15 +87,26 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
     y += 2;
 
     if (f.description) { wrap("Description", 12, "bold", [4, 120, 87]); wrap(f.description, 10); }
+    if (f.pourquoi) { wrap("Pourquoi ça fonctionne", 12, "bold", [4, 120, 87]); wrap(f.pourquoi, 10); }
+    if (f.quandUtiliser) { wrap("Quand l'utiliser", 12, "bold", [4, 120, 87]); wrap(f.quandUtiliser, 10); }
+    if (f.quandEviter) { wrap("Quand éviter", 12, "bold", [180, 60, 60]); wrap(f.quandEviter, 10); }
     if (f.deroulement?.length) {
       wrap("Déroulement", 12, "bold", [4, 120, 87]);
       f.deroulement.forEach((e, i) => wrap(`${i + 1}. ${e.titre}${e.description && e.description !== e.titre ? " — " + e.description : ""}`, 10));
     }
+    if (f.etapes?.length) {
+      wrap("Étapes", 12, "bold", [4, 120, 87]);
+      f.etapes.forEach((e, i) => wrap(`${i + 1}. ${e}`, 10));
+    }
+    if (f.materiel?.length) { wrap("Matériel", 12, "bold", [4, 120, 87]); f.materiel.forEach((m) => wrap(`• ${m}`, 10)); }
+    if (f.conseils?.length) { wrap("Conseils", 12, "bold", [4, 120, 87]); f.conseils.forEach((c) => wrap(`• ${c}`, 10)); }
     if (f.pointsVigilance?.length) {
       wrap("Points de vigilance", 12, "bold", [180, 100, 20]);
       f.pointsVigilance.forEach((p) => wrap(`• ${p.point}${p.explication ? " — " + p.explication : ""}`, 10));
     }
+    if (f.erreurs?.length) { wrap("Erreurs à éviter", 12, "bold", [180, 100, 20]); f.erreurs.forEach((e) => wrap(`• ${e}`, 10)); }
     if (f.precautions?.length) { wrap("Précautions", 12, "bold", [180, 60, 60]); f.precautions.forEach((p) => wrap(`• ${p}`, 10)); }
+    if (f.contreIndications?.length) { wrap("Contre-indications", 12, "bold", [180, 60, 60]); f.contreIndications.forEach((c) => wrap(`• ${c}`, 10)); }
     if (f.fondementPrincipe) { wrap("Fondement", 12, "bold", [4, 120, 87]); wrap(f.fondementPrincipe, 10); }
     if (f.sources?.length) { wrap("Sources", 12, "bold", [4, 120, 87]); f.sources.forEach((s) => wrap(`• ${s}`, 9, "normal", [120, 120, 120])); }
 
