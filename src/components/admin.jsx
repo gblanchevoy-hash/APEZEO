@@ -6,6 +6,7 @@ import {
   FileText, LogOut, Eye, EyeOff,
 } from "lucide-react";
 import { supabase } from "../lib/supabase.js";
+import { fetchAllRows } from "../lib/utils.js";
 import { PROFESSIONS } from "../data/constants.js";
 import { Badge, TopBar, Field, inputCls } from "./ui.jsx";
 
@@ -61,9 +62,9 @@ export function SuperAdminStatsView({ onBack }) {
     setLoading(true);
     setError("");
     const [structRes, profRes, fichesRes, usageRes, signalRes] = await Promise.all([
-      supabase.from("structures").select("id, nom, quota, suspended, essai_duree_semaines, created_at"),
-      supabase.from("profiles").select("id, structure_id, plan, actif, created_at"),
-      supabase.from("interventions").select("categorie, niveau_detail"),
+      fetchAllRows(supabase, "structures", "id, nom, quota, suspended, essai_duree_semaines, created_at"),
+      fetchAllRows(supabase, "profiles", "id, structure_id, plan, actif, created_at"),
+      fetchAllRows(supabase, "interventions", "categorie, niveau_detail"),
       supabase.rpc("stats_usage_bibliotheque"),
       supabase.from("signalements").select("*").order("created_at", { ascending: false }),
     ]);

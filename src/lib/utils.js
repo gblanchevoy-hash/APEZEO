@@ -8,6 +8,30 @@ export const linesToArray = (s) => (s || "").split("\n").map((x) => x.trim()).fi
 
 export const arrayToLines = (a) => (a || []).join("\n");
 
+// Supabase plafonne chaque requête à 1000 lignes par défaut, sauf à
+// demander explicitement la suite (pagination). Toute requête
+// susceptible de dépasser ce nombre (comme `interventions`, qui a
+// dépassé 1000 lignes en cours de route) doit passer par ici plutôt
+// que par un appel direct .select() — sinon le résultat plafonne
+// silencieusement, sans erreur visible.
+export async function fetchAllRows(supabase, table, columns = "*", orderCol = "id") {
+  const pageSize = 1000;
+  let from = 0;
+  let all = [];
+  while (true) {
+    const { data, error } = await supabase
+      .from(table)
+      .select(columns)
+      .order(orderCol, { ascending: true })
+      .range(from, from + pageSize - 1);
+    if (error) return { data: null, error };
+    all = all.concat(data || []);
+    if (!data || data.length < pageSize) break;
+    from += pageSize;
+  }
+  return { data: all, error: null };
+}
+
 // Logique de score partagée par le formulaire "Trouver la meilleure
 // technique", Pro comme Aidant. Les deux versions avaient dérivé l'une
 // de l'autre avec le temps (la version Aidant n'appliquait plus les

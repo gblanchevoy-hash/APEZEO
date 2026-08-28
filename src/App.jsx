@@ -17,7 +17,7 @@ import { SuperAdminStatsView, CreateStructureView, MonCompteView, AdminTeamView,
 import { AuthView } from "./components/AuthView.jsx";
 import { Gate } from "./components/gate.jsx";
 import { Home_ } from "./components/Home.jsx";
-import { uid, scoreFiche } from "./lib/utils.js";
+import { uid, scoreFiche, fetchAllRows } from "./lib/utils.js";
 
 const emptyLocalFiche = () => ({
   id: null, isLocal: true, titre: "", categorie: FAMILLES[0], sousCategorie: "",
@@ -89,28 +89,6 @@ function AuthenticatedApp({ session, onChangeMode }) {
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200); };
 
-  // Supabase plafonne toute requête non paginée à 1000 lignes par défaut.
-  // Cette fonction récupère la table entière par blocs successifs, quelle
-  // que soit sa taille — indispensable maintenant que "interventions"
-  // dépasse ce seuil.
-  const fetchAllRows = useCallback(async (table, orderCol = "id") => {
-    const pageSize = 1000;
-    let from = 0;
-    let all = [];
-    while (true) {
-      const { data, error } = await supabase
-        .from(table)
-        .select("*")
-        .order(orderCol, { ascending: true })
-        .range(from, from + pageSize - 1);
-      if (error) return { data: null, error };
-      all = all.concat(data || []);
-      if (!data || data.length < pageSize) break;
-      from += pageSize;
-    }
-    return { data: all, error: null };
-  }, []);
-
   const loadFromSupabase = useCallback(async () => {
     if (!supabaseReady) { setLoading(false); return; }
     setLoading(true);
@@ -119,7 +97,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
     // La bibliothèque complète (le plus gros volume) charge en arrière-
     // plan, sans bloquer le reste : profil, favoris et historique sont
     // minuscules et peuvent débloquer l'écran d'accueil bien avant.
-    fetchAllRows("interventions", "id").then((interv) => {
+    fetchAllRows(supabase, "interventions", "*", "id").then((interv) => {
       if (interv.error) { setDbError(interv.error.message); }
       else { setDbFiches((interv.data || []).map(rowToFiche)); setDbError(null); }
       setLibraryLoading(false);
@@ -175,14 +153,14 @@ function AuthenticatedApp({ session, onChangeMode }) {
       // policy RLS de `structures` ne renvoie ces lignes qu'à un vrai
       // super-admin, quel que soit le moyen d'appel utilisé.
       if (p?.super_admin) {
-        const { data: structs } = await supabase.from("structures").select("id, nom, essai_duree_semaines, created_at, suspended");
+        const { data: structs } = await fetchAllRows(supabase, "structures", "id, nom, essai_duree_semaines, created_at, suspended");
         const expirees = (structs || []).filter((s) => !s.suspended && essaiJoursRestants(s) != null && essaiJoursRestants(s) <= 0);
         setEssaisExpires(expirees);
       }
     }
 
     setLoading(false);
-  }, [userId, fetchAllRows]);
+  }, [userId]);
 
   useEffect(() => { loadFromSupabase(); }, [loadFromSupabase]);
 
@@ -359,19 +337,19 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
 
       {current.view === "troubles" && (
-        <TroublesView fiches={fiches} onBack={pop} onOpenTrouble={(t) => push({ view: "trouble-detail", trouble: t })} />
+        <TroublesView fiches={fichesRecherchables} onBack={pop} onOpenTrouble={(t) => push({ view: "trouble-detail", trouble: t })} />
       )}
       {current.view === "trouble-detail" && (
         <FicheListView title={current.trouble} onBack={pop} favoris={favoris}
-          items={fiches.filter((f) => f.troubles.includes(current.trouble)).sort((a, b) => b.niveauPreuve - a.niveauPreuve)}
+          items={fichesRecherchables.filter((f) => f.troubles.includes(current.trouble)).sort((a, b) => b.niveauPreuve - a.niveauPreuve)}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucune fiche pour ce trouble pour l'instant." />
       )}
       {current.view === "besoins" && (
-        <FamillesView fiches={fiches} onBack={pop} onOpenFamille={(c) => push({ view: "famille-detail", famille: c })} />
+        <FamillesView fiches={fichesRecherchables} onBack={pop} onOpenFamille={(c) => push({ view: "famille-detail", famille: c })} />
       )}
       {current.view === "famille-detail" && (
         <FicheListView title={current.famille} onBack={pop} favoris={favoris}
-          items={fiches.filter((f) => f.categorie === current.famille)}
+          items={fichesRecherchables.filter((f) => f.categorie === current.famille)}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucune fiche dans cette famille pour l'instant." />
       )}
       {current.view === "outils" && (
