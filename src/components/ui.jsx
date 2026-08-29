@@ -55,7 +55,7 @@ export function TopBar({ title, onBack, right }) {
   );
 }
 
-export function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge }) {
+export function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", badge, notifCount }) {
   const accents = {
     emerald: "bg-gradient-to-br from-emerald-500 to-emerald-800 text-white",
     amber: "bg-gradient-to-br from-amber-300 to-amber-500 text-emerald-950",
@@ -64,7 +64,12 @@ export function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", b
     violet: "bg-gradient-to-br from-violet-400 to-violet-700 text-white",
   };
   return (
-    <button onClick={onClick} className="w-full flex items-center gap-4 bg-white rounded-3xl p-5 shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] hover:shadow-[0_8px_28px_-6px_rgba(6,78,59,0.18)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200 text-left">
+    <button onClick={onClick} className="relative w-full flex items-center gap-4 bg-white rounded-3xl p-5 shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] hover:shadow-[0_8px_28px_-6px_rgba(6,78,59,0.18)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200 text-left">
+      {notifCount > 0 && (
+        <span className="absolute -top-2 -right-2 min-w-[22px] h-[22px] px-1 rounded-full bg-rose-600 text-white text-[11px] font-bold flex items-center justify-center shadow-md">
+          {notifCount}
+        </span>
+      )}
       <div className={`relative overflow-hidden rounded-2xl p-3 ${accents[accent]}`}>
         {/* reflet — léger halo lumineux en haut à gauche */}
         <div className="absolute -top-3 -left-3 w-9 h-9 rounded-full bg-white/30 blur-md pointer-events-none" />

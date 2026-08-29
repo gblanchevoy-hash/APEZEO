@@ -64,7 +64,7 @@ export function AuthView({ onChangeMode }) {
           <svg className="absolute inset-x-0 bottom-0 w-full h-14 pointer-events-none" viewBox="0 0 400 60" preserveAspectRatio="none">
             <path d="M0,35 C90,55 160,15 240,32 C310,47 350,25 400,38 L400,60 L0,60 Z" fill="rgba(255,255,255,0.05)" />
           </svg>
-          <p className="relative text-3xl font-bold mb-1 tracking-tight">1000+ fiches</p>
+          <p className="relative text-3xl font-bold mb-1 tracking-tight">1500+ fiches</p>
           <p className="relative text-sm text-emerald-100 mb-4">d'aides non médicamenteuses pour les professionnels accompagnant des personnes atteintes d'Alzheimer et maladies apparentées.</p>
           <ul className="relative space-y-2 text-sm text-emerald-50">
             <li className="flex gap-2"><CheckCircle2 size={16} className="shrink-0 mt-0.5 text-amber-300" /> Recherche instantanée par symptôme</li>

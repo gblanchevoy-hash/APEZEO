@@ -6,7 +6,7 @@ import {
 import { NavCard } from "./ui.jsx";
 import { LegalFooterLinks } from "./legal.jsx";
 
-export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, essaisExpires, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
+export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, essaisExpires, signalementsNonResolus, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       {isSuperAdmin && essaisExpires?.length > 0 && (
@@ -78,8 +78,8 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
         <NavCard icon={FileText} label="Mes fiches" sub="Toutes vos créations personnelles" onClick={onOpenMesFiches} accent="emerald" />
         {hasStructure && <NavCard icon={Star} label="Favoris de l'équipe" sub="Recommandées par votre établissement" onClick={onOpenFavorisEquipe} accent="emerald" />}
         {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="admin" badge="Admin" />}
-        {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="admin" badge="Admin" />}
-        {isSuperAdmin && <NavCard icon={Activity} label="Statistiques" sub="Vue d'ensemble de la plateforme" onClick={onOpenSuperAdminStats} accent="admin" badge="Admin" />}
+        {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="admin" badge="Admin" notifCount={essaisExpires?.length} />}
+        {isSuperAdmin && <NavCard icon={Activity} label="Statistiques" sub="Vue d'ensemble de la plateforme" onClick={onOpenSuperAdminStats} accent="admin" badge="Admin" notifCount={signalementsNonResolus} />}
       </div>
       <div className="px-5 lg:px-8 mt-5">
         <button onClick={onOpenAdd} className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-stone-300 hover:border-emerald-700/40 hover:bg-emerald-50/50 text-stone-500 hover:text-emerald-800 rounded-2xl py-4 font-medium transition-colors">

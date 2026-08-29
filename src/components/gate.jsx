@@ -136,7 +136,7 @@ export function GateDesktop({ onChoose }) {
             <span className="inline-block text-[11px] font-bold tracking-wider text-emerald-700 bg-emerald-50 rounded-full px-3.5 py-1.5 mb-5">POUR LES PROFESSIONNELS</span>
             <h2 className="font-serif text-[28px] font-semibold text-emerald-950 tracking-tight leading-tight mb-5">Des ressources fiables pour enrichir votre pratique au quotidien.</h2>
             <ul className="space-y-4 mb-9">
-              <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Plus de 1000 fiches</span>, sourcées et régulièrement enrichies, couvrant les situations les plus fréquentes en accompagnement.</li>
+              <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Plus de 1500 fiches</span>, sourcées et régulièrement enrichies, couvrant les situations les plus fréquentes en accompagnement.</li>
               <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Un niveau Expert</span>, avec fondements cliniques et références documentaires, pour étayer vos décisions de terrain.</li>
               <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Une recherche rapide</span> par trouble, par besoin ou par situation — pour trouver la bonne réponse en quelques secondes.</li>
               <li className="text-[15px] text-stone-600 leading-relaxed"><span className="font-bold text-emerald-950">Une gestion d'équipe intégrée</span>, pensée pour les établissements et les structures de soin.</li>

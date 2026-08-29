@@ -15,7 +15,7 @@ export function FicheCard({ f, onClick, favState }) {
   const isTechnique = !isOutil && !isConcept;
   const isStandard = f.niveauDetail !== "expert";
   const borderCls = isStandard
-    ? "border-l-[3px] border-emerald-300 focus-visible:outline-emerald-600"
+    ? "border-l-[3px] border-green-400 focus-visible:outline-green-600"
     : isOutil ? "border-l-[3px] border-violet-400 focus-visible:outline-violet-500"
     : isConcept ? "border-l-[3px] border-sky-400 focus-visible:outline-sky-500"
     : "border-l-[3px] border-amber-400 focus-visible:outline-emerald-600";

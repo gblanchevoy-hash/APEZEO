@@ -86,7 +86,11 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
     if (f.troubles?.length) wrap("Troubles : " + f.troubles.join(", "), 10, "normal", [80, 80, 80]);
     y += 2;
 
+    if (f.alerteOutil) { wrap("⚠ Point de vigilance réglementaire", 12, "bold", [180, 30, 30]); wrap(f.alerteOutil, 10); }
     if (f.description) { wrap("Description", 12, "bold", [4, 120, 87]); wrap(f.description, 10); }
+    if (f.indication) { wrap("Indication", 12, "bold", [4, 120, 87]); wrap(f.indication, 10); }
+    if (f.contreIndicationOutil?.length) { wrap("Contre-indications", 12, "bold", [180, 60, 60]); f.contreIndicationOutil.forEach((c) => wrap(`• ${c}`, 10)); }
+    if (f.precautionsParticulieres?.length) { wrap("Précautions particulières", 12, "bold", [180, 100, 20]); f.precautionsParticulieres.forEach((p) => wrap(`• ${p}`, 10)); }
     if (f.pourquoi) { wrap("Pourquoi ça fonctionne", 12, "bold", [4, 120, 87]); wrap(f.pourquoi, 10); }
     if (f.quandUtiliser) { wrap("Quand l'utiliser", 12, "bold", [4, 120, 87]); wrap(f.quandUtiliser, 10); }
     if (f.quandEviter) { wrap("Quand éviter", 12, "bold", [180, 60, 60]); wrap(f.quandEviter, 10); }

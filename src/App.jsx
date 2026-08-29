@@ -46,6 +46,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const [stack, setStack] = useState([{ view: "home" }]);
   const [profile, setProfile] = useState(null);
   const [essaisExpires, setEssaisExpires] = useState([]);
+  const [signalementsNonResolus, setSignalementsNonResolus] = useState(0);
   const [essaiTermine, setEssaiTermine] = useState(false);
   const [sessionReplaced, setSessionReplaced] = useState(false);
   const mySessionToken = useRef(null);
@@ -163,6 +164,11 @@ function AuthenticatedApp({ session, onChangeMode }) {
         const { data: structs } = await fetchAllRows(supabase, "structures", "id, nom, essai_duree_semaines, created_at, suspended");
         const expirees = (structs || []).filter((s) => !s.suspended && essaiJoursRestants(s) != null && essaiJoursRestants(s) <= 0);
         setEssaisExpires(expirees);
+
+        // Même principe que les essais expirés : protégé nativement par
+        // la policy RLS de `signalements` (super-admin uniquement).
+        const { count } = await supabase.from("signalements").select("id", { count: "exact", head: true }).eq("resolu", false);
+        setSignalementsNonResolus(count || 0);
       }
     }
 
@@ -318,6 +324,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           isAdmin={profile?.role === "admin"}
           isSuperAdmin={profile?.super_admin === true}
           essaisExpires={essaisExpires}
+          signalementsNonResolus={signalementsNonResolus}
           hasStructure={!!profile?.structure_id}
           canToggleExpert={profile?.plan === "structure"}
           onLockedExpertClick={() => showToast("La Bibliothèque Expert est réservée aux comptes Structure — contactez votre établissement pour en bénéficier.")}
