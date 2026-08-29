@@ -388,7 +388,7 @@ export function CreateStructureView({ onBack }) {
       const { error: adminError } = await supabase
         .from("profiles")
         .update({ structure_id: newStructure.id, role: "admin", plan: "structure" })
-        .eq("email", adminEmail.trim());
+        .ilike("email", adminEmail.trim());
       if (adminError) { setError("Structure créée, mais échec de la promotion admin : " + adminError.message); }
     }
 
@@ -467,7 +467,7 @@ export function CreateStructureView({ onBack }) {
       const { error: adminError } = await supabase
         .from("profiles")
         .update({ structure_id: s.id, role: "admin", plan: "structure" })
-        .eq("email", editAdminEmail.trim());
+        .ilike("email", editAdminEmail.trim());
       if (adminError) {
         setSavingParams(false);
         setRowMsg({ id: s.id, ok: false, text: "Essai mis à jour, mais échec de la promotion admin : " + adminError.message });
@@ -986,6 +986,21 @@ export function AdminTeamView({ structureId, onBack }) {
     load();
   };
 
+  const [confirmDeleteAccount, setConfirmDeleteAccount] = useState(null);
+  const deleteMemberAccount = async (memberId) => {
+    const { data, error } = await supabase.rpc("delete_member_account", { p_member_id: memberId });
+    setConfirmDeleteAccount(null);
+    const result = data && data[0];
+    if (error || !result?.success) {
+      setToast("Échec : " + (error?.message || result?.message));
+      setTimeout(() => setToast(null), 2500);
+      return;
+    }
+    setToast("Compte supprimé définitivement");
+    setTimeout(() => setToast(null), 2000);
+    load();
+  };
+
   const attachAccount = async (e) => {
     e.preventDefault();
     setAttaching(true);
@@ -1213,12 +1228,25 @@ export function AdminTeamView({ structureId, onBack }) {
                 )}
               </div>
               {confirmRemove === m.id && (
-                <div className="mt-2.5 pt-2.5 border-t border-stone-100 flex items-center justify-between gap-2">
-                  <p className="text-xs text-stone-500">Retirer {m.email} de l'équipe ? Son compte redevient gratuit, ne disparaît pas.</p>
-                  <div className="flex gap-1.5 shrink-0">
-                    <button onClick={() => removeMember(m.id)} className="text-xs font-semibold bg-rose-600 text-white rounded-lg px-3 py-1.5">Confirmer</button>
+                <div className="mt-2.5 pt-2.5 border-t border-stone-100">
+                  <p className="text-xs text-stone-500 mb-2">Retirer {m.email} de l'équipe ? Son compte redevient gratuit, ne disparaît pas — il peut être rattaché à nouveau plus tard.</p>
+                  <div className="flex gap-1.5 mb-3">
+                    <button onClick={() => removeMember(m.id)} className="text-xs font-semibold bg-rose-600 text-white rounded-lg px-3 py-1.5">Confirmer le retrait</button>
                     <button onClick={() => setConfirmRemove(null)} className="text-xs font-medium text-stone-500 px-2 py-1.5">Annuler</button>
                   </div>
+                  {confirmDeleteAccount === m.id ? (
+                    <div className="bg-rose-50 border border-rose-200 rounded-lg p-2.5">
+                      <p className="text-xs text-rose-800 mb-2"><b>Irréversible</b> : supprime le compte pour de bon (favoris, historique, fiches personnelles). Libère l'e-mail pour une nouvelle inscription.</p>
+                      <div className="flex gap-2">
+                        <button onClick={() => deleteMemberAccount(m.id)} className="flex-1 bg-rose-600 text-white text-xs font-semibold rounded-lg py-1.5">Supprimer définitivement</button>
+                        <button onClick={() => setConfirmDeleteAccount(null)} className="flex-1 bg-white border border-stone-300 text-xs rounded-lg py-1.5">Annuler</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => setConfirmDeleteAccount(m.id)} className="text-[11px] text-stone-400 underline">
+                      Ou supprimer définitivement le compte (libère l'e-mail)
+                    </button>
+                  )}
                 </div>
               )}
             </div>

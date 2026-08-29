@@ -86,7 +86,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
     if (f.troubles?.length) wrap("Troubles : " + f.troubles.join(", "), 10, "normal", [80, 80, 80]);
     y += 2;
 
-    if (f.alerteOutil) { wrap("⚠ Point de vigilance réglementaire", 12, "bold", [180, 30, 30]); wrap(f.alerteOutil, 10); }
+    if (f.alerteOutil) { wrap("ATTENTION — Point de vigilance réglementaire", 12, "bold", [180, 30, 30]); wrap(f.alerteOutil, 10); }
     if (f.description) { wrap("Description", 12, "bold", [4, 120, 87]); wrap(f.description, 10); }
     if (f.indication) { wrap("Indication", 12, "bold", [4, 120, 87]); wrap(f.indication, 10); }
     if (f.contreIndicationOutil?.length) { wrap("Contre-indications", 12, "bold", [180, 60, 60]); f.contreIndicationOutil.forEach((c) => wrap(`• ${c}`, 10)); }
@@ -144,7 +144,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
 
   if (f.typeFiche === "outil") {
     return (
-      <div className="pb-10">
+      <div className="pb-28">
         <TopBar title={f.outilType || "Outil spécifique"} onBack={onBack} />
         <div className="p-5 lg:p-9 lg:max-w-2xl">
           <Badge tone="outil">Outil spécifique</Badge>
