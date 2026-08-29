@@ -51,10 +51,11 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.includes("/rest/v1/interventions"),
-            handler: "StaleWhileRevalidate",
+            handler: "NetworkFirst",
             options: {
               cacheName: "apezeo-fiches-cache",
-              expiration: { maxEntries: 5, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              networkTimeoutSeconds: 8,
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
