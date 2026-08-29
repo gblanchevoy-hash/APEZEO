@@ -206,6 +206,11 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
               <button onClick={() => setShowSignal((s) => !s)} className="flex items-center gap-1.5 text-xs font-medium text-stone-500 hover:text-amber-700 transition-colors">
                 <Flag size={14} /> Signaler un problème
               </button>
+              {teamAdminStructureId && (
+                <button onClick={toggleTeamFavori} className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${teamFavId ? "text-violet-700" : "text-stone-500 hover:text-violet-700"}`}>
+                  <Star size={14} className={teamFavId ? "fill-violet-600 text-violet-600" : ""} /> {teamFavId ? "Dans les favoris de l'équipe" : "Ajouter aux favoris de l'équipe"}
+                </button>
+              )}
             </div>
           )}
           {showSignal && (

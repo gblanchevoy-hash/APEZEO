@@ -378,7 +378,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <SearchView fiches={fichesRecherchables} onBack={pop} favoris={favoris} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "favoris" && (
-        <FavorisView fiches={fichesRecherchables} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+        <FavorisView fiches={fichesTousNiveaux} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "favoris-equipe" && (
         <FavorisEquipeView structureId={profile?.structure_id} fiches={fichesTousNiveaux} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />

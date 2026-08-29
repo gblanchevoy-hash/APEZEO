@@ -89,5 +89,3 @@ begin
 end;
 $function$;
 
--- Vérification
-select public.stats_usage_bibliotheque();

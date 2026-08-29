@@ -84,6 +84,22 @@ export function SuperAdminStatsView({ onBack }) {
     await supabase.from("signalements").update({ resolu: !current }).eq("id", id);
   };
 
+  const deleteSignalement = async (id) => {
+    setSignalements((s) => s.filter((x) => x.id !== id));
+    await supabase.from("signalements").delete().eq("id", id);
+  };
+
+  // Cumuls calculés directement depuis la liste déjà chargée, sans
+  // requête supplémentaire.
+  const signalementsCeMois = useMemo(() => {
+    const debut = new Date(); debut.setDate(1); debut.setHours(0, 0, 0, 0);
+    return signalements.filter((s) => new Date(s.created_at) >= debut).length;
+  }, [signalements]);
+  const signalementsCetteAnnee = useMemo(() => {
+    const debut = new Date(new Date().getFullYear(), 0, 1);
+    return signalements.filter((s) => new Date(s.created_at) >= debut).length;
+  }, [signalements]);
+
   useEffect(() => { load(); }, [load]);
 
   const [openTop, setOpenTop] = useState(true);
@@ -281,15 +297,24 @@ export function SuperAdminStatsView({ onBack }) {
                 Signalements
                 {signalements.filter((s) => !s.resolu).length > 0 && <Badge tone="rose">{signalements.filter((s) => !s.resolu).length} à traiter</Badge>}
               </h2>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <StatBlock label="Signalements ce mois" value={signalementsCeMois} />
+                <StatBlock label="Signalements cette année" value={signalementsCetteAnnee} />
+              </div>
               <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
                 {signalements.length === 0 && <div className="px-4 py-3 text-sm text-stone-400">Aucun signalement pour l'instant.</div>}
                 {signalements.map((s) => (
                   <div key={s.id} className={`px-4 py-3 ${s.resolu ? "opacity-50" : ""}`}>
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <span className="text-sm font-semibold text-emerald-950">{s.fiche_titre}</span>
-                      <button onClick={() => toggleResolu(s.id, s.resolu)} className={`shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded-full ${s.resolu ? "bg-stone-100 text-stone-500" : "bg-amber-100 text-amber-800"}`}>
-                        {s.resolu ? "Résolu" : "Marquer résolu"}
-                      </button>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button onClick={() => toggleResolu(s.id, s.resolu)} className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${s.resolu ? "bg-stone-100 text-stone-500" : "bg-amber-100 text-amber-800"}`}>
+                          {s.resolu ? "Résolu" : "Marquer résolu"}
+                        </button>
+                        <button onClick={() => deleteSignalement(s.id)} className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100">
+                          Supprimer
+                        </button>
+                      </div>
                     </div>
                     <p className="text-sm text-stone-600 mb-1">{s.message}</p>
                     <p className="text-[11px] text-stone-400">{s.technique_id ? s.technique_id + " · " : ""}{new Date(s.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}</p>
@@ -322,6 +347,10 @@ export function CreateStructureView({ onBack }) {
   const [rowMsg, setRowMsg] = useState(null); // {id, ok, text}
   const [editQuotaId, setEditQuotaId] = useState(null);
   const [editQuotaValue, setEditQuotaValue] = useState("");
+  const [editParamsId, setEditParamsId] = useState(null);
+  const [editEssaiValue, setEditEssaiValue] = useState("");
+  const [editAdminEmail, setEditAdminEmail] = useState("");
+  const [savingParams, setSavingParams] = useState(false);
 
   const loadStructures = useCallback(async () => {
     setLoadingList(true);
@@ -416,6 +445,41 @@ export function CreateStructureView({ onBack }) {
     loadStructures();
   };
 
+  const openEditParams = (s) => {
+    setEditParamsId(editParamsId === s.id ? null : s.id);
+    setEditEssaiValue(s.essai_duree_semaines != null ? String(s.essai_duree_semaines) : "");
+    setEditAdminEmail("");
+  };
+
+  const saveStructureParams = async (s) => {
+    setSavingParams(true);
+    setRowMsg(null);
+    const { error: essaiError } = await supabase
+      .from("structures")
+      .update({ essai_duree_semaines: editEssaiValue.trim() ? Number(editEssaiValue) : null })
+      .eq("id", s.id);
+    if (essaiError) {
+      setSavingParams(false);
+      setRowMsg({ id: s.id, ok: false, text: essaiError.message });
+      return;
+    }
+    if (editAdminEmail.trim()) {
+      const { error: adminError } = await supabase
+        .from("profiles")
+        .update({ structure_id: s.id, role: "admin", plan: "structure" })
+        .eq("email", editAdminEmail.trim());
+      if (adminError) {
+        setSavingParams(false);
+        setRowMsg({ id: s.id, ok: false, text: "Essai mis à jour, mais échec de la promotion admin : " + adminError.message });
+        return;
+      }
+    }
+    setSavingParams(false);
+    setRowMsg({ id: s.id, ok: true, text: "Paramètres mis à jour." });
+    setEditParamsId(null);
+    loadStructures();
+  };
+
   return (
     <div className="pb-10">
       <TopBar title="Créer une structure" onBack={onBack} />
@@ -474,9 +538,35 @@ export function CreateStructureView({ onBack }) {
             {structures.map((s) => (
               <div key={s.id} className={`bg-white rounded-xl p-3 border shadow-sm ${s.suspended ? "border-rose-300" : "border-emerald-900/5"}`}>
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="font-medium text-emerald-950 text-sm flex-1">{s.nom}</div>
+                  <button onClick={() => openEditParams(s)} className="font-medium text-emerald-950 text-sm flex-1 text-left underline decoration-dotted underline-offset-2 hover:text-emerald-700">
+                    {s.nom}
+                  </button>
                   <StructureStatusBadge s={s} />
                 </div>
+                {editParamsId === s.id && (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 mb-2 flex flex-col gap-2">
+                    <Field label="Durée d'essai en semaines">
+                      <input
+                        type="number" min={1} className={inputCls + " !py-1.5 !text-xs"} value={editEssaiValue}
+                        onChange={(e) => setEditEssaiValue(e.target.value)}
+                        placeholder="Vide = pas de limite"
+                      />
+                    </Field>
+                    <Field label="Promouvoir un admin (e-mail, optionnel)">
+                      <input
+                        type="email" className={inputCls + " !py-1.5 !text-xs"} value={editAdminEmail}
+                        onChange={(e) => setEditAdminEmail(e.target.value)}
+                        placeholder="doit déjà avoir un compte"
+                      />
+                    </Field>
+                    <div className="flex gap-2">
+                      <button onClick={() => saveStructureParams(s)} disabled={savingParams} className="flex-1 bg-emerald-700 disabled:bg-stone-300 text-white text-xs font-semibold rounded-lg py-1.5">
+                        {savingParams ? "…" : "Enregistrer"}
+                      </button>
+                      <button onClick={() => setEditParamsId(null)} className="flex-1 bg-white border border-stone-300 text-xs rounded-lg py-1.5">Annuler</button>
+                    </div>
+                  </div>
+                )}
                 <div className="flex items-center justify-between bg-stone-50 rounded-lg px-2.5 py-1.5 mb-2">
                   <span className="text-xs text-stone-600 font-mono">{s.code_invitation}</span>
                   <button onClick={() => copyRowCode(s)} className="flex items-center gap-1 text-xs text-emerald-700 font-medium shrink-0 ml-2">
@@ -886,6 +976,16 @@ export function AdminTeamView({ structureId, onBack }) {
     load();
   };
 
+  const [confirmRemove, setConfirmRemove] = useState(null); // id du membre à confirmer
+  const removeMember = async (memberId) => {
+    const { error } = await supabase.from("profiles").update({ structure_id: null }).eq("id", memberId);
+    setConfirmRemove(null);
+    if (error) { setToast("Échec : " + error.message); setTimeout(() => setToast(null), 2500); return; }
+    setToast("Membre retiré de l'équipe");
+    setTimeout(() => setToast(null), 2000);
+    load();
+  };
+
   const attachAccount = async (e) => {
     e.preventDefault();
     setAttaching(true);
@@ -1089,18 +1189,37 @@ export function AdminTeamView({ structureId, onBack }) {
         <div className="flex flex-col gap-2">
           {members.length === 0 && <div className="text-stone-400 text-sm py-6 text-center">Aucun membre pour l'instant.</div>}
           {members.map((m) => (
-            <div key={m.id} className="bg-white rounded-xl p-3 border border-emerald-900/5 shadow-sm flex items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-emerald-950 text-sm truncate">{m.email}</div>
-                <div className="text-xs text-stone-500">{m.profession || "—"} {m.role === "admin" && "· Admin"}</div>
+            <div key={m.id} className="bg-white rounded-xl p-3 border border-emerald-900/5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-emerald-950 text-sm truncate">{m.email}</div>
+                  <div className="text-xs text-stone-500">{m.profession || "—"} {m.role === "admin" && "· Admin"}</div>
+                </div>
+                {m.role !== "admin" && (
+                  <>
+                    <button
+                      onClick={() => toggleActif(m.id, m.actif)}
+                      className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border ${m.actif ? "border-stone-300 text-stone-600" : "border-rose-300 text-rose-600 bg-rose-50"}`}
+                    >
+                      {m.actif ? <><UserCheck size={13} /> Actif</> : <><UserX size={13} /> Désactivé</>}
+                    </button>
+                    <button
+                      onClick={() => setConfirmRemove(confirmRemove === m.id ? null : m.id)}
+                      className="text-xs font-medium px-2.5 py-1.5 rounded-lg border border-rose-300 text-rose-600 hover:bg-rose-50"
+                    >
+                      Supprimer
+                    </button>
+                  </>
+                )}
               </div>
-              {m.role !== "admin" && (
-                <button
-                  onClick={() => toggleActif(m.id, m.actif)}
-                  className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 rounded-lg border ${m.actif ? "border-stone-300 text-stone-600" : "border-rose-300 text-rose-600 bg-rose-50"}`}
-                >
-                  {m.actif ? <><UserCheck size={13} /> Actif</> : <><UserX size={13} /> Désactivé</>}
-                </button>
+              {confirmRemove === m.id && (
+                <div className="mt-2.5 pt-2.5 border-t border-stone-100 flex items-center justify-between gap-2">
+                  <p className="text-xs text-stone-500">Retirer {m.email} de l'équipe ? Son compte redevient gratuit, ne disparaît pas.</p>
+                  <div className="flex gap-1.5 shrink-0">
+                    <button onClick={() => removeMember(m.id)} className="text-xs font-semibold bg-rose-600 text-white rounded-lg px-3 py-1.5">Confirmer</button>
+                    <button onClick={() => setConfirmRemove(null)} className="text-xs font-medium text-stone-500 px-2 py-1.5">Annuler</button>
+                  </div>
+                </div>
               )}
             </div>
           ))}
