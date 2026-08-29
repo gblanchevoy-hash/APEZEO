@@ -52,7 +52,11 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const mySessionToken = useRef(null);
 
   const current = stack[stack.length - 1];
-  const push = (frame) => setStack((s) => [...s, frame]);
+  const push = (frame) => setStack((s) => {
+    const updated = [...s];
+    updated[updated.length - 1] = { ...updated[updated.length - 1], scrollY: window.scrollY };
+    return [...updated, frame];
+  });
   const goHome = () => setStack([{ view: "home" }]);
   const pop = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
 
@@ -354,7 +358,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <TroublesView fiches={fichesRecherchables} onBack={pop} onOpenTrouble={(t) => push({ view: "trouble-detail", trouble: t })} />
       )}
       {current.view === "trouble-detail" && (
-        <FicheListView title={current.trouble} onBack={pop} favoris={favoris}
+        <FicheListView title={current.trouble} onBack={pop} favoris={favoris} scrollY={current.scrollY}
           items={fichesRecherchables.filter((f) => f.troubles.includes(current.trouble)).sort((a, b) => b.niveauPreuve - a.niveauPreuve)}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucune fiche pour ce trouble pour l'instant." />
       )}
@@ -362,7 +366,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <FamillesView fiches={fichesRecherchables} onBack={pop} onOpenFamille={(c) => push({ view: "famille-detail", famille: c })} />
       )}
       {current.view === "famille-detail" && (
-        <FicheListView title={current.famille} onBack={pop} favoris={favoris}
+        <FicheListView title={current.famille} onBack={pop} favoris={favoris} scrollY={current.scrollY}
           items={fichesRecherchables.filter((f) => f.categorie === current.famille)}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucune fiche dans cette famille pour l'instant." />
       )}
@@ -370,7 +374,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <OutilsView fiches={outilsFiches} onBack={pop} onOpenType={(t) => push({ view: "outil-type", outilType: t })} />
       )}
       {current.view === "outil-type" && (
-        <FicheListView title={current.outilType} onBack={pop} favoris={favoris}
+        <FicheListView title={current.outilType} onBack={pop} favoris={favoris} scrollY={current.scrollY}
           items={outilsFiches.filter((f) => f.outilType === current.outilType)}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucun outil dans cette catégorie pour l'instant." />
       )}
@@ -462,7 +466,11 @@ function AidantApp({ onChangeMode }) {
   const [stack, setStack] = useState([{ view: "home" }]);
 
   const current = stack[stack.length - 1];
-  const push = (frame) => setStack((s) => [...s, frame]);
+  const push = (frame) => setStack((s) => {
+    const updated = [...s];
+    updated[updated.length - 1] = { ...updated[updated.length - 1], scrollY: window.scrollY };
+    return [...updated, frame];
+  });
   const pop = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
   const goHome = () => setStack([{ view: "home" }]);
   const fiches = useMemo(() => [...AIDANT_FICHES, ...localFiches], [localFiches]);
@@ -551,7 +559,7 @@ function AidantApp({ onChangeMode }) {
         <TroublesView fiches={fiches} onBack={pop} onOpenTrouble={(t) => push({ view: "trouble-detail", trouble: t })} />
       )}
       {current.view === "trouble-detail" && (
-        <FicheListView title={current.trouble} onBack={pop} favoris={{ liked: favoris, disliked: [] }}
+        <FicheListView title={current.trouble} onBack={pop} favoris={{ liked: favoris, disliked: [] }} scrollY={current.scrollY}
           items={fiches.filter((f) => f.troubles.includes(current.trouble)).sort((a, b) => b.niveauPreuve - a.niveauPreuve)}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucune idée pour cette situation pour l'instant." />
       )}

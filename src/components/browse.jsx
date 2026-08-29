@@ -70,9 +70,12 @@ export function FamillesView({ fiches, onBack, onOpenFamille }) {
   );
 }
 
-export function FicheListView({ title, items, onBack, onOpenFiche, favoris, emptyLabel }) {
+export function FicheListView({ title, items, onBack, onOpenFiche, favoris, emptyLabel, scrollY }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   const [typeFilter, setTypeFilter] = useState("tous");
+  useEffect(() => {
+    if (scrollY) window.scrollTo(0, scrollY);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const hasConcept = items.some((f) => f.typeFiche === "concept");
   const filtered = (typeFilter === "tous" ? items : items.filter((f) => f.typeFiche === typeFilter))
     .slice()
