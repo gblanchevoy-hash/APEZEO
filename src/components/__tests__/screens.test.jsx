@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { QuizView, RecommandationsView } from "../quiz.jsx";
 import { Home_ } from "../Home.jsx";
 import { Gate } from "../gate.jsx";
+import { GateV2 } from "../GateV2.jsx";
 import { AuthView } from "../AuthView.jsx";
 import { mockFicheTechnique } from "../../test/fixtures.js";
 
@@ -51,6 +52,15 @@ describe("Gate (page d'accueil publique)", () => {
   it("s'affiche sans planter", () => {
     render(<Gate onChoose={noop} />);
     expect(screen.getAllByText(/Apézeo/i).length).toBeGreaterThan(0);
+  });
+});
+
+describe("GateV2 (nouvelle landing page)", () => {
+  it("s'affiche sans planter et les deux parcours sont présents", () => {
+    render(<GateV2 onChoose={noop} />);
+    expect(screen.getAllByText(/Apézeo/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/espace professionnel/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/espace aidant/i).length).toBeGreaterThan(0);
   });
 });
 

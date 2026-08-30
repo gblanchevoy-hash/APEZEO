@@ -15,7 +15,7 @@ import { QuizView, RecommandationsView } from "./components/quiz.jsx";
 import { FicheDetailView, LogView, FicheFormView } from "./components/ficheDetail.jsx";
 import { SuperAdminStatsView, CreateStructureView, MonCompteView, AdminTeamView, essaiJoursRestants } from "./components/admin.jsx";
 import { AuthView } from "./components/AuthView.jsx";
-import { Gate } from "./components/gate.jsx";
+import { GateV2 } from "./components/GateV2.jsx";
 import { Home_ } from "./components/Home.jsx";
 import { uid, scoreFiche, fetchAllRows } from "./lib/utils.js";
 
@@ -698,7 +698,7 @@ export default function App() {
     );
   }
 
-  if (!mode) return <Gate onChoose={chooseMode} />;
+  if (!mode) return <GateV2 onChoose={chooseMode} />;
 
   if (mode === "aidant") return <AidantApp onChangeMode={changeMode} />;
 
