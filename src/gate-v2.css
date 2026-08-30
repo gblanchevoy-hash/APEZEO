@@ -119,11 +119,17 @@
 .apezeo-landing-v2 .phone .ui {aspect-ratio:9/17;padding:6px}
 .apezeo-landing-v2 .ui-head {height:10%;background:#dceee8;border-radius:5px;margin-bottom:8px}
 .apezeo-landing-v2 .ui-grid {display:grid;grid-template-columns:25% 1fr;gap:7px;height:84%}
-.apezeo-landing-v2 .ui-side {background:#e5efeb;border-radius:5px}
+.apezeo-landing-v2 .ui-side {background:#e5efeb;border-radius:5px;padding:8px 6px;display:flex;flex-direction:column;gap:6px}
+.apezeo-landing-v2 .ui-nav-item {height:9%;border-radius:4px;background:#c9ddd4}
+.apezeo-landing-v2 .ui-nav-item.active {background:#0f6e56}
 .apezeo-landing-v2 .ui-cards {display:grid;grid-template-rows:repeat(3,1fr);gap:7px}
-.apezeo-landing-v2 .ui-card {background:#fff;border:1px solid #dce9e4;border-radius:7px}
-.apezeo-landing-v2 .ui-card:before {content:"";display:block;width:46%;height:7px;background:#0b8f8d;border-radius:4px;margin:9px}
-.apezeo-landing-v2 .ui-card:after {content:"";display:block;width:68%;height:5px;background:#dce9e4;border-radius:4px;margin:0 9px}
+.apezeo-landing-v2 .app-card {background:#fff;border:1px solid #dce9e4;border-left-width:4px;border-radius:7px;display:flex;align-items:center;padding:0 9px;position:relative;overflow:hidden}
+.apezeo-landing-v2 .app-card span {font-size:.6rem;font-weight:700;color:#134e3a;line-height:1.15}
+.apezeo-landing-v2 .app-card[data-tag="Technique"] {border-left-color:#f59e0b}
+.apezeo-landing-v2 .app-card[data-tag="Explicatif"] {border-left-color:#38bdf8}
+.apezeo-landing-v2 .app-card[data-tag="Standard"] {border-left-color:#4ade80}
+.apezeo-landing-v2 .app-card.small span {display:none}
+.apezeo-landing-v2 .app-card.small:before {content:"";width:44%;height:5px;background:#dce9e4;border-radius:4px;margin-right:6px}
 .apezeo-landing-v2 .hero-badge {
  position:absolute;left:0;bottom:3%;z-index:5;padding:16px 18px;border-radius:18px;
  background:#fff;color:var(--navy);box-shadow:0 18px 45px rgba(0,0,0,.2);font-size:.88rem;font-weight:800

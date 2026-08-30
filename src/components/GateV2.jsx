@@ -5,17 +5,9 @@
 // l'app. Les liens internes (#pourquoi, #sources...) restent de
 // vrais ancrages qui font défiler la page ; seuls les boutons menant
 // réellement dans l'app appellent onChoose.
-import { useEffect } from "react";
 import "../gate-v2.css";
 
 export function GateV2({ onChoose }) {
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,WONK@9..144,500,0;9..144,600,0;9..144,700,0&family=Inter:wght@400;500;600;700;800&display=swap";
-    document.head.appendChild(link);
-    return () => { document.head.removeChild(link); };
-  }, []);
 
   return (
     <div className="apezeo-landing-v2">
@@ -56,9 +48,34 @@ export function GateV2({ onChoose }) {
             <div className="hero-art">
               <div className="leaf one" /><div className="leaf two" /><div className="leaf three" />
               <div className="device" aria-label="Aperçu de l'application">
-                <div className="screen laptop"><div className="ui"><div className="ui-head" /><div className="ui-grid"><div className="ui-side" /><div className="ui-cards"><div className="ui-card" /><div className="ui-card" /><div className="ui-card" /></div></div></div></div>
-                <div className="screen tablet"><div className="ui"><div className="ui-head" /><div className="ui-cards"><div className="ui-card" /><div className="ui-card" /></div></div></div>
-                <div className="screen phone"><div className="ui"><div className="ui-head" /><div className="ui-cards"><div className="ui-card" /><div className="ui-card" /><div className="ui-card" /></div></div></div>
+                <div className="screen laptop"><div className="ui">
+                  <div className="ui-head" />
+                  <div className="ui-grid">
+                    <div className="ui-side">
+                      <div className="ui-nav-item" /><div className="ui-nav-item" /><div className="ui-nav-item active" /><div className="ui-nav-item" />
+                    </div>
+                    <div className="ui-cards">
+                      <div className="ui-card app-card" data-tag="Technique"><span>Créer un parcours nocturne sécurisé</span></div>
+                      <div className="ui-card app-card" data-tag="Explicatif"><span>Comprendre la déambulation</span></div>
+                      <div className="ui-card app-card" data-tag="Standard"><span>Reformuler avec empathie</span></div>
+                    </div>
+                  </div>
+                </div></div>
+                <div className="screen tablet"><div className="ui">
+                  <div className="ui-head" />
+                  <div className="ui-cards">
+                    <div className="ui-card app-card small" data-tag="Technique"><span>Adapter l'espace sensoriel</span></div>
+                    <div className="ui-card app-card small" data-tag="Explicatif"><span>Comprendre la validation émotionnelle</span></div>
+                  </div>
+                </div></div>
+                <div className="screen phone"><div className="ui">
+                  <div className="ui-head" />
+                  <div className="ui-cards">
+                    <div className="ui-card app-card small" data-tag="Standard" />
+                    <div className="ui-card app-card small" data-tag="Technique" />
+                    <div className="ui-card app-card small" data-tag="Explicatif" />
+                  </div>
+                </div></div>
                 <div className="hero-badge"><b>1500+</b> fiches de pratiques</div>
               </div>
             </div>

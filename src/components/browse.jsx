@@ -73,16 +73,34 @@ export function FamillesView({ fiches, onBack, onOpenFamille }) {
 export function FicheListView({ title, items, onBack, onOpenFiche, favoris, emptyLabel, scrollY }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   const [typeFilter, setTypeFilter] = useState("tous");
+  const [sortBy, setSortBy] = useState("pertinence");
   useEffect(() => {
     if (scrollY) window.scrollTo(0, scrollY);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const hasConcept = items.some((f) => f.typeFiche === "concept");
+  const SORTERS = {
+    pertinence: (a, b) => (a.typeFiche === "concept" ? 0 : 1) - (b.typeFiche === "concept" ? 0 : 1) || b.niveauPreuve - a.niveauPreuve,
+    type: (a, b) => (a.typeFiche === "concept" ? 0 : 1) - (b.typeFiche === "concept" ? 0 : 1) || a.titre.localeCompare(b.titre),
+    date: (a, b) => (b.dateMaj || "").localeCompare(a.dateMaj || ""),
+    alpha: (a, b) => a.titre.localeCompare(b.titre),
+  };
   const filtered = (typeFilter === "tous" ? items : items.filter((f) => f.typeFiche === typeFilter))
     .slice()
-    .sort((a, b) => (a.typeFiche === "concept" ? 0 : 1) - (b.typeFiche === "concept" ? 0 : 1));
+    .sort(SORTERS[sortBy]);
   return (
     <div className="pb-10">
       <TopBar title={title} onBack={onBack} />
+      {items.length > 6 && (
+        <div className="px-4 pt-3 flex items-center gap-2">
+          <span className="text-xs text-stone-400 shrink-0">Trier par</span>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="text-sm border border-stone-200 rounded-lg px-2 py-1.5 bg-white text-emerald-950">
+            <option value="pertinence">Pertinence</option>
+            <option value="type">Type (explicatif d'abord)</option>
+            <option value="alpha">Ordre alphabétique</option>
+            <option value="date">Date de mise à jour</option>
+          </select>
+        </div>
+      )}
       {hasConcept && (
         <div className="px-4 pt-3 pb-1">
           <div className="flex gap-2">
@@ -140,6 +158,14 @@ export function SearchView({ fiches, onBack, onOpenFiche, favoris }) {
   }, [q, results, fiches]);
 
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
+  const [sortBy, setSortBy] = useState("pertinence");
+  const SORTERS = {
+    pertinence: (a, b) => (a.typeFiche === "concept" ? 0 : 1) - (b.typeFiche === "concept" ? 0 : 1) || b.niveauPreuve - a.niveauPreuve,
+    type: (a, b) => (a.typeFiche === "concept" ? 0 : 1) - (b.typeFiche === "concept" ? 0 : 1) || a.titre.localeCompare(b.titre),
+    date: (a, b) => (b.dateMaj || "").localeCompare(a.dateMaj || ""),
+    alpha: (a, b) => a.titre.localeCompare(b.titre),
+  };
+  const sortedResults = results.slice().sort(SORTERS[sortBy]);
   return (
     <div className="pb-10">
       <TopBar title="Recherche libre" onBack={onBack} />
@@ -149,6 +175,17 @@ export function SearchView({ fiches, onBack, onOpenFiche, favoris }) {
           <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Un trouble, un mot-clé, une technique…"
             className="w-full rounded-xl border border-stone-300 pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600" />
         </div>
+        {results.length > 6 && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xs text-stone-400 shrink-0">Trier par</span>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="text-sm border border-stone-200 rounded-lg px-2 py-1.5 bg-white text-emerald-950">
+              <option value="pertinence">Pertinence</option>
+              <option value="type">Type (explicatif d'abord)</option>
+              <option value="alpha">Ordre alphabétique</option>
+              <option value="date">Date de mise à jour</option>
+            </select>
+          </div>
+        )}
         <div className="flex flex-col gap-2.5">
           {q.trim() && results.length === 0 && (
             <div className="text-center text-stone-400 text-sm py-6">Aucun résultat exact.</div>
@@ -166,7 +203,7 @@ export function SearchView({ fiches, onBack, onOpenFiche, favoris }) {
               </div>
             </div>
           )}
-          {results.map((f) => <FicheCard key={f.id} f={f} favState={favState(f.id)} onClick={() => onOpenFiche(f)} />)}
+          {sortedResults.map((f) => <FicheCard key={f.id} f={f} favState={favState(f.id)} onClick={() => onOpenFiche(f)} />)}
         </div>
       </div>
     </div>

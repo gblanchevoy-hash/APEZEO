@@ -131,19 +131,29 @@ export function SuperAdminStatsView({ onBack }) {
   const [periode, setPeriode] = useState("mois");
   const bucketsParPeriode = useMemo(() => {
     const creations = evenements.filter((e) => e.type_evenement === "creation");
-    const key = (d) => {
+    // Chaque entrée porte une clé de tri numérique séparée de son
+    // libellé affiché -- Object.entries() ne trie jamais par ordre
+    // chronologique, seulement par ordre d'insertion, d'où le
+    // désordre observé (S34 avant S32...).
+    const bucketOf = (d) => {
       const date = new Date(d);
       if (periode === "semaine") {
         const onejan = new Date(date.getFullYear(), 0, 1);
         const week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-        return `S${week} '${String(date.getFullYear()).slice(2)}`;
+        return { sortKey: date.getFullYear() * 100 + week, label: `S${week} '${String(date.getFullYear()).slice(2)}` };
       }
-      if (periode === "annee") return String(date.getFullYear());
-      return date.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" });
+      if (periode === "annee") return { sortKey: date.getFullYear(), label: String(date.getFullYear()) };
+      return { sortKey: date.getFullYear() * 100 + date.getMonth(), label: date.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" }) };
     };
     const map = {};
-    creations.forEach((e) => { const k = key(e.created_at); map[k] = (map[k] || 0) + 1; });
-    const entries = Object.entries(map);
+    creations.forEach((e) => {
+      const { sortKey, label } = bucketOf(e.created_at);
+      if (!map[sortKey]) map[sortKey] = { label, count: 0 };
+      map[sortKey].count += 1;
+    });
+    const entries = Object.entries(map)
+      .sort((a, b) => Number(a[0]) - Number(b[0]))
+      .map(([, v]) => [v.label, v.count]);
     const maxPoints = periode === "semaine" ? 8 : periode === "annee" ? 5 : 6;
     return entries.slice(-maxPoints);
   }, [evenements, periode]);
