@@ -1,6 +1,6 @@
 // Écrans réservés aux administrateurs (structure ou super-admin) :
 // statistiques, création de structure, gestion d'équipe, mon compte.
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   Plus, Trash2, UserCheck, UserX, Copy, RefreshCw, AlertTriangle, Clock,
   FileText, LogOut, Eye, EyeOff,
@@ -56,17 +56,19 @@ export function SuperAdminStatsView({ onBack }) {
   const [fiches, setFiches] = useState([]);
   const [usage, setUsage] = useState(null);
   const [signalements, setSignalements] = useState([]);
+  const [evenements, setEvenements] = useState([]);
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
-    const [structRes, profRes, fichesRes, usageRes, signalRes] = await Promise.all([
+    const [structRes, profRes, fichesRes, usageRes, signalRes, evenRes] = await Promise.all([
       fetchAllRows(supabase, "structures", "id, nom, quota, suspended, essai_duree_semaines, created_at"),
       fetchAllRows(supabase, "profiles", "id, structure_id, plan, actif, created_at"),
       fetchAllRows(supabase, "interventions", "categorie, niveau_detail, type_fiche"),
       supabase.rpc("stats_usage_bibliotheque"),
       supabase.from("signalements").select("*").order("created_at", { ascending: false }),
+      fetchAllRows(supabase, "structures_evenements", "structure_id, type_evenement, created_at"),
     ]);
     if (structRes.error || profRes.error || fichesRes.error || usageRes.error) {
       setError((structRes.error || profRes.error || fichesRes.error || usageRes.error).message);
@@ -76,6 +78,7 @@ export function SuperAdminStatsView({ onBack }) {
     setFiches(fichesRes.data || []);
     setUsage(usageRes.data || null);
     setSignalements(signalRes.data || []);
+    setEvenements(evenRes.data || []);
     setLoading(false);
   }, []);
 
@@ -102,10 +105,10 @@ export function SuperAdminStatsView({ onBack }) {
 
   useEffect(() => { load(); }, [load]);
 
-  const [openTop, setOpenTop] = useState(true);
-  const [openTopSemaine, setOpenTopSemaine] = useState(true);
-  const [openContenu, setOpenContenu] = useState(true);
-  const [openParCategorie, setOpenParCategorie] = useState(true);
+  const [openTop, setOpenTop] = useState(false);
+  const [openTopSemaine, setOpenTopSemaine] = useState(false);
+  const [openContenu, setOpenContenu] = useState(false);
+  const [openParCategorie, setOpenParCategorie] = useState(false);
 
   // --- Croissance & comptes ---
   const structStatus = useMemo(() => structures.map((s) => {
@@ -121,15 +124,58 @@ export function SuperAdminStatsView({ onBack }) {
   const nbSuspendue = structStatus.filter((s) => s === "suspendue").length;
   const comptesActifs = profiles.filter((p) => p.actif).length;
 
-  const evolutionMois = useMemo(() => {
-    const byMonth = {};
-    structures.forEach((s) => {
-      const key = new Date(s.created_at).toLocaleDateString("fr-FR", { month: "short", year: "2-digit" });
-      byMonth[key] = (byMonth[key] || 0) + 1;
+  // --- Nouveau graphique période (semaine/mois/année), à partir du
+  // journal d'événements (créations réelles depuis toujours, via le
+  // rattrapage initial ; suspensions/réactivations à partir de la
+  // mise en place du journal seulement).
+  const [periode, setPeriode] = useState("mois");
+  const bucketsParPeriode = useMemo(() => {
+    const creations = evenements.filter((e) => e.type_evenement === "creation");
+    const key = (d) => {
+      const date = new Date(d);
+      if (periode === "semaine") {
+        const onejan = new Date(date.getFullYear(), 0, 1);
+        const week = Math.ceil((((date - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+        return `S${week} '${String(date.getFullYear()).slice(2)}`;
+      }
+      if (periode === "annee") return String(date.getFullYear());
+      return date.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" });
+    };
+    const map = {};
+    creations.forEach((e) => { const k = key(e.created_at); map[k] = (map[k] || 0) + 1; });
+    const entries = Object.entries(map);
+    const maxPoints = periode === "semaine" ? 8 : periode === "annee" ? 5 : 6;
+    return entries.slice(-maxPoints);
+  }, [evenements, periode]);
+  const essaisChartRef = useRef(null);
+  const essaisChartInstance = useRef(null);
+  useEffect(() => {
+    if (!essaisChartRef.current || loading) return;
+    let cancelled = false;
+    import("chart.js/auto").then(({ Chart }) => {
+      if (cancelled || !essaisChartRef.current) return;
+      if (essaisChartInstance.current) essaisChartInstance.current.destroy();
+      essaisChartInstance.current = new Chart(essaisChartRef.current, {
+        type: "bar",
+        data: {
+          labels: bucketsParPeriode.map(([k]) => k),
+          datasets: [{ data: bucketsParPeriode.map(([, n]) => n), backgroundColor: "#0f6e56", borderRadius: 4, maxBarThickness: 28 }],
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0, color: "#a8a29e", font: { size: 11 } }, grid: { color: "#f1efe8" } },
+            x: { grid: { display: false }, ticks: { color: "#a8a29e", font: { size: 11 } } },
+          },
+        },
+      });
     });
-    // ordre chronologique
-    return Object.entries(byMonth).sort((a, b) => new Date("1 " + a[0]) - new Date("1 " + b[0])).slice(-6);
-  }, [structures]);
+    return () => { cancelled = true; essaisChartInstance.current?.destroy(); };
+  }, [bucketsParPeriode, loading]);
+
+  const categorieChartRef = useRef(null);
+  const categorieChartInstance = useRef(null);
 
   // --- Santé commerciale ---
   const essaisBientotFinis = useMemo(() => structures
@@ -156,6 +202,32 @@ export function SuperAdminStatsView({ onBack }) {
   const nbExpert = fichesNonOutils.filter((f) => f.niveau_detail === "expert").length;
   const nbStandard = fichesNonOutils.length - nbExpert;
 
+  useEffect(() => {
+    if (!categorieChartRef.current || loading || parCategorie.length === 0) return;
+    let cancelled = false;
+    import("chart.js/auto").then(({ Chart }) => {
+      if (cancelled || !categorieChartRef.current) return;
+      if (categorieChartInstance.current) categorieChartInstance.current.destroy();
+      const top6 = parCategorie.slice(0, 6);
+      categorieChartInstance.current = new Chart(categorieChartRef.current, {
+        type: "bar",
+        data: {
+          labels: top6.map(([c]) => c.length > 22 ? c.slice(0, 20) + "…" : c),
+          datasets: [{ data: top6.map(([, n]) => n), backgroundColor: "#0f6e56", borderRadius: 4, maxBarThickness: 16 }],
+        },
+        options: {
+          indexAxis: "y", responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { display: false },
+            y: { grid: { display: false }, ticks: { color: "#78716c", font: { size: 11 } } },
+          },
+        },
+      });
+    });
+    return () => { cancelled = true; categorieChartInstance.current?.destroy(); };
+  }, [parCategorie, loading]);
+
   return (
     <div className="pb-10">
       <TopBar title="Statistiques" onBack={onBack} right={<button onClick={load} className="p-2 text-emerald-700"><RefreshCw size={17} /></button>} />
@@ -165,6 +237,22 @@ export function SuperAdminStatsView({ onBack }) {
 
         {!loading && !error && (
           <>
+            {/* Indicateurs clés */}
+            <section>
+              <div className="grid grid-cols-2 gap-2.5 mb-3">
+                <div className="bg-emerald-900 rounded-2xl p-3.5">
+                  <div className="text-xs text-emerald-200 mb-1">Vues ce mois</div>
+                  <div className="text-2xl font-bold text-white">{usage?.total_vues_mois ?? 0}</div>
+                </div>
+                <StatBlock label="Vues cette semaine" value={usage?.total_vues_semaine ?? 0} />
+                <StatBlock label="PDF téléchargés" value={usage?.total_telechargements_mois ?? 0} />
+                <div className="bg-amber-100 rounded-2xl p-3.5">
+                  <div className="text-xs text-amber-800 mb-1">Signalements</div>
+                  <div className="text-2xl font-bold text-amber-950">{signalements.filter((s) => !s.resolu).length}</div>
+                </div>
+              </div>
+            </section>
+
             {/* Croissance & comptes */}
             <section>
               <h2 className="text-sm font-bold text-emerald-950 mb-3">Croissance & comptes</h2>
@@ -178,20 +266,24 @@ export function SuperAdminStatsView({ onBack }) {
                 <StatBlock label="Structures au total" value={structures.length} />
                 <StatBlock label="Comptes actifs" value={comptesActifs} sub={`${profiles.length} comptes créés au total`} />
               </div>
-              {evolutionMois.length > 0 && (
-                <div className="bg-white rounded-2xl p-4 border border-emerald-900/5">
-                  <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-3">Nouvelles structures par mois</div>
-                  <div className="flex items-end gap-3 h-24">
-                    {evolutionMois.map(([mois, n]) => (
-                      <div key={mois} className="flex-1 flex flex-col items-center gap-1.5">
-                        <div className="text-xs font-bold text-emerald-800">{n}</div>
-                        <div className="w-full bg-emerald-600 rounded-t-md" style={{ height: `${Math.max(8, (n / Math.max(...evolutionMois.map((e) => e[1]))) * 60)}px` }} />
-                        <div className="text-[10px] text-stone-400">{mois}</div>
-                      </div>
+              <div className="bg-white rounded-2xl p-4 border border-emerald-900/5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide">Nouveaux essais</div>
+                  <div className="flex gap-1 bg-stone-100 rounded-lg p-0.5">
+                    {[["semaine", "Semaine"], ["mois", "Mois"], ["annee", "Année"]].map(([val, lab]) => (
+                      <button key={val} onClick={() => setPeriode(val)}
+                        className={`text-[11px] font-semibold px-2 py-1 rounded-md ${periode === val ? "bg-emerald-700 text-white" : "text-stone-500"}`}>
+                        {lab}
+                      </button>
                     ))}
                   </div>
                 </div>
-              )}
+                {bucketsParPeriode.length === 0 ? (
+                  <div className="text-sm text-stone-400 text-center py-6">Pas encore de données pour cette période.</div>
+                ) : (
+                  <div className="relative h-[150px]"><canvas ref={essaisChartRef} role="img" aria-label="Nouveaux essais par période" /></div>
+                )}
+              </div>
             </section>
 
             {/* Santé commerciale */}
@@ -222,72 +314,79 @@ export function SuperAdminStatsView({ onBack }) {
             {/* Usage de la bibliothèque */}
             <section>
               <h2 className="text-sm font-bold text-emerald-950 mb-3">Usage de la bibliothèque</h2>
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <StatBlock label="Vues ce mois" value={usage?.total_vues_mois ?? 0} sub="toutes structures confondues" />
-                <StatBlock label="Vues cette semaine" value={usage?.total_vues_semaine ?? 0} tone="emerald" />
-              </div>
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <StatBlock label="PDF téléchargés ce mois" value={usage?.total_telechargements_mois ?? 0} />
+              <div className="grid grid-cols-1 gap-3 mb-3">
                 <StatBlock label="Jamais consultées" value={usage?.fiches_jamais_consultees ?? 0} tone={usage?.fiches_jamais_consultees > 0 ? "amber" : "stone"} />
               </div>
-              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5 mb-3">
-                <button onClick={() => setOpenTop((o) => !o)} className="w-full px-4 py-2.5 flex items-center justify-between text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
-                  Top 10 fiches — ce mois, toutes structures
-                  <span>{openTop ? "▾" : "▸"}</span>
-                </button>
-                {openTop && (!usage?.top_fiches || usage.top_fiches.length === 0) && <div className="px-4 py-3 text-sm text-stone-400">Aucune consultation ce mois-ci.</div>}
-                {openTop && usage?.top_fiches?.map((t, i) => (
-                  <div key={i} className="px-4 py-3 flex items-center gap-3">
-                    <span className="text-xs font-bold text-stone-300 w-4">{i + 1}</span>
-                    <span className="text-sm text-emerald-950 flex-1">{t.titre}</span>
-                    <span className="text-xs font-bold text-emerald-700">{t.vues} vues</span>
-                  </div>
-                ))}
+              <div className="bg-white rounded-2xl border border-emerald-900/5 p-4 mb-3">
+                <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-2">Top fiches — ce mois</div>
+                {(!usage?.top_fiches || usage.top_fiches.length === 0) && <div className="text-sm text-stone-400 py-2">Aucune consultation ce mois-ci.</div>}
+                <div className="flex flex-col gap-2">
+                  {usage?.top_fiches?.slice(0, openTop ? 10 : 5).map((t, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="text-xs font-bold text-stone-300 w-4">{i + 1}</span>
+                      <span className="text-sm text-emerald-950 flex-1">{t.titre}</span>
+                      <span className="text-xs font-bold text-emerald-700">{t.vues} vues</span>
+                    </div>
+                  ))}
+                </div>
+                {usage?.top_fiches?.length > 5 && (
+                  <button onClick={() => setOpenTop((o) => !o)} className="w-full mt-2 pt-2 border-t border-stone-100 text-[11px] text-stone-400 font-semibold text-center">
+                    {openTop ? "Réduire ▾" : "Voir le top 10 complet ▸"}
+                  </button>
+                )}
               </div>
-              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
-                <button onClick={() => setOpenTopSemaine((o) => !o)} className="w-full px-4 py-2.5 flex items-center justify-between text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
-                  Top fiches — cette semaine, toutes structures
-                  <span>{openTopSemaine ? "▾" : "▸"}</span>
-                </button>
-                {openTopSemaine && (!usage?.top_fiches_semaine || usage.top_fiches_semaine.length === 0) && <div className="px-4 py-3 text-sm text-stone-400">Aucune consultation cette semaine.</div>}
-                {openTopSemaine && usage?.top_fiches_semaine?.map((t, i) => (
-                  <div key={i} className="px-4 py-3 flex items-center gap-3">
-                    <span className="text-xs font-bold text-stone-300 w-4">{i + 1}</span>
-                    <span className="text-sm text-emerald-950 flex-1">{t.titre}</span>
-                    <span className="text-xs font-bold text-emerald-700">{t.vues} vues</span>
-                  </div>
-                ))}
+              <div className="bg-white rounded-2xl border border-emerald-900/5 p-4">
+                <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-2">Top fiches — cette semaine</div>
+                {(!usage?.top_fiches_semaine || usage.top_fiches_semaine.length === 0) && <div className="text-sm text-stone-400 py-2">Aucune consultation cette semaine.</div>}
+                <div className="flex flex-col gap-2">
+                  {usage?.top_fiches_semaine?.slice(0, openTopSemaine ? 10 : 5).map((t, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="text-xs font-bold text-stone-300 w-4">{i + 1}</span>
+                      <span className="text-sm text-emerald-950 flex-1">{t.titre}</span>
+                      <span className="text-xs font-bold text-emerald-700">{t.vues} vues</span>
+                    </div>
+                  ))}
+                </div>
+                {usage?.top_fiches_semaine?.length > 5 && (
+                  <button onClick={() => setOpenTopSemaine((o) => !o)} className="w-full mt-2 pt-2 border-t border-stone-100 text-[11px] text-stone-400 font-semibold text-center">
+                    {openTopSemaine ? "Réduire ▾" : "Voir plus ▸"}
+                  </button>
+                )}
               </div>
             </section>
 
             {/* Contenu de la bibliothèque */}
             <section>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-bold text-emerald-950">Contenu de la bibliothèque</h2>
-                <button onClick={() => setOpenContenu((o) => !o)} className="text-xs text-stone-400 font-semibold">{openContenu ? "Réduire ▾" : "Développer ▸"}</button>
+                <h2 className="text-sm font-bold text-emerald-950">Bibliothèque — {fiches.length} fiches</h2>
+                <button onClick={() => setOpenContenu((o) => !o)} className="text-xs text-stone-400 font-semibold">{openContenu ? "Réduire ▾" : "Détail ▸"}</button>
               </div>
-              {openContenu && (
-                <>
-                  <div className="grid grid-cols-2 gap-3 mb-3">
-                    <StatBlock label="Fiches standard" value={nbStandard} />
-                    <StatBlock label="Fiches Expert" value={nbExpert} tone="emerald" />
-                  </div>
-                  <div className="grid grid-cols-1 gap-3 mb-3">
-                    <StatBlock label="Outils spécifiques" value={nbOutils} sub="comptés à part, comme sur l'accueil" />
-                  </div>
-                  <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
-                    <button onClick={() => setOpenParCategorie((o) => !o)} className="w-full px-4 py-2.5 flex items-center justify-between text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
-                      Répartition par catégorie
-                      <span>{openParCategorie ? "▾" : "▸"}</span>
-                    </button>
-                    {openParCategorie && parCategorie.map(([cat, n]) => (
-                      <div key={cat} className="px-4 py-2.5 flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-emerald-900/5 p-4 mb-3">
+                {parCategorie.length === 0 ? (
+                  <div className="text-sm text-stone-400 text-center py-4">Aucune donnée.</div>
+                ) : (
+                  <div className="relative h-[170px]"><canvas ref={categorieChartRef} role="img" aria-label="Répartition des 6 plus grandes catégories de fiches" /></div>
+                )}
+                <button onClick={() => setOpenParCategorie((o) => !o)} className="w-full mt-2 text-[11px] text-stone-400 font-semibold text-center">
+                  {openParCategorie ? "Réduire ▾" : `Voir les ${parCategorie.length} catégories ▸`}
+                </button>
+                {openParCategorie && (
+                  <div className="mt-2 pt-2 border-t border-stone-100 divide-y divide-stone-50">
+                    {parCategorie.map(([cat, n]) => (
+                      <div key={cat} className="py-2 flex items-center justify-between">
                         <span className="text-sm text-emerald-950">{cat}</span>
                         <span className="text-xs font-bold text-stone-500">{n}</span>
                       </div>
                     ))}
                   </div>
-                </>
+                )}
+              </div>
+              {openContenu && (
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <StatBlock label="Fiches standard" value={nbStandard} />
+                  <StatBlock label="Fiches Expert" value={nbExpert} tone="emerald" />
+                  <StatBlock label="Outils spécifiques" value={nbOutils} sub="comptés à part" />
+                </div>
               )}
             </section>
 
