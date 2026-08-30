@@ -12,7 +12,7 @@ export function GateV2({ onChoose }) {
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,WONK@9..144,500,0;9..144,600,0;9..144,700,0&family=Inter:wght@400;500;600;700;800&display=swap";
     document.head.appendChild(link);
     return () => { document.head.removeChild(link); };
   }, []);
@@ -164,7 +164,7 @@ export function GateV2({ onChoose }) {
                 <div className="steps">
                   <div className="step"><b>1</b><span>Ouvrir Apézeo dans Chrome.</span></div>
                   <div className="step"><b>2</b><span>Ouvrir le menu du navigateur.</span></div>
-                  <div className="step"><b>3</b><span>Choisir « Installer l'application » ou « Ajouter à l'écran d'accueil\u00A0».</span></div>
+                  <div className="step"><b>3</b><span>Choisir « Installer l'application » ou « Ajouter à l'écran d'accueil ».</span></div>
                 </div>
               </article>
               <article className="install-card ios">
@@ -172,7 +172,7 @@ export function GateV2({ onChoose }) {
                 <div className="steps">
                   <div className="step"><b>1</b><span>Ouvrir Apézeo dans Safari.</span></div>
                   <div className="step"><b>2</b><span>Appuyer sur « Partager ».</span></div>
-                  <div className="step"><b>3</b><span>Choisir « Sur l'écran d'accueil », puis « Ajouter\u00A0».</span></div>
+                  <div className="step"><b>3</b><span>Choisir « Sur l'écran d'accueil », puis « Ajouter ».</span></div>
                 </div>
               </article>
             </div>
