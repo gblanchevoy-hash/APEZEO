@@ -223,6 +223,7 @@
 .apezeo-landing-v2 .source-copy p {margin-top:11px}
 .apezeo-landing-v2 .badges {display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px;max-width:360px}
 .apezeo-landing-v2 .badge {padding:10px 13px;border-radius:999px;background:#e8f3ef;color:var(--navy);font-weight:800;font-size:.8rem}
+.apezeo-landing-v2 .badges.muted {display:block;max-width:340px;color:var(--muted);font-size:.78rem;font-weight:500;line-height:1.6;text-align:right}
 
 .apezeo-landing-v2 .install {
  padding:68px 0;background:linear-gradient(180deg,#f5f7f4,#eaf1ed)
@@ -236,9 +237,10 @@
 .apezeo-landing-v2 .steps {margin-top:20px;display:grid;gap:11px}
 .apezeo-landing-v2 .step {display:flex;gap:10px;color:var(--muted)}
 .apezeo-landing-v2 .step b {
- flex:none;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;
+ flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
  background:var(--navy);color:#fff;font-size:.72rem
 }
+.apezeo-landing-v2 .step b svg {width:14px;height:14px}
 .apezeo-landing-v2 .ios .step b {background:var(--amber2)}
 
 .apezeo-landing-v2 .cta {
@@ -266,6 +268,7 @@
 .apezeo-landing-v2 .number-grid {grid-template-columns:repeat(2,1fr)}
 .apezeo-landing-v2 .source-box {flex-direction:column;align-items:flex-start}
 .apezeo-landing-v2 .badges {justify-content:flex-start;max-width:none}
+.apezeo-landing-v2 .badges.muted {text-align:left}
 }
 @media(max-width:700px){
 .apezeo-landing-v2 .container {width:calc(100% - 24px)}

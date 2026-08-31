@@ -135,6 +135,7 @@ export function GateV2({ onChoose }) {
                 <div className="feature"><div className="feature-icon">02</div><div><strong>Deux bibliothèques complémentaires</strong><span>Standard pour aller à l'essentiel, Expert pour approfondir.</span></div></div>
                 <div className="feature"><div className="feature-icon">03</div><div><strong>Des fiches créées pour le terrain</strong><span>Les professionnels peuvent créer leurs propres fiches selon leurs besoins.</span></div></div>
                 <div className="feature"><div className="feature-icon">04</div><div><strong>Des favoris individuels et d'équipe</strong><span>Retrouver et partager rapidement les ressources utiles.</span></div></div>
+                <div className="feature"><div className="feature-icon">05</div><div><strong>Des fiches outils spécifiques</strong><span>Pour découvrir des outils pratiques et utilisables facilement auprès de personnes ayant des troubles neurocognitifs. Chaque fiche outil contient un lien vers une étude scientifique sourcée.</span></div></div>
               </div>
             </div>
 
@@ -146,7 +147,7 @@ export function GateV2({ onChoose }) {
                   <div className="mini"><b><span className="mnum">01</span>Socle commun</b><span>Les mêmes repères pour toute l'équipe.</span></div>
                   <div className="mini"><b><span className="mnum">02</span>Formation prolongée</b><span>Les connaissances restent accessibles.</span></div>
                   <div className="mini"><b><span className="mnum">03</span>Nouveaux arrivants</b><span>Une prise en main plus rapide.</span></div>
-                  <div className="mini"><b><span className="mnum">04</span>Sources reconnues</b><span>HAS, NICE, France Alzheimer et sociétés savantes.</span></div>
+                  <div className="mini"><b><span className="mnum">04</span>Sources reconnues</b><span>HAS, NICE, France Alzheimer, OMS, revues scientifiques et sociétés savantes.</span></div>
                 </div>
                 <div className="flyer-bottom"><div><div className="count">1500+</div><small>fiches de pratiques<br />non médicamenteuses</small></div><a className="btn btn-white" href="#sources">Voir les sources →</a></div>
               </div>
@@ -161,7 +162,7 @@ export function GateV2({ onChoose }) {
                 <h2>Des pratiques éclairées par des sources reconnues.</h2>
                 <p>Les fiches s'appuient notamment sur des recommandations, ressources et données issues d'organismes reconnus. Les sources sont consultables depuis l'application.</p>
               </div>
-              <div className="badges"><span className="badge">HAS</span><span className="badge">NICE</span><span className="badge">France Alzheimer</span><span className="badge">Sociétés savantes</span></div>
+              <div className="badges muted">HAS · NICE · France Alzheimer · OMS · Revues scientifiques reconnues · Sociétés savantes</div>
             </div>
           </div>
         </section>
@@ -173,17 +174,17 @@ export function GateV2({ onChoose }) {
               <article className="install-card">
                 <h3>Android · Chrome</h3><p>Ajoutez Apézeo à l'écran d'accueil depuis Chrome.</p>
                 <div className="steps">
-                  <div className="step"><b>1</b><span>Ouvrir Apézeo dans Chrome.</span></div>
-                  <div className="step"><b>2</b><span>Ouvrir le menu du navigateur.</span></div>
-                  <div className="step"><b>3</b><span>Choisir « Installer l'application » ou « Ajouter à l'écran d'accueil ».</span></div>
+                  <div className="step"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15 15 0 0 1 0 20a15 15 0 0 1 0-20" /></svg></b><span>Ouvrir Apézeo dans Chrome.</span></div>
+                  <div className="step"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><circle cx="12" cy="5" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /></svg></b><span>Ouvrir le menu du navigateur.</span></div>
+                  <div className="step"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v12" /><path d="M7 10l5 5 5-5" /><path d="M5 21h14" /></svg></b><span>Choisir « Installer l'application » ou « Ajouter à l'écran d'accueil ».</span></div>
                 </div>
               </article>
               <article className="install-card ios">
                 <h3>iPhone / iPad · Safari</h3><p>Ajoutez Apézeo à l'écran d'accueil depuis Safari.</p>
                 <div className="steps">
-                  <div className="step"><b>1</b><span>Ouvrir Apézeo dans Safari.</span></div>
-                  <div className="step"><b>2</b><span>Appuyer sur « Partager ».</span></div>
-                  <div className="step"><b>3</b><span>Choisir « Sur l'écran d'accueil », puis « Ajouter ».</span></div>
+                  <div className="step"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polygon points="16,8 13,13 8,16 11,11" /></svg></b><span>Ouvrir Apézeo dans Safari.</span></div>
+                  <div className="step"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 16V4" /><path d="M7 9l5-5 5 5" /><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></svg></b><span>Appuyer sur « Partager ».</span></div>
+                  <div className="step"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M12 8v8" /><path d="M8 12h8" /></svg></b><span>Choisir « Sur l'écran d'accueil », puis « Ajouter ».</span></div>
                 </div>
               </article>
             </div>
