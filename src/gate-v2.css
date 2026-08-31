@@ -93,7 +93,8 @@
 .apezeo-landing-v2 .hero-actions {display:flex;flex-wrap:wrap;gap:12px;margin-top:31px}
 .apezeo-landing-v2 .hero-foot {display:flex;gap:15px;align-items:center;margin-top:23px;color:rgba(255,255,255,.7);font-size:.88rem}
 
-.apezeo-landing-v2 .hero-art {position:relative;min-height:490px;display:grid;place-items:center}
+.apezeo-landing-v2 .hero-art {position:relative;min-height:520px;display:grid;place-items:center;perspective:1200px}
+.apezeo-landing-v2 .art-glow {position:absolute;width:430px;height:430px;border-radius:50%;background:radial-gradient(circle,rgba(4,120,87,.30),rgba(4,120,87,.07) 48%,transparent 70%);filter:blur(8px);right:2%;top:8%;pointer-events:none}
 .apezeo-landing-v2 .leaf {
  position:absolute;width:150px;height:75px;border-radius:100% 0 100% 0;
  background:linear-gradient(135deg,rgba(126,190,178,.34),rgba(255,255,255,.04));
@@ -103,30 +104,28 @@
 .apezeo-landing-v2 .leaf.two {right:12%;top:17%;transform:rotate(16deg) scale(.8)}
 .apezeo-landing-v2 .leaf.three {left:4%;bottom:9%;transform:rotate(25deg) scale(.7)}
 .apezeo-landing-v2 .device {
- position:relative;width:min(100%,560px);aspect-ratio:1.08/1;
- border-radius:32px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.04));
- border:1px solid rgba(255,255,255,.16);box-shadow:0 35px 80px rgba(0,0,0,.22)
+ position:relative;width:min(100%,590px);aspect-ratio:1.08/1;
+ background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.025));
+ border:1px solid rgba(255,255,255,.14);border-radius:34px;
+ box-shadow:0 38px 90px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,255,255,.12);
+ transform:rotateY(-3deg);transform-style:preserve-3d
 }
-.apezeo-landing-v2 .screen {
- position:absolute;background:#fff;border:7px solid #123b54;border-radius:18px;
- box-shadow:0 22px 50px rgba(0,0,0,.28);overflow:hidden
-}
-.apezeo-landing-v2 .screen.laptop {width:73%;left:8%;top:12%}
-.apezeo-landing-v2 .screen.tablet {width:39%;right:5%;bottom:11%;border-width:6px}
-.apezeo-landing-v2 .screen.phone {width:17%;right:27%;bottom:5%;border-width:5px;z-index:3}
-.apezeo-landing-v2 .ui {aspect-ratio:16/10;background:#f4f8f6;padding:10px}
-.apezeo-landing-v2 .tablet .ui {aspect-ratio:4/3}
-.apezeo-landing-v2 .phone .ui {aspect-ratio:9/17;padding:6px}
-.apezeo-landing-v2 .ui-head {height:10%;background:#dceee8;border-radius:5px;margin-bottom:8px}
-.apezeo-landing-v2 .ui-grid {display:grid;grid-template-columns:25% 1fr;gap:7px;height:84%}
-.apezeo-landing-v2 .screenshot {width:100%;height:100%;object-fit:cover}
-.apezeo-landing-v2 .screen.laptop .screenshot {object-position:top}
-.apezeo-landing-v2 .screen.tablet .screenshot, .apezeo-landing-v2 .screen.phone .screenshot {object-position:top}
-.apezeo-landing-v2 .hero-badge {
- position:absolute;left:0;bottom:3%;z-index:5;padding:16px 18px;border-radius:18px;
- background:#fff;color:var(--navy);box-shadow:0 18px 45px rgba(0,0,0,.2);font-size:.88rem;font-weight:800
-}
-.apezeo-landing-v2 .hero-badge b {display:block;color:var(--green);font-size:1.45rem;font-family:Lora,Georgia,serif}
+.apezeo-landing-v2 .app-tag {position:absolute;right:7%;top:4%;z-index:7;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.92);color:#064e3b;font-size:.7rem;font-weight:800;box-shadow:0 10px 25px rgba(0,0,0,.15)}
+.apezeo-landing-v2 .app-window {position:absolute;left:7%;top:9%;width:75%;height:70%;background:#f8faf9;border:7px solid rgba(6,78,59,.86);border-radius:20px;overflow:hidden;box-shadow:0 25px 55px rgba(0,0,0,.25)}
+.apezeo-landing-v2 .browser-bar {height:30px;background:#eef3f0;display:flex;align-items:center;gap:6px;padding:0 10px}
+.apezeo-landing-v2 .browser-dot {width:7px;height:7px;border-radius:50%;background:#c8d6d0}
+.apezeo-landing-v2 .browser-address {margin-left:7px;height:15px;flex:1;border-radius:999px;background:#e1eae6}
+.apezeo-landing-v2 .app-screenshot {height:calc(100% - 30px);overflow:hidden;background:#f7faf8}
+.apezeo-landing-v2 .app-screenshot img {width:100%;height:100%;object-fit:cover;object-position:top}
+.apezeo-landing-v2 .screen-phone {position:absolute;right:8%;bottom:3%;z-index:6;width:18%;min-width:92px;max-width:116px;background:#f8faf9;border:6px solid rgba(6,78,59,.86);border-radius:24px;overflow:hidden;box-shadow:0 28px 55px rgba(0,0,0,.30);transform:rotate(2deg)}
+.apezeo-landing-v2 .phone-notch {height:14px;background:#f0f5f2;position:relative}
+.apezeo-landing-v2 .phone-notch:after {content:"";position:absolute;left:50%;top:4px;transform:translateX(-50%);width:30%;height:4px;border-radius:999px;background:#cddbd5}
+.apezeo-landing-v2 .phone-screenshot {min-height:210px;overflow:hidden;background:#f7faf8}
+.apezeo-landing-v2 .phone-screenshot img {width:100%;height:100%;object-fit:cover;object-position:top}
+.apezeo-landing-v2 .floating-card {position:absolute;left:1%;bottom:5%;z-index:5;width:175px;padding:16px 17px;border-radius:20px;background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.7);color:#064e3b;box-shadow:0 22px 45px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
+.apezeo-landing-v2 .floating-card strong {display:block;font-family:Lora,Georgia,serif;font-size:2rem;line-height:1;color:#064e3b}
+.apezeo-landing-v2 .floating-card span {display:block;font-size:.75rem;font-weight:800;margin-top:7px;color:#31534b}
+.apezeo-landing-v2 .floating-card small {display:block;font-size:.68rem;color:#6a7772;margin-top:5px}
 
 .apezeo-landing-v2 .intro {padding:64px 0 44px}
 .apezeo-landing-v2 .intro-head {max-width:800px;margin-bottom:30px}
@@ -266,11 +265,20 @@
 .apezeo-landing-v2 .hero-actions .btn {width:100%}
 .apezeo-landing-v2 .hero-secondary {justify-content:center}
 .apezeo-landing-v2 .path-secondary {display:block;margin:12px 0 0;text-align:center}
-.apezeo-landing-v2 .hero-art {min-height:315px;margin-top:20px}
-.apezeo-landing-v2 .screen.laptop {width:76%}
-.apezeo-landing-v2 .screen.tablet {width:39%}
-.apezeo-landing-v2 .screen.phone {width:18%}
-.apezeo-landing-v2 .hero-badge {left:0;bottom:0}
+.apezeo-landing-v2 .hero-art {min-height:330px;margin-top:18px}
+.apezeo-landing-v2 .device {width:100%;aspect-ratio:1.02/1;border-radius:25px}
+.apezeo-landing-v2 .app-window {left:5%;top:10%;width:79%;height:66%;border-width:5px;border-radius:15px}
+.apezeo-landing-v2 .browser-bar {height:21px;padding:0 7px}
+.apezeo-landing-v2 .browser-dot {width:5px;height:5px}
+.apezeo-landing-v2 .browser-address {height:10px}
+.apezeo-landing-v2 .floating-card {left:0;bottom:2%;width:128px;padding:11px 12px;border-radius:15px}
+.apezeo-landing-v2 .floating-card strong {font-size:1.45rem}
+.apezeo-landing-v2 .floating-card span {font-size:.63rem;margin-top:5px}
+.apezeo-landing-v2 .floating-card small {font-size:.56rem}
+.apezeo-landing-v2 .screen-phone {right:6%;bottom:2%;width:20%;min-width:70px;border-width:4px;border-radius:17px}
+.apezeo-landing-v2 .phone-notch {height:9px}
+.apezeo-landing-v2 .phone-screenshot {min-height:135px}
+.apezeo-landing-v2 .app-tag {right:6%;top:4%;font-size:.58rem;padding:6px 8px}
 .apezeo-landing-v2 .intro {padding:65px 0 45px}
 .apezeo-landing-v2 .number-grid {grid-template-columns:1fr}
 .apezeo-landing-v2 .number-card {min-height:auto}

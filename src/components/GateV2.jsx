@@ -46,12 +46,19 @@ export function GateV2({ onChoose }) {
             </div>
 
             <div className="hero-art">
+              <div className="art-glow" />
               <div className="leaf one" /><div className="leaf two" /><div className="leaf three" />
-              <div className="device" aria-label="Aperçu de l'application">
-                <div className="screen laptop"><img src="/landing/screenshot-accueil.jpg" alt="Écran d'accueil d'Apézeo, version professionnelle" className="screenshot" /></div>
-                <div className="screen tablet"><img src="/landing/screenshot-fiche.jpg" alt="Détail d'une fiche technique dans Apézeo" className="screenshot" /></div>
-                <div className="screen phone"><img src="/landing/screenshot-fiche.jpg" alt="Détail d'une fiche technique dans Apézeo, sur mobile" className="screenshot" /></div>
-                <div className="hero-badge"><b>1500+</b> fiches de pratiques</div>
+              <div className="device" aria-label="Aperçu de l'application Apézeo">
+                <div className="app-tag">Bibliothèque Apézeo</div>
+                <div className="app-window">
+                  <div className="browser-bar"><span className="browser-dot" /><span className="browser-dot" /><span className="browser-dot" /><span className="browser-address" /></div>
+                  <div className="app-screenshot"><img src="/landing/screenshot-accueil.jpg" alt="Écran d'accueil d'Apézeo, version professionnelle" /></div>
+                </div>
+                <div className="screen-phone">
+                  <div className="phone-notch" />
+                  <div className="phone-screenshot"><img src="/landing/screenshot-fiche.jpg" alt="Détail d'une fiche technique dans Apézeo, sur mobile" /></div>
+                </div>
+                <div className="floating-card"><strong>1500+</strong><span>fiches de pratiques</span><small>Une bibliothèque riche et évolutive</small></div>
               </div>
             </div>
           </div>
