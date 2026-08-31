@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { QuizView, RecommandationsView } from "../quiz.jsx";
 import { Home_ } from "../Home.jsx";
-import { Gate } from "../gate.jsx";
 import { GateV2 } from "../GateV2.jsx";
 import { AuthView } from "../AuthView.jsx";
 import { mockFicheTechnique } from "../../test/fixtures.js";
@@ -45,13 +44,6 @@ describe("Home_ (accueil Pro)", () => {
         onOpenLegal={noop} onOpenCompte={noop} onRefresh={noop} onLogout={noop} onChangeMode={noop} />
     );
     expect(screen.getByText("Un geste apaisant, tout de suite.")).toBeInTheDocument();
-  });
-});
-
-describe("Gate (page d'accueil publique)", () => {
-  it("s'affiche sans planter", () => {
-    render(<Gate onChoose={noop} />);
-    expect(screen.getAllByText(/Apézeo/i).length).toBeGreaterThan(0);
   });
 });
 
