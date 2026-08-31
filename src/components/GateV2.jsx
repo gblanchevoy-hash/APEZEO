@@ -49,7 +49,6 @@ export function GateV2({ onChoose }) {
               <div className="art-glow" />
               <div className="leaf one" /><div className="leaf two" /><div className="leaf three" />
               <div className="device" aria-label="Aperçu de l'application Apézeo">
-                <div className="app-tag">Bibliothèque Apézeo</div>
                 <div className="app-window">
                   <div className="browser-bar"><span className="browser-dot" /><span className="browser-dot" /><span className="browser-dot" /><span className="browser-address" /></div>
                   <div className="mock-home">
@@ -68,7 +67,6 @@ export function GateV2({ onChoose }) {
                     <div className="mock-fiche-badges"><span>Standard</span><span className="alt">Technique</span></div>
                     <div className="mock-fiche-title" />
                     <div className="mock-fiche-title short" />
-                    <div className="mock-fiche-card" />
                     <div className="mock-fiche-card" />
                   </div>
                 </div>

@@ -116,8 +116,8 @@
 .apezeo-landing-v2 .browser-dot {width:7px;height:7px;border-radius:50%;background:#c8d6d0}
 .apezeo-landing-v2 .browser-address {margin-left:7px;height:15px;flex:1;border-radius:999px;background:#e1eae6}
 .apezeo-landing-v2 .app-screenshot, .apezeo-landing-v2 .mock-home {height:calc(100% - 30px);overflow:hidden;background:#f7faf8}
-.apezeo-landing-v2 .screen-phone {position:absolute;right:8%;bottom:3%;z-index:6;width:18%;min-width:92px;max-width:116px;background:#f8faf9;border:6px solid rgba(6,78,59,.86);border-radius:24px;overflow:hidden;box-shadow:0 28px 55px rgba(0,0,0,.30);transform:rotate(2deg)}
-.apezeo-landing-v2 .phone-notch {height:14px;background:#f0f5f2;position:relative}
+.apezeo-landing-v2 .screen-phone {position:absolute;right:8%;bottom:3%;z-index:6;width:18%;min-width:92px;max-width:116px;aspect-ratio:0.46/1;background:#f8faf9;border:6px solid rgba(6,78,59,.86);border-radius:24px;overflow:hidden;box-shadow:0 28px 55px rgba(0,0,0,.30);transform:rotate(2deg);display:flex;flex-direction:column}
+.apezeo-landing-v2 .phone-notch {height:14px;background:#f0f5f2;position:relative;flex:none}
 .apezeo-landing-v2 .phone-notch:after {content:"";position:absolute;left:50%;top:4px;transform:translateX(-50%);width:30%;height:4px;border-radius:999px;background:#cddbd5}
 .apezeo-landing-v2 .mock-home-header {background:linear-gradient(135deg,var(--navy),var(--navy2));padding:14px 13px 18px;display:flex;align-items:center;gap:8px}
 .apezeo-landing-v2 .mock-logo {width:22px;height:22px;object-fit:contain;border-radius:50%;background:#fff}
@@ -128,13 +128,13 @@
 .apezeo-landing-v2 .mock-nav-text {display:flex;flex-direction:column;gap:5px;flex:1}
 .apezeo-landing-v2 .mock-nav-text i {display:block;width:55%;height:7px;border-radius:4px;background:#064e3b;opacity:.85}
 .apezeo-landing-v2 .mock-nav-text em {display:block;width:78%;height:5px;border-radius:4px;background:#dce7e3}
-.apezeo-landing-v2 .phone-screenshot, .apezeo-landing-v2 .mock-fiche {min-height:210px;overflow:hidden;background:#fff;padding:11px 10px}
-.apezeo-landing-v2 .mock-fiche-badges {display:flex;gap:5px;margin-bottom:9px}
-.apezeo-landing-v2 .mock-fiche-badges span {font-size:.5rem;font-weight:800;padding:3px 7px;border-radius:999px;background:#dcece6;color:var(--navy)}
+.apezeo-landing-v2 .phone-screenshot, .apezeo-landing-v2 .mock-fiche {flex:1;overflow:hidden;background:#fff;padding:10px 9px}
+.apezeo-landing-v2 .mock-fiche-badges {display:flex;gap:4px;margin-bottom:8px}
+.apezeo-landing-v2 .mock-fiche-badges span {font-size:.46rem;font-weight:800;padding:3px 6px;border-radius:999px;background:#dcece6;color:var(--navy)}
 .apezeo-landing-v2 .mock-fiche-badges span.alt {background:#fde8c8;color:#8a5a06}
-.apezeo-landing-v2 .mock-fiche-title {height:9px;border-radius:5px;background:#064e3b;margin-bottom:6px;width:92%}
-.apezeo-landing-v2 .mock-fiche-title.short {width:58%;margin-bottom:12px}
-.apezeo-landing-v2 .mock-fiche-card {height:34px;border-radius:8px;background:#f7faf8;border:1px solid #e1eae6;border-left:3px solid var(--green2);margin-bottom:8px}
+.apezeo-landing-v2 .mock-fiche-title {height:8px;border-radius:4px;background:#064e3b;margin-bottom:5px;width:92%}
+.apezeo-landing-v2 .mock-fiche-title.short {width:58%;margin-bottom:10px}
+.apezeo-landing-v2 .mock-fiche-card {height:28px;border-radius:8px;background:#f7faf8;border:1px solid #e1eae6;border-left:3px solid var(--green2)}
 .apezeo-landing-v2 .floating-card {position:absolute;left:1%;bottom:5%;z-index:5;width:175px;padding:16px 17px;border-radius:20px;background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.7);color:#064e3b;box-shadow:0 22px 45px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
 .apezeo-landing-v2 .floating-card strong {display:block;font-family:Lora,Georgia,serif;font-size:2rem;line-height:1;color:#064e3b}
 .apezeo-landing-v2 .floating-card span {display:block;font-size:.75rem;font-weight:800;margin-top:7px;color:#31534b}
