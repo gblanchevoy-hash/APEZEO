@@ -21,7 +21,6 @@ export function GateV2({ onChoose }) {
           <nav className="nav-actions" aria-label="Navigation principale">
             <a className="nav-link" href="#pourquoi">Pourquoi Apézeo</a>
             <a className="nav-link" href="#fonctionnalites">Comment ça marche</a>
-            <a className="nav-link" href="#sources">Nos sources</a>
             <button className="btn btn-outline nav-login" onClick={() => onChoose("pro")}>Connexion</button>
           </nav>
         </div>
@@ -106,7 +105,7 @@ export function GateV2({ onChoose }) {
                 <li><span className="tick">✓</span><span>Outils pratiques et liens vers les études et ressources scientifiques.</span></li>
               </ul>
               <button className="btn btn-green" onClick={() => onChoose("pro")}>Découvrir l'espace professionnel →</button>
-              <a className="path-secondary" href="#sources">Voir les sources et la méthode</a>
+              <a className="path-secondary" href="#fonctionnalites">Voir les sources et la méthode</a>
             </article>
 
             <article className="path aidant" id="aidants">
@@ -135,7 +134,7 @@ export function GateV2({ onChoose }) {
                 <div className="feature"><div className="feature-icon">02</div><div><strong>Deux bibliothèques complémentaires</strong><span>Standard pour aller à l'essentiel, Expert pour approfondir.</span></div></div>
                 <div className="feature"><div className="feature-icon">03</div><div><strong>Des fiches créées pour le terrain</strong><span>Les professionnels peuvent créer leurs propres fiches selon leurs besoins.</span></div></div>
                 <div className="feature"><div className="feature-icon">04</div><div><strong>Des favoris individuels et d'équipe</strong><span>Retrouver et partager rapidement les ressources utiles.</span></div></div>
-                <div className="feature"><div className="feature-icon">05</div><div><strong>Des fiches outils spécifiques</strong><span>Pour découvrir des outils pratiques et utilisables facilement auprès de personnes ayant des troubles neurocognitifs. Chaque fiche outil contient un lien vers une étude scientifique sourcée.</span></div></div>
+                <div className="feature"><div className="feature-icon">05</div><div><strong>Des fiches outils spécifiques</strong><span>Des outils concrets et faciles à utiliser auprès des personnes vivant avec des troubles neurocognitifs, chacun accompagné d'une étude scientifique de référence.</span></div></div>
               </div>
             </div>
 
@@ -149,23 +148,12 @@ export function GateV2({ onChoose }) {
                   <div className="mini"><b><span className="mnum">03</span>Nouveaux arrivants</b><span>Une prise en main plus rapide.</span></div>
                   <div className="mini"><b><span className="mnum">04</span>Sources reconnues</b><span>HAS, NICE, France Alzheimer, OMS, revues scientifiques et sociétés savantes.</span></div>
                 </div>
-                <div className="flyer-bottom"><div><div className="count">1500+</div><small>fiches de pratiques<br />non médicamenteuses</small></div><a className="btn btn-white" href="#sources">Voir les sources →</a></div>
+                <div className="flyer-bottom"><div><div className="count">1500+</div><small>fiches de pratiques<br />non médicamenteuses</small></div><a className="btn btn-white" href="#fonctionnalites">Voir les sources →</a></div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="sources" id="sources">
-          <div className="container">
-            <div className="source-box">
-              <div className="source-copy">
-                <h2>Des pratiques éclairées par des sources reconnues.</h2>
-                <p>Les fiches s'appuient notamment sur des recommandations, ressources et données issues d'organismes reconnus. Les sources sont consultables depuis l'application.</p>
-              </div>
-              <div className="badges muted">HAS · NICE · France Alzheimer · OMS · Revues scientifiques reconnues · Sociétés savantes</div>
-            </div>
-          </div>
-        </section>
 
         <section className="install">
           <div className="container">
