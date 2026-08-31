@@ -162,8 +162,8 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
 
           {f.croquisUrl ? (
             CROQUIS_PLEINE_LARGEUR.includes(f.titre) ? (
-              <div className="rounded-2xl overflow-hidden mb-6 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.15)]">
-                <img src={f.croquisUrl} alt={f.titre} className="w-full h-auto" />
+              <div className="rounded-2xl overflow-hidden mb-6 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.15)] flex items-center justify-center bg-white">
+                <img src={f.croquisUrl} alt={f.titre} className="w-full h-auto max-h-[360px] object-contain" />
               </div>
             ) : (
             <div className="relative mb-6" style={{ aspectRatio: "900 / 560" }}>

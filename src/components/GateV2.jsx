@@ -48,34 +48,9 @@ export function GateV2({ onChoose }) {
             <div className="hero-art">
               <div className="leaf one" /><div className="leaf two" /><div className="leaf three" />
               <div className="device" aria-label="Aperçu de l'application">
-                <div className="screen laptop"><div className="ui">
-                  <div className="ui-head" />
-                  <div className="ui-grid">
-                    <div className="ui-side">
-                      <div className="ui-nav-item" /><div className="ui-nav-item" /><div className="ui-nav-item active" /><div className="ui-nav-item" />
-                    </div>
-                    <div className="ui-cards">
-                      <div className="ui-card app-card" data-tag="Technique"><span>Créer un parcours nocturne sécurisé</span></div>
-                      <div className="ui-card app-card" data-tag="Explicatif"><span>Comprendre la déambulation</span></div>
-                      <div className="ui-card app-card" data-tag="Standard"><span>Reformuler avec empathie</span></div>
-                    </div>
-                  </div>
-                </div></div>
-                <div className="screen tablet"><div className="ui">
-                  <div className="ui-head" />
-                  <div className="ui-cards">
-                    <div className="ui-card app-card small" data-tag="Technique"><span>Adapter l'espace sensoriel</span></div>
-                    <div className="ui-card app-card small" data-tag="Explicatif"><span>Comprendre la validation émotionnelle</span></div>
-                  </div>
-                </div></div>
-                <div className="screen phone"><div className="ui">
-                  <div className="ui-head" />
-                  <div className="ui-cards">
-                    <div className="ui-card app-card small" data-tag="Standard" />
-                    <div className="ui-card app-card small" data-tag="Technique" />
-                    <div className="ui-card app-card small" data-tag="Explicatif" />
-                  </div>
-                </div></div>
+                <div className="screen laptop"><img src="/landing/screenshot-accueil.jpg" alt="Écran d'accueil d'Apézeo, version professionnelle" className="screenshot" /></div>
+                <div className="screen tablet"><img src="/landing/screenshot-fiche.jpg" alt="Détail d'une fiche technique dans Apézeo" className="screenshot" /></div>
+                <div className="screen phone"><img src="/landing/screenshot-fiche.jpg" alt="Détail d'une fiche technique dans Apézeo, sur mobile" className="screenshot" /></div>
                 <div className="hero-badge"><b>1500+</b> fiches de pratiques</div>
               </div>
             </div>
