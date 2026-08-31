@@ -14,18 +14,20 @@ export function SuperAdminStatsView({ onBack }) {
   const [usage, setUsage] = useState(null);
   const [signalements, setSignalements] = useState([]);
   const [evenements, setEvenements] = useState([]);
+  const [usageParStructure, setUsageParStructure] = useState([]);
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
-    const [structRes, profRes, fichesRes, usageRes, signalRes, evenRes] = await Promise.all([
+    const [structRes, profRes, fichesRes, usageRes, signalRes, evenRes, usageStructRes] = await Promise.all([
       fetchAllRows(supabase, "structures", "id, nom, quota, suspended, essai_duree_semaines, created_at"),
       fetchAllRows(supabase, "profiles", "id, structure_id, plan, actif, created_at"),
       fetchAllRows(supabase, "interventions", "categorie, niveau_detail, type_fiche"),
       supabase.rpc("stats_usage_bibliotheque"),
       supabase.from("signalements").select("*").order("created_at", { ascending: false }),
       fetchAllRows(supabase, "structures_evenements", "structure_id, type_evenement, created_at"),
+      supabase.rpc("stats_usage_par_structure"),
     ]);
     if (structRes.error || profRes.error || fichesRes.error || usageRes.error) {
       setError((structRes.error || profRes.error || fichesRes.error || usageRes.error).message);
@@ -36,6 +38,7 @@ export function SuperAdminStatsView({ onBack }) {
     setUsage(usageRes.data || null);
     setSignalements(signalRes.data || []);
     setEvenements(evenRes.data || []);
+    setUsageParStructure(usageStructRes.data || []);
     setLoading(false);
   }, []);
 
@@ -66,6 +69,11 @@ export function SuperAdminStatsView({ onBack }) {
   const [openTopSemaine, setOpenTopSemaine] = useState(false);
   const [openContenu, setOpenContenu] = useState(false);
   const [openParCategorie, setOpenParCategorie] = useState(false);
+  const [openParStructure, setOpenParStructure] = useState(false);
+  const usageParStructureTriee = useMemo(
+    () => usageParStructure.slice().sort((a, b) => b.vues_mois - a.vues_mois),
+    [usageParStructure]
+  );
 
   // --- Croissance & comptes ---
   const structStatus = useMemo(() => structures.map((s) => {
@@ -251,6 +259,29 @@ export function SuperAdminStatsView({ onBack }) {
                   <div className="relative h-[150px]"><canvas ref={essaisChartRef} role="img" aria-label="Nouveaux essais par période" /></div>
                 )}
               </div>
+            </section>
+
+            {/* Usage par structure */}
+            <section>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-bold text-emerald-950">Usage par structure</h2>
+                <button onClick={() => setOpenParStructure((o) => !o)} className="text-xs text-stone-400 font-semibold">{openParStructure ? "Réduire ▾" : "Détail ▸"}</button>
+              </div>
+              {openParStructure && (
+                <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
+                  {usageParStructureTriee.length === 0 && <div className="px-4 py-3 text-sm text-stone-400">Aucune donnée pour l'instant.</div>}
+                  {usageParStructureTriee.map((s) => (
+                    <div key={s.structure_id} className="px-4 py-3">
+                      <div className="text-sm font-semibold text-emerald-950 mb-1.5">{s.structure_nom}</div>
+                      <div className="flex gap-4 text-xs text-stone-500">
+                        <span><b className="text-emerald-700">{s.vues_mois}</b> vues ce mois</span>
+                        <span><b className="text-emerald-700">{s.vues_semaine}</b> cette semaine</span>
+                        <span><b className="text-emerald-700">{s.telechargements_mois}</b> PDF ce mois</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
 
             {/* Santé commerciale */}

@@ -178,6 +178,9 @@
  background:var(--green-soft);color:var(--green);font-size:.75rem;font-weight:900
 }
 .apezeo-landing-v2 .aidant .tick {background:#fff0d4;color:var(--amber2)}
+.apezeo-landing-v2 .path-pricing {position:relative;z-index:2;font-size:.85rem;color:var(--muted);margin-bottom:16px;padding:11px 13px;background:var(--green-soft);border-radius:10px}
+.apezeo-landing-v2 .aidant .path-pricing {background:#fff0d4}
+.apezeo-landing-v2 .path-pricing strong {color:var(--navy)}
 .apezeo-landing-v2 .path .btn {position:relative;z-index:2}
 
 .apezeo-landing-v2 .features {padding:76px 0}
@@ -210,9 +213,12 @@
 .apezeo-landing-v2 .mini b {display:block;color:#fff;font-size:.88rem;margin-bottom:4px}
 .apezeo-landing-v2 .mini span {color:rgba(255,255,255,.6);font-size:.78rem}
 .apezeo-landing-v2 .mini .mnum {color:var(--amber);font-weight:900;margin-right:5px}
-.apezeo-landing-v2 .flyer-bottom {display:flex;align-items:center;justify-content:space-between;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12)}
-.apezeo-landing-v2 .count {font-family:Lora,Georgia,serif;font-size:2.2rem;color:#fff}
-.apezeo-landing-v2 .count small {display:block;font-family:Inter,sans-serif;font-size:.72rem;color:rgba(255,255,255,.6);line-height:1.2}
+.apezeo-landing-v2 .flyer-bottom {
+ margin-top:22px;padding:18px 16px;border-top:1px solid rgba(255,255,255,.12);
+ text-align:center;background:rgba(255,255,255,.05);border-radius:14px;padding-top:18px
+}
+.apezeo-landing-v2 .count {font-family:Lora,Georgia,serif;font-weight:700;font-size:2.6rem;color:var(--amber);line-height:1}
+.apezeo-landing-v2 .count-label {display:block;margin-top:6px;font-family:Inter,sans-serif;font-size:.78rem;color:rgba(255,255,255,.68)}
 
 .apezeo-landing-v2 .sources {padding:0 0 76px}
 .apezeo-landing-v2 .source-box {

@@ -104,6 +104,7 @@ export function GateV2({ onChoose }) {
                 <li><span className="tick">✓</span><span>Favoris personnels et partageables dans les favoris d'équipe.</span></li>
                 <li><span className="tick">✓</span><span>Outils pratiques et liens vers les études et ressources scientifiques.</span></li>
               </ul>
+              <p className="path-pricing">Tarification sur devis, adaptée à la taille de votre structure — <strong>6 semaines d'essai offertes, sans engagement.</strong></p>
               <button className="btn btn-green" onClick={() => onChoose("pro")}>Découvrir l'espace professionnel →</button>
               <a className="path-secondary" href="#fonctionnalites">Voir les sources et la méthode</a>
             </article>
@@ -148,7 +149,7 @@ export function GateV2({ onChoose }) {
                   <div className="mini"><b><span className="mnum">03</span>Nouveaux arrivants</b><span>Une prise en main plus rapide.</span></div>
                   <div className="mini"><b><span className="mnum">04</span>Sources reconnues</b><span>HAS, NICE, France Alzheimer, OMS, revues scientifiques et sociétés savantes.</span></div>
                 </div>
-                <div className="flyer-bottom"><div><div className="count">1500+</div><small>fiches de pratiques<br />non médicamenteuses</small></div><a className="btn btn-white" href="#fonctionnalites">Voir les sources →</a></div>
+                <div className="flyer-bottom"><div className="count">1500+</div><small className="count-label">fiches de pratiques non médicamenteuses</small></div>
               </div>
             </div>
           </div>
