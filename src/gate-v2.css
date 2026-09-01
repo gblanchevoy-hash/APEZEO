@@ -90,6 +90,12 @@
 .apezeo-landing-v2 .number-card h3 {font-family:Inter,sans-serif;font-size:1rem;font-weight:800;margin-bottom:7px}
 .apezeo-landing-v2 .number-card p {font-size:.86rem}
 
+.apezeo-landing-v2 .proto-note {padding:44px 0 8px}
+.apezeo-landing-v2 .proto-note-box {max-width:760px;margin:auto;padding:28px 32px;background:var(--green-soft);border:1px solid rgba(4,120,87,.18);border-radius:20px}
+.apezeo-landing-v2 .proto-note-box h2 {font-size:1.3rem;margin-bottom:14px;color:var(--navy)}
+.apezeo-landing-v2 .proto-note-box p {margin-bottom:10px;font-size:.88rem;line-height:1.6}
+.apezeo-landing-v2 .proto-note-box p:last-child {margin-bottom:0;color:var(--muted);font-size:.82rem}
+
 .apezeo-landing-v2 .split {
  padding:68px 0;background:#eaf3ef
 }
@@ -113,9 +119,6 @@
  background:var(--green-soft);color:var(--green);font-size:.75rem;font-weight:900
 }
 .apezeo-landing-v2 .aidant .tick {background:#fff0d4;color:var(--amber2)}
-.apezeo-landing-v2 .path-pricing {position:relative;z-index:2;font-size:.85rem;color:var(--muted);margin-bottom:16px;padding:11px 13px;background:var(--green-soft);border-radius:10px}
-.apezeo-landing-v2 .aidant .path-pricing {background:#fff0d4}
-.apezeo-landing-v2 .path-pricing strong {color:var(--navy)}
 .apezeo-landing-v2 .path .btn {position:relative;z-index:2}
 
 .apezeo-landing-v2 .features {padding:76px 0}

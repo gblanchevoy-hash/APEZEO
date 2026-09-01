@@ -73,7 +73,7 @@ export function AuthView({ onChangeMode }) {
             <li className="flex gap-2"><CheckCircle2 size={16} className="shrink-0 mt-0.5 text-amber-300" /> Suivi d'usage par technique testée</li>
           </ul>
           <div className="relative mt-5 pt-4 border-t border-white/15 text-xs text-emerald-100">
-            Accès structure (EHPAD, SSIAD, accueil de jour…) — <strong className="text-white">tarif sur devis</strong>, adapté à votre organisation. <a href="mailto:contact@apezeo.fr" className="underline text-amber-300">Demander un devis</a>
+            Accès structure (EHPAD, SSIAD, accueil de jour…) — <strong className="text-white">accessible gratuitement</strong> pendant cette phase de découverte et d'expérimentation sur le terrain.
           </div>
         </div>
         <p className="text-sm text-stone-500 text-center mb-2">Réservé aux professionnels accompagnant des personnes atteintes d'Alzheimer et maladies apparentées.</p>

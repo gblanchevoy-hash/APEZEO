@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { QuizView, RecommandationsView } from "../quiz.jsx";
 import { Home_ } from "../Home.jsx";
 import { GateV2 } from "../GateV2.jsx";
+import { AidantApp } from "../../AidantApp.jsx";
 import { AuthView } from "../AuthView.jsx";
 import { mockFicheTechnique } from "../../test/fixtures.js";
 
@@ -60,5 +61,12 @@ describe("AuthView", () => {
   it("s'affiche sans planter", () => {
     render(<AuthView onChangeMode={noop} />);
     expect(screen.getByText("Connexion")).toBeInTheDocument();
+  });
+});
+
+describe("AidantApp", () => {
+  it("s'affiche sans planter (accueil aidant, après clic sur la carte ambre de la landing)", () => {
+    render(<AidantApp onChangeMode={noop} />);
+    expect(screen.getAllByText(/Apézeo/i).length).toBeGreaterThan(0);
   });
 });

@@ -116,9 +116,11 @@ L'administrateur d'une Structure (compte disposant du rôle « admin ») peut :
 
 L'administrateur d'une Structure s'engage à n'utiliser ces fonctionnalités que dans le cadre de la gestion légitime des accès de son établissement, dans le respect du droit du travail et des droits des personnes concernées (voir Politique de confidentialité).
 
-## Article 6 — Abonnement et facturation (Structures)
+## Article 6 — Accès gratuit en phase de découverte (Structures)
 
-L'accès à la Version Pro pour une Structure (établissement, groupe d'établissements) fait l'objet d'un **tarif établi sur devis**, adapté au nombre de comptes souhaité et à l'organisation demandeuse. Les modalités d'abonnement, de facturation et de résiliation applicables à une Structure cliente font l'objet d'un contrat commercial distinct entre l'éditeur et la Structure. [À COMPLÉTER — référencer ici votre futur contrat-type / CGV B2B une fois rédigé].
+L'accès à la Version Pro pour une Structure (établissement, groupe d'établissements) est actuellement proposé **gratuitement**, dans le cadre d'une phase de découverte et d'expérimentation sur le terrain. Cette phase permet de recueillir les retours des professionnels et de faire évoluer le Service au plus près des besoins réels.
+
+Les modalités d'accès pourront évoluer à l'avenir, notamment avec la possibilité de proposer certaines fonctionnalités ou certains contenus dans le cadre d'offres payantes. Toute évolution des conditions d'accès ou de tarification sera communiquée aux Structures concernées avant son entrée en vigueur.
 
 ## Article 7 — Disponibilité du Service
 

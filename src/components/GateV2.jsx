@@ -246,7 +246,6 @@ export function GateV2({ onChoose }) {
                 <li><span className="tick">✓</span><span>Favoris personnels et partageables dans les favoris d'équipe.</span></li>
                 <li><span className="tick">✓</span><span>Outils pratiques et liens vers les études et ressources scientifiques.</span></li>
               </ul>
-              <p className="path-pricing">Tarification sur devis, adaptée à la taille de votre structure — <strong>6 semaines d'essai offertes, sans engagement.</strong></p>
               <button className="btn btn-green" onClick={() => onChoose("pro")}>Découvrir l'espace professionnel →</button>
               <a className="path-secondary" href="#fonctionnalites">Voir les sources et la méthode</a>
             </article>
@@ -264,6 +263,17 @@ export function GateV2({ onChoose }) {
               <button className="btn btn-amber" onClick={() => onChoose("aidant")}>Accéder gratuitement à l'espace aidant →</button>
               <a className="path-secondary" href="#fonctionnalites">Voir les fonctionnalités</a>
             </article>
+          </div>
+        </section>
+
+        <section className="proto-note">
+          <div className="container proto-note-box">
+            <h2>Apézeo — actuellement accessible gratuitement aux établissements</h2>
+            <p>Apézeo est une bibliothèque numérique de pratiques non médicamenteuses destinée aux professionnels accompagnant les personnes vivant avec des troubles neurocognitifs.</p>
+            <p>La plateforme est actuellement proposée gratuitement aux établissements souhaitant la découvrir et l'expérimenter sur le terrain.</p>
+            <p>Cette phase permet de recueillir les retours des professionnels et de faire évoluer l'outil au plus près des besoins du terrain.</p>
+            <p>Les modalités d'accès pourront évoluer à l'avenir, notamment avec la possibilité de proposer certaines fonctionnalités ou certains contenus dans le cadre d'offres payantes.</p>
+            <p>Toute évolution des conditions d'accès ou de tarification sera communiquée aux utilisateurs concernés.</p>
           </div>
         </section>
 

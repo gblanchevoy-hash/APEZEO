@@ -2,7 +2,7 @@
 // compte, avec des fiches embarquées localement (AIDANT_FICHES) et
 // un stockage purement local (favoris, historique, fiches perso).
 import { useState, useMemo } from "react";
-import { ArrowLeftRight, Info, PhoneCall, Plus } from "lucide-react";
+import { ArrowLeftRight, Info, PhoneCall, Plus, AlertTriangle, Search, Heart, FileText } from "lucide-react";
 import { AIDANT_FICHES } from "./data/aidantFiches.js";
 import { getLocal, setLocal } from "./lib/localStore.js";
 import { uid, scoreFiche } from "./lib/utils.js";
