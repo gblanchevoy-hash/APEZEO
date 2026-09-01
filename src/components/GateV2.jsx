@@ -29,51 +29,193 @@ export function GateV2({ onChoose }) {
       <main id="top">
         <section className="hero">
           <div className="container hero-grid">
-            <div>
-              <h1>La bonne pratique,<br /><span>au bon moment,</span><br />pour tous.</h1>
-              <p className="hero-lead">
-                Apézeo est une bibliothèque numérique de pratiques non médicamenteuses
-                pour accompagner les personnes vivant avec Alzheimer ou maladies apparentées,
+            <div className="hero-copy">
+              <div className="hero-kicker">
+                <span className="kicker-line" />
+                <span>LA BIBLIOTHÈQUE DES BONNES PRATIQUES</span>
+              </div>
+
+              <h1 className="hero-title">
+                La bonne pratique,
+                <span>au bon moment,</span>
+                pour tous.
+              </h1>
+
+              <p className="hero-description">
+                Apézeo rassemble plus de 1500 fiches de pratiques
+                non médicamenteuses pour accompagner les personnes
+                vivant avec Alzheimer ou maladies apparentées,
                 au plus près des situations du quotidien.
               </p>
-              <div className="hero-actions">
-                <button className="btn btn-green" onClick={() => onChoose("pro")}>Découvrir l'espace professionnel <span>→</span></button>
-                <button className="btn btn-amber" onClick={() => onChoose("aidant")}>Accéder gratuitement à l'espace aidant <span>→</span></button>
-                <a className="hero-secondary" href="#fonctionnalites">Voir comment ça marche <span>↓</span></a>
+
+              <div className="hero-access">
+                <button className="access-card professional" onClick={() => onChoose("pro")}>
+                  <div className="access-card-top">
+                    <div className="access-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                        <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.7" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+                      </svg>
+                    </div>
+                    <div className="access-arrow">↗</div>
+                  </div>
+                  <div className="access-content">
+                    <span className="access-label">ESPACE PROFESSIONNEL</span>
+                    <strong>Pour les équipes de soin</strong>
+                    <p>Une bibliothèque structurée pour harmoniser les pratiques et accompagner les équipes au quotidien.</p>
+                  </div>
+                  <div className="access-footer">
+                    <span>Découvrir l'espace professionnel</span>
+                    <span className="footer-arrow">→</span>
+                  </div>
+                </button>
+
+                <button className="access-card caregiver" onClick={() => onChoose("aidant")}>
+                  <div className="access-card-top">
+                    <div className="access-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <div className="access-arrow">↗</div>
+                  </div>
+                  <div className="access-content">
+                    <span className="access-label">ESPACE AIDANT</span>
+                    <strong>Gratuit, simplement</strong>
+                    <p>Des pratiques accessibles pour trouver des repères concrets dans les situations du quotidien.</p>
+                  </div>
+                  <div className="access-footer">
+                    <span>Accéder gratuitement à l'espace aidant</span>
+                    <span className="footer-arrow">→</span>
+                  </div>
+                </button>
               </div>
-              <div className="hero-foot"><span>Une ressource commune pour les professionnels et les aidants.</span></div>
+
+              <div className="hero-secondary-actions">
+                <button className="login-link" onClick={() => onChoose("pro")}>
+                  <span className="login-dot" />
+                  Déjà professionnel ?
+                  <strong>Se connecter</strong>
+                  <span>→</span>
+                </button>
+                <a className="how-link" href="#fonctionnalites">
+                  Comment fonctionne Apézeo ?
+                  <span>↓</span>
+                </a>
+              </div>
+
+              <div className="hero-signature">
+                <span className="signature-mark" />
+                <span>Une ressource commune pour les professionnels et les aidants.</span>
+              </div>
             </div>
 
-            <div className="hero-art">
-              <div className="art-glow" />
-              <div className="leaf one" /><div className="leaf two" /><div className="leaf three" />
-              <div className="device" aria-label="Aperçu de l'application Apézeo">
-                <div className="app-window">
-                  <div className="browser-bar"><span className="browser-dot" /><span className="browser-dot" /><span className="browser-dot" /><span className="browser-address" /></div>
-                  <div className="mock-home">
-                    <div className="mock-home-header">
-                      <img src="/logo-phoenix.png" alt="" className="mock-logo" />
-                      <span className="mock-brand">Apézeo</span>
+            <section className="apezeo-visual">
+              <div className="visual-background-shape" />
+              <div className="visual-phoenix"><img src="/logo-phoenix.png" alt="" aria-hidden="true" /></div>
+
+              <div className="saas-window">
+                <div className="window-topbar">
+                  <div className="window-dots"><span /><span /><span /></div>
+                  <div className="window-address">apezeo.fr</div>
+                  <div className="window-space" />
+                </div>
+
+                <div className="app-header">
+                  <div className="app-brand">
+                    <div className="app-logo"><img src="/logo-phoenix.png" alt="" /></div>
+                    <span>Apézeo</span>
+                  </div>
+                  <div className="app-header-actions">
+                    <span className="header-pill">Bibliothèque</span>
+                    <div className="header-avatar" />
+                  </div>
+                </div>
+
+                <div className="app-content">
+                  <aside className="app-sidebar">
+                    <div className="sidebar-item active"><span className="sidebar-icon" /><span>Bibliothèque</span></div>
+                    <div className="sidebar-item"><span className="sidebar-icon small" /><span>Favoris</span></div>
+                    <div className="sidebar-item"><span className="sidebar-icon small" /><span>Mes fiches</span></div>
+                    <div className="sidebar-separator" />
+                    <div className="sidebar-label">CATÉGORIES</div>
+                    <div className="sidebar-item muted">Communication</div>
+                    <div className="sidebar-item muted">Activités</div>
+                    <div className="sidebar-item muted">Relaxation</div>
+                  </aside>
+
+                  <main className="app-main">
+                    <div className="main-heading">
+                      <div><span className="eyebrow">BIBLIOTHÈQUE</span><h3>Bonnes pratiques</h3></div>
+                      <button className="fake-button">+ Créer une fiche</button>
                     </div>
-                    <div className="mock-nav-row"><span className="mock-nav-icon" /><span className="mock-nav-text"><i /><em /></span></div>
-                    <div className="mock-nav-row"><span className="mock-nav-icon alt" /><span className="mock-nav-text"><i /><em /></span></div>
-                    <div className="mock-nav-row"><span className="mock-nav-icon" /><span className="mock-nav-text"><i /><em /></span></div>
-                  </div>
+                    <div className="fake-search"><span className="search-icon" /><span>Rechercher une pratique...</span></div>
+                    <div className="fake-filters">
+                      <span className="filter active">Toutes</span>
+                      <span className="filter">Communication</span>
+                      <span className="filter">Activités</span>
+                      <span className="filter">Relaxation</span>
+                    </div>
+                    <div className="practice-list">
+                      <article className="practice-card">
+                        <div className="practice-mark green" />
+                        <div className="practice-content">
+                          <div className="practice-title">Adapter sa communication</div>
+                          <div className="practice-description">Repères pour faciliter les échanges au quotidien</div>
+                        </div>
+                        <span className="practice-arrow">›</span>
+                      </article>
+                      <article className="practice-card">
+                        <div className="practice-mark amber" />
+                        <div className="practice-content">
+                          <div className="practice-title">Créer un environnement apaisant</div>
+                          <div className="practice-description">Des pistes simples directement applicables</div>
+                        </div>
+                        <span className="practice-arrow">›</span>
+                      </article>
+                      <article className="practice-card">
+                        <div className="practice-mark green" />
+                        <div className="practice-content">
+                          <div className="practice-title">Favoriser une activité adaptée</div>
+                          <div className="practice-description">Des pratiques ajustées aux capacités de chacun</div>
+                        </div>
+                        <span className="practice-arrow">›</span>
+                      </article>
+                    </div>
+                  </main>
                 </div>
-                <div className="screen-phone">
-                  <div className="phone-notch" />
-                  <div className="mock-fiche">
-                    <div className="mock-fiche-badges"><span>Standard</span><span className="alt">Technique</span></div>
-                    <div className="mock-fiche-title" />
-                    <div className="mock-fiche-title short" />
-                    <div className="mock-fiche-card" />
-                  </div>
-                </div>
-                <div className="floating-card"><strong>1500+</strong><span>fiches de pratiques</span><small>Une bibliothèque riche et évolutive</small></div>
               </div>
-            </div>
+
+              <div className="saas-phone">
+                <div className="phone-speaker" />
+                <div className="phone-screen">
+                  <div className="phone-header">
+                    <div className="phone-brand"><img src="/logo-phoenix.png" alt="" /><span>Apézeo</span></div>
+                    <div className="phone-menu">•••</div>
+                  </div>
+                  <div className="phone-title"><span>Bibliothèque</span><strong>Bonnes pratiques</strong></div>
+                  <div className="phone-tabs"><span className="selected">Standard</span><span>Expert</span></div>
+                  <div className="phone-card"><div className="phone-card-mark" /><div className="phone-lines"><span /><span /></div></div>
+                  <div className="phone-card"><div className="phone-card-mark amber" /><div className="phone-lines"><span /><span /></div></div>
+                  <div className="phone-card"><div className="phone-card-mark" /><div className="phone-lines"><span /><span /></div></div>
+                </div>
+              </div>
+
+              <div className="library-badge">
+                <div className="badge-number">1500<span>+</span></div>
+                <div className="badge-title">fiches de pratiques</div>
+                <div className="badge-description">Une bibliothèque riche<br />et évolutive</div>
+              </div>
+
+              <div className="visual-caption">
+                <span className="caption-dot" />
+                <span>Accessible partout, sur tous vos appareils</span>
+              </div>
+            </section>
           </div>
         </section>
+
 
         <section className="intro" id="pourquoi">
           <div className="container">
@@ -129,7 +271,6 @@ export function GateV2({ onChoose }) {
           <div className="container features-grid">
             <div className="feature-copy">
               <h2>Une bibliothèque qui s'adapte au terrain.</h2>
-              <p>Le principe du flyer reste au cœur de la page : des ressources riches, structurées et directement utilisables.</p>
               <div className="feature-list">
                 <div className="feature"><div className="feature-icon">01</div><div><strong>Plus de 1500 fiches</strong><span>Une bibliothèque riche et évolutive, consultable à tout moment.</span></div></div>
                 <div className="feature"><div className="feature-icon">02</div><div><strong>Deux bibliothèques complémentaires</strong><span>Standard pour aller à l'essentiel, Expert pour approfondir.</span></div></div>
@@ -149,7 +290,7 @@ export function GateV2({ onChoose }) {
                   <div className="mini"><b><span className="mnum">03</span>Nouveaux arrivants</b><span>Une prise en main plus rapide.</span></div>
                   <div className="mini"><b><span className="mnum">04</span>Sources reconnues</b><span>HAS, NICE, France Alzheimer, OMS, revues scientifiques et sociétés savantes.</span></div>
                 </div>
-                <div className="flyer-bottom"><div className="count">1500+</div><small className="count-label">fiches de pratiques non médicamenteuses</small></div>
+                <div className="flyer-bottom"><div className="count">1500+</div><small className="count-label">fiches de techniques non médicamenteuses et d'outils de compréhension des troubles</small></div>
               </div>
             </div>
           </div>

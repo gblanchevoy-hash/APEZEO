@@ -40,12 +40,6 @@
 .apezeo-landing-v2 .btn-outline {background:transparent;color:var(--navy);border-color:rgba(5,41,74,.2)}
 .apezeo-landing-v2 .btn:focus-visible {outline:3px solid rgba(245,169,0,.5);outline-offset:3px}
 
-.apezeo-landing-v2 .hero-secondary {
- display:inline-flex;align-items:center;gap:7px;
- color:rgba(255,255,255,.78);font-weight:700;font-size:.92rem;
- padding:12px 4px;transition:.2s ease
-}
-.apezeo-landing-v2 .hero-secondary:hover {color:#fff;transform:translateY(-1px)}
 .apezeo-landing-v2 .path-secondary {
  position:relative;z-index:2;display:inline-flex;margin-left:13px;
  color:var(--muted);font-size:.88rem;font-weight:700;vertical-align:middle
@@ -80,65 +74,6 @@
 .apezeo-landing-v2 .hero:before {width:540px;height:540px;right:-250px;top:-190px}
 .apezeo-landing-v2 .hero:after {width:300px;height:300px;left:-180px;bottom:-180px}
 .apezeo-landing-v2 .hero-grid {position:relative;z-index:1;display:grid;grid-template-columns:1.03fr .97fr;gap:62px;align-items:center}
-.apezeo-landing-v2 .eyebrow {
- display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border-radius:999px;
- background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.13);
- color:#fff;font-size:.8rem;font-weight:800;margin-bottom:22px
-}
-.apezeo-landing-v2 .eyebrow i {display:block;width:8px;height:8px;border-radius:50%;background:var(--amber)}
-.apezeo-landing-v2 .hero h1 {max-width:750px}
-.apezeo-landing-v2 .hero h1 span {color:#51c6c0}
-.apezeo-landing-v2 .hero-lead {max-width:650px;margin-top:24px;color:rgba(255,255,255,.78);font-size:1.08rem}
-.apezeo-landing-v2 .hero-lead strong {color:#fff}
-.apezeo-landing-v2 .hero-actions {display:flex;flex-wrap:wrap;gap:12px;margin-top:31px}
-.apezeo-landing-v2 .hero-foot {display:flex;gap:15px;align-items:center;margin-top:23px;color:rgba(255,255,255,.7);font-size:.88rem}
-
-.apezeo-landing-v2 .hero-art {position:relative;min-height:520px;display:grid;place-items:center;perspective:1200px}
-.apezeo-landing-v2 .art-glow {position:absolute;width:430px;height:430px;border-radius:50%;background:radial-gradient(circle,rgba(4,120,87,.30),rgba(4,120,87,.07) 48%,transparent 70%);filter:blur(8px);right:2%;top:8%;pointer-events:none}
-.apezeo-landing-v2 .leaf {
- position:absolute;width:150px;height:75px;border-radius:100% 0 100% 0;
- background:linear-gradient(135deg,rgba(126,190,178,.34),rgba(255,255,255,.04));
- transform:rotate(-28deg);filter:blur(.1px)
-}
-.apezeo-landing-v2 .leaf.one {right:2%;top:6%;transform:rotate(-28deg) scale(1.1)}
-.apezeo-landing-v2 .leaf.two {right:12%;top:17%;transform:rotate(16deg) scale(.8)}
-.apezeo-landing-v2 .leaf.three {left:4%;bottom:9%;transform:rotate(25deg) scale(.7)}
-.apezeo-landing-v2 .device {
- position:relative;width:min(100%,590px);aspect-ratio:1.08/1;
- background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.025));
- border:1px solid rgba(255,255,255,.14);border-radius:34px;
- box-shadow:0 38px 90px rgba(0,0,0,.27),inset 0 1px 0 rgba(255,255,255,.12);
- transform:rotateY(-3deg);transform-style:preserve-3d
-}
-.apezeo-landing-v2 .app-tag {position:absolute;right:7%;top:4%;z-index:7;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.92);color:#064e3b;font-size:.7rem;font-weight:800;box-shadow:0 10px 25px rgba(0,0,0,.15)}
-.apezeo-landing-v2 .app-window {position:absolute;left:7%;top:9%;width:75%;height:70%;background:#f8faf9;border:7px solid rgba(6,78,59,.86);border-radius:20px;overflow:hidden;box-shadow:0 25px 55px rgba(0,0,0,.25)}
-.apezeo-landing-v2 .browser-bar {height:30px;background:#eef3f0;display:flex;align-items:center;gap:6px;padding:0 10px}
-.apezeo-landing-v2 .browser-dot {width:7px;height:7px;border-radius:50%;background:#c8d6d0}
-.apezeo-landing-v2 .browser-address {margin-left:7px;height:15px;flex:1;border-radius:999px;background:#e1eae6}
-.apezeo-landing-v2 .app-screenshot, .apezeo-landing-v2 .mock-home {height:calc(100% - 30px);overflow:hidden;background:#f7faf8}
-.apezeo-landing-v2 .screen-phone {position:absolute;right:8%;bottom:3%;z-index:6;width:18%;min-width:92px;max-width:116px;aspect-ratio:0.46/1;background:#f8faf9;border:6px solid rgba(6,78,59,.86);border-radius:24px;overflow:hidden;box-shadow:0 28px 55px rgba(0,0,0,.30);transform:rotate(2deg);display:flex;flex-direction:column}
-.apezeo-landing-v2 .phone-notch {height:14px;background:#f0f5f2;position:relative;flex:none}
-.apezeo-landing-v2 .phone-notch:after {content:"";position:absolute;left:50%;top:4px;transform:translateX(-50%);width:30%;height:4px;border-radius:999px;background:#cddbd5}
-.apezeo-landing-v2 .mock-home-header {background:linear-gradient(135deg,var(--navy),var(--navy2));padding:14px 13px 18px;display:flex;align-items:center;gap:8px}
-.apezeo-landing-v2 .mock-logo {width:22px;height:22px;object-fit:contain;border-radius:50%;background:#fff}
-.apezeo-landing-v2 .mock-brand {color:#fff;font-family:Lora,Georgia,serif;font-weight:700;font-size:.85rem}
-.apezeo-landing-v2 .mock-nav-row {display:flex;align-items:center;gap:9px;margin:9px 13px;padding:9px 10px;background:#fff;border:1px solid #dce7e3;border-radius:10px;box-shadow:0 4px 10px rgba(5,41,74,.04)}
-.apezeo-landing-v2 .mock-nav-icon {width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--green2),var(--green));flex:none}
-.apezeo-landing-v2 .mock-nav-icon.alt {background:linear-gradient(135deg,var(--amber),var(--amber2))}
-.apezeo-landing-v2 .mock-nav-text {display:flex;flex-direction:column;gap:5px;flex:1}
-.apezeo-landing-v2 .mock-nav-text i {display:block;width:55%;height:7px;border-radius:4px;background:#064e3b;opacity:.85}
-.apezeo-landing-v2 .mock-nav-text em {display:block;width:78%;height:5px;border-radius:4px;background:#dce7e3}
-.apezeo-landing-v2 .phone-screenshot, .apezeo-landing-v2 .mock-fiche {flex:1;overflow:hidden;background:#fff;padding:10px 9px}
-.apezeo-landing-v2 .mock-fiche-badges {display:flex;gap:4px;margin-bottom:8px}
-.apezeo-landing-v2 .mock-fiche-badges span {font-size:.46rem;font-weight:800;padding:3px 6px;border-radius:999px;background:#dcece6;color:var(--navy)}
-.apezeo-landing-v2 .mock-fiche-badges span.alt {background:#fde8c8;color:#8a5a06}
-.apezeo-landing-v2 .mock-fiche-title {height:8px;border-radius:4px;background:#064e3b;margin-bottom:5px;width:92%}
-.apezeo-landing-v2 .mock-fiche-title.short {width:58%;margin-bottom:10px}
-.apezeo-landing-v2 .mock-fiche-card {height:28px;border-radius:8px;background:#f7faf8;border:1px solid #e1eae6;border-left:3px solid var(--green2)}
-.apezeo-landing-v2 .floating-card {position:absolute;left:1%;bottom:5%;z-index:5;width:175px;padding:16px 17px;border-radius:20px;background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.7);color:#064e3b;box-shadow:0 22px 45px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
-.apezeo-landing-v2 .floating-card strong {display:block;font-family:Lora,Georgia,serif;font-size:2rem;line-height:1;color:#064e3b}
-.apezeo-landing-v2 .floating-card span {display:block;font-size:.75rem;font-weight:800;margin-top:7px;color:#31534b}
-.apezeo-landing-v2 .floating-card small {display:block;font-size:.68rem;color:#6a7772;margin-top:5px}
 
 .apezeo-landing-v2 .intro {padding:64px 0 44px}
 .apezeo-landing-v2 .intro-head {max-width:800px;margin-bottom:30px}
@@ -270,7 +205,6 @@
 
 @media(max-width:950px){
 .apezeo-landing-v2 .hero-grid, .apezeo-landing-v2 .features-grid {grid-template-columns:1fr}
-.apezeo-landing-v2 .hero-art {min-height:420px}
 .apezeo-landing-v2 .number-grid {grid-template-columns:repeat(2,1fr)}
 .apezeo-landing-v2 .source-box {flex-direction:column;align-items:flex-start}
 .apezeo-landing-v2 .badges {justify-content:flex-start;max-width:none}
@@ -282,25 +216,7 @@
 .apezeo-landing-v2 .nav-actions .nav-link {display:none}
 .apezeo-landing-v2 .nav-login {display:inline-flex!important;font-size:.78rem;min-height:40px;padding:0 12px}
 .apezeo-landing-v2 .hero {padding:105px 0 65px}
-.apezeo-landing-v2 h1 {font-size:clamp(2.8rem,14vw,4.4rem)}
-.apezeo-landing-v2 .hero-actions {display:grid;grid-template-columns:1fr}
-.apezeo-landing-v2 .hero-actions .btn {width:100%}
-.apezeo-landing-v2 .hero-secondary {justify-content:center}
 .apezeo-landing-v2 .path-secondary {display:block;margin:12px 0 0;text-align:center}
-.apezeo-landing-v2 .hero-art {min-height:330px;margin-top:18px}
-.apezeo-landing-v2 .device {width:100%;aspect-ratio:1.02/1;border-radius:25px}
-.apezeo-landing-v2 .app-window {left:5%;top:10%;width:79%;height:66%;border-width:5px;border-radius:15px}
-.apezeo-landing-v2 .browser-bar {height:21px;padding:0 7px}
-.apezeo-landing-v2 .browser-dot {width:5px;height:5px}
-.apezeo-landing-v2 .browser-address {height:10px}
-.apezeo-landing-v2 .floating-card {left:0;bottom:2%;width:128px;padding:11px 12px;border-radius:15px}
-.apezeo-landing-v2 .floating-card strong {font-size:1.45rem}
-.apezeo-landing-v2 .floating-card span {font-size:.63rem;margin-top:5px}
-.apezeo-landing-v2 .floating-card small {font-size:.56rem}
-.apezeo-landing-v2 .screen-phone {right:6%;bottom:2%;width:20%;min-width:70px;border-width:4px;border-radius:17px}
-.apezeo-landing-v2 .phone-notch {height:9px}
-.apezeo-landing-v2 .phone-screenshot {min-height:135px}
-.apezeo-landing-v2 .app-tag {right:6%;top:4%;font-size:.58rem;padding:6px 8px}
 .apezeo-landing-v2 .intro {padding:65px 0 45px}
 .apezeo-landing-v2 .number-grid {grid-template-columns:1fr}
 .apezeo-landing-v2 .number-card {min-height:auto}
@@ -320,4 +236,149 @@
 }
 @media(prefers-reduced-motion:reduce){
 .apezeo-landing-v2 * {scroll-behavior:auto!important;transition:none!important}
+}
+
+/* =========================================================
+   HERO PREMIUM — colonne gauche (texte + accès)
+   ========================================================= */
+.apezeo-landing-v2 .hero-copy {width:min(100%,570px);padding:25px 0;color:#fff}
+.apezeo-landing-v2 .hero-kicker {display:flex;align-items:center;gap:10px;margin-bottom:25px;font-family:Inter,sans-serif;font-size:10px;font-weight:700;letter-spacing:.13em;color:rgba(255,255,255,.58)}
+.apezeo-landing-v2 .kicker-line {width:28px;height:1px;background:rgba(255,255,255,.55)}
+.apezeo-landing-v2 .hero-title {margin:0;max-width:570px;font-family:Lora,Georgia,serif;font-size:clamp(2.6rem,5vw,4rem);font-weight:600;line-height:1.02;letter-spacing:-.02em;color:#fff}
+.apezeo-landing-v2 .hero-title span {display:block;color:#69c9bb;font-style:normal}
+.apezeo-landing-v2 .hero-description {max-width:520px;margin:22px 0 28px;font-family:Inter,sans-serif;font-size:.98rem;line-height:1.6;color:rgba(255,255,255,.76)}
+.apezeo-landing-v2 .hero-access {display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%}
+.apezeo-landing-v2 .access-card {position:relative;display:flex;flex-direction:column;min-height:200px;padding:17px;border:1px solid rgba(255,255,255,.12);border-radius:16px;text-align:left;cursor:pointer;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;font-family:inherit}
+.apezeo-landing-v2 .access-card:before {content:"";position:absolute;inset:0;opacity:0;transition:opacity .3s ease;pointer-events:none}
+.apezeo-landing-v2 .access-card:hover {transform:translateY(-4px)}
+.apezeo-landing-v2 .access-card:hover:before {opacity:1}
+.apezeo-landing-v2 .access-card.professional {background:linear-gradient(145deg,rgba(4,120,87,.95),rgba(6,78,59,.88));box-shadow:0 18px 35px -20px rgba(0,0,0,.5)}
+.apezeo-landing-v2 .access-card.professional:before {background:radial-gradient(circle at 90% 0%,rgba(255,255,255,.11),transparent 50%)}
+.apezeo-landing-v2 .access-card.professional:hover {border-color:rgba(255,255,255,.25);box-shadow:0 25px 45px -22px rgba(0,0,0,.65)}
+.apezeo-landing-v2 .access-card.caregiver {background:linear-gradient(145deg,#f59e0b,#d97706);border-color:rgba(255,255,255,.12);box-shadow:0 18px 35px -20px rgba(0,0,0,.5)}
+.apezeo-landing-v2 .access-card.caregiver:before {background:radial-gradient(circle at 90% 0%,rgba(255,255,255,.18),transparent 50%)}
+.apezeo-landing-v2 .access-card.caregiver:hover {box-shadow:0 25px 45px -22px rgba(0,0,0,.65)}
+.apezeo-landing-v2 .access-card-top {display:flex;align-items:center;justify-content:space-between}
+.apezeo-landing-v2 .access-icon {width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.13);color:#fff}
+.apezeo-landing-v2 .access-icon svg {width:18px;height:18px}
+.apezeo-landing-v2 .access-arrow {width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.1);font-size:15px;color:rgba(255,255,255,.8);transition:transform .3s ease,background .3s ease}
+.apezeo-landing-v2 .access-card:hover .access-arrow {transform:translate(2px,-2px);background:rgba(255,255,255,.18)}
+.apezeo-landing-v2 .access-content {margin-top:22px}
+.apezeo-landing-v2 .access-label {display:block;margin-bottom:6px;font-family:Inter,sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.1em;color:rgba(255,255,255,.62)}
+.apezeo-landing-v2 .access-content strong {display:block;font-family:Lora,Georgia,serif;font-size:1.25rem;font-weight:600;line-height:1.15;color:#fff}
+.apezeo-landing-v2 .access-content p {margin:8px 0 0;font-family:Inter,sans-serif;font-size:.72rem;line-height:1.5;color:rgba(255,255,255,.72)}
+.apezeo-landing-v2 .access-footer {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:15px;border-top:1px solid rgba(255,255,255,.13);font-family:Inter,sans-serif;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.92)}
+.apezeo-landing-v2 .footer-arrow {font-size:15px;transition:transform .3s ease}
+.apezeo-landing-v2 .access-card:hover .footer-arrow {transform:translateX(4px)}
+.apezeo-landing-v2 .hero-secondary-actions {display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:15px}
+.apezeo-landing-v2 .login-link, .apezeo-landing-v2 .how-link {border:0;background:none;color:rgba(255,255,255,.65);font-family:Inter,sans-serif;font-size:.75rem;cursor:pointer;transition:color .25s ease}
+.apezeo-landing-v2 .login-link {display:flex;align-items:center;gap:6px}
+.apezeo-landing-v2 .login-link strong {color:rgba(255,255,255,.9)}
+.apezeo-landing-v2 .login-link > span:last-child {margin-left:2px;transition:transform .25s ease}
+.apezeo-landing-v2 .login-link:hover, .apezeo-landing-v2 .how-link:hover {color:#fff}
+.apezeo-landing-v2 .login-link:hover > span:last-child {transform:translateX(3px)}
+.apezeo-landing-v2 .login-dot {width:6px;height:6px;border-radius:50%;background:#69c9bb;box-shadow:0 0 0 4px rgba(105,201,187,.1)}
+.apezeo-landing-v2 .how-link {display:flex;align-items:center;gap:7px;font-weight:600}
+.apezeo-landing-v2 .how-link span {font-size:13px;transition:transform .25s ease}
+.apezeo-landing-v2 .how-link:hover span {transform:translateY(3px)}
+.apezeo-landing-v2 .hero-signature {display:flex;align-items:center;gap:9px;margin-top:22px;font-family:Inter,sans-serif;font-size:.7rem;color:rgba(255,255,255,.46)}
+.apezeo-landing-v2 .signature-mark {width:22px;height:1px;background:linear-gradient(90deg,#69c9bb,transparent)}
+
+/* =========================================================
+   VISUEL SAAS — colonne droite
+   ========================================================= */
+.apezeo-landing-v2 .apezeo-visual {--v-cream:#f4f6f2;position:relative;width:100%;min-height:520px;display:flex;align-items:center;justify-content:center;font-family:Inter,Arial,sans-serif;isolation:isolate}
+.apezeo-landing-v2 .visual-background-shape {position:absolute;inset:5% 6% 8% 6%;border-radius:28px;background:linear-gradient(145deg,#064e3b 0%,#047857 100%);box-shadow:0 35px 70px -30px rgba(6,78,59,.55);overflow:hidden;z-index:-2}
+.apezeo-landing-v2 .visual-background-shape:before {content:"";position:absolute;width:380px;height:380px;right:-140px;top:-160px;border-radius:50%;background:rgba(255,255,255,.045)}
+.apezeo-landing-v2 .visual-phoenix {position:absolute;right:7%;top:4%;width:220px;height:220px;opacity:.07;transform:rotate(-8deg);pointer-events:none}
+.apezeo-landing-v2 .visual-phoenix img {width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1)}
+.apezeo-landing-v2 .saas-window {position:absolute;left:9%;top:11%;width:72%;height:57%;background:#fff;border-radius:15px;overflow:hidden;border:5px solid rgba(255,255,255,.65);box-shadow:0 30px 60px -25px rgba(2,44,34,.55),0 12px 25px -15px rgba(2,44,34,.35);transform:perspective(1200px) rotateX(1deg);transition:transform .45s ease,box-shadow .45s ease}
+.apezeo-landing-v2 .window-topbar {height:26px;display:flex;align-items:center;padding:0 10px;background:#f2f5f2;border-bottom:1px solid #e2e8e4;position:relative}
+.apezeo-landing-v2 .window-dots {display:flex;gap:5px}
+.apezeo-landing-v2 .window-dots span {width:6px;height:6px;border-radius:50%;background:#d3ddd8}
+.apezeo-landing-v2 .window-address {position:absolute;left:50%;transform:translateX(-50%);font-size:7px;color:#8a9891;background:#fff;padding:3px 26px;border-radius:5px;border:1px solid #e7ece9}
+.apezeo-landing-v2 .window-space {flex:1}
+.apezeo-landing-v2 .app-header {height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(135deg,#064e3b,#047857);color:#fff}
+.apezeo-landing-v2 .app-brand {display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700}
+.apezeo-landing-v2 .app-logo {width:19px;height:19px;display:grid;place-items:center;border-radius:6px;background:rgba(255,255,255,.15)}
+.apezeo-landing-v2 .app-logo img {width:14px;height:14px;object-fit:contain}
+.apezeo-landing-v2 .app-header-actions {display:flex;align-items:center;gap:8px}
+.apezeo-landing-v2 .header-pill {font-size:7px;padding:4px 8px;border-radius:20px;background:rgba(255,255,255,.12)}
+.apezeo-landing-v2 .header-avatar {width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.25)}
+.apezeo-landing-v2 .app-content {height:calc(100% - 68px);display:flex;background:#f8faf8}
+.apezeo-landing-v2 .app-sidebar {width:27%;padding:12px 7px;background:#fff;border-right:1px solid #e8eeea}
+.apezeo-landing-v2 .sidebar-item {min-height:22px;display:flex;align-items:center;gap:6px;padding:5px 6px;margin-bottom:3px;border-radius:6px;font-size:6.5px;color:#64736c}
+.apezeo-landing-v2 .sidebar-item.active {background:#e6f1ed;color:#064e3b;font-weight:700}
+.apezeo-landing-v2 .sidebar-item.muted {color:#87938d}
+.apezeo-landing-v2 .sidebar-icon {width:8px;height:8px;border-radius:3px;background:#047857;opacity:.9}
+.apezeo-landing-v2 .sidebar-icon.small {width:6px;height:6px;background:#bdccc5}
+.apezeo-landing-v2 .sidebar-separator {height:1px;margin:10px 4px;background:#edf1ee}
+.apezeo-landing-v2 .sidebar-label {padding:0 6px 4px;font-size:4.5px;font-weight:700;letter-spacing:.08em;color:#a0aaa5}
+.apezeo-landing-v2 .app-main {flex:1;padding:13px 14px}
+.apezeo-landing-v2 .main-heading {display:flex;align-items:center;justify-content:space-between}
+.apezeo-landing-v2 .app-main .eyebrow {display:block;margin-bottom:2px;font-size:4.5px;letter-spacing:.12em;font-weight:700;color:#047857}
+.apezeo-landing-v2 .main-heading h3 {margin:0;font-family:Lora,Georgia,serif;font-size:17px;line-height:1;color:#022c22;font-weight:600}
+.apezeo-landing-v2 .fake-button {border:0;padding:6px 9px;border-radius:7px;background:#064e3b;color:#fff;font-size:5.5px;box-shadow:0 8px 15px -8px rgba(6,78,59,.55)}
+.apezeo-landing-v2 .fake-search {height:24px;display:flex;align-items:center;gap:7px;margin-top:12px;padding:0 8px;background:#fff;border:1px solid #e5ebe7;border-radius:7px;color:#a1aaa5;font-size:6.5px}
+.apezeo-landing-v2 .search-icon {width:7px;height:7px;border:1px solid #8a9991;border-radius:50%;position:relative}
+.apezeo-landing-v2 .search-icon:after {content:"";position:absolute;width:4px;height:1px;background:#8a9991;right:-3px;bottom:-1px;transform:rotate(45deg)}
+.apezeo-landing-v2 .fake-filters {display:flex;gap:5px;margin:8px 0}
+.apezeo-landing-v2 .filter {padding:4px 6px;border-radius:20px;background:#edf2ef;color:#7a8780;font-size:4.5px}
+.apezeo-landing-v2 .filter.active {background:#d9ebe4;color:#064e3b;font-weight:700}
+.apezeo-landing-v2 .practice-list {display:grid;gap:5px}
+.apezeo-landing-v2 .practice-card {min-height:36px;display:flex;align-items:center;padding:6px 7px;background:#fff;border:1px solid #e6ece8;border-radius:8px;box-shadow:0 5px 12px -10px rgba(2,44,34,.4);transition:transform .25s ease,box-shadow .25s ease}
+.apezeo-landing-v2 .practice-card:hover {transform:translateY(-2px);box-shadow:0 12px 20px -12px rgba(2,44,34,.35)}
+.apezeo-landing-v2 .practice-mark {width:8px;height:8px;flex-shrink:0;border-radius:3px;margin-right:7px;background:#047857}
+.apezeo-landing-v2 .practice-mark.amber {background:#f59e0b}
+.apezeo-landing-v2 .practice-content {flex:1}
+.apezeo-landing-v2 .practice-title {font-size:6.5px;font-weight:700;color:#24443a}
+.apezeo-landing-v2 .practice-description {margin-top:3px;font-size:4.5px;color:#a0aaa5}
+.apezeo-landing-v2 .practice-arrow {font-size:13px;color:#b6c1bb}
+.apezeo-landing-v2 .saas-phone {position:absolute;right:9%;bottom:9%;width:20%;height:43%;padding:5px;background:linear-gradient(145deg,#f8faf9,#dce7e1);border:2px solid #0a5a45;border-radius:20px;box-shadow:0 30px 45px -20px rgba(2,44,34,.65),0 10px 20px -10px rgba(2,44,34,.3);transform:rotate(3deg);z-index:5;transition:transform .4s ease}
+.apezeo-landing-v2 .phone-speaker {position:absolute;top:5px;left:50%;width:22px;height:3px;transform:translateX(-50%);border-radius:10px;background:#183f34;opacity:.35}
+.apezeo-landing-v2 .phone-screen {height:100%;overflow:hidden;padding:12px 6px 6px;border-radius:15px;background:#fff}
+.apezeo-landing-v2 .phone-header {display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.apezeo-landing-v2 .phone-brand {display:flex;align-items:center;gap:4px;font-size:6.5px;font-weight:700;color:#064e3b}
+.apezeo-landing-v2 .phone-brand img {width:10px;height:10px;object-fit:contain}
+.apezeo-landing-v2 .phone-menu {font-size:7px;color:#94a29b}
+.apezeo-landing-v2 .phone-title span {display:block;font-size:4.5px;color:#89958f}
+.apezeo-landing-v2 .phone-title strong {display:block;margin-top:2px;font-size:8px;color:#022c22}
+.apezeo-landing-v2 .phone-tabs {display:flex;margin-top:9px;margin-bottom:7px;border-bottom:1px solid #edf1ee}
+.apezeo-landing-v2 .phone-tabs span {padding:4px 5px;font-size:4.5px;color:#929d97}
+.apezeo-landing-v2 .phone-tabs span.selected {color:#064e3b;font-weight:700;border-bottom:2px solid #047857}
+.apezeo-landing-v2 .phone-card {display:flex;align-items:center;gap:5px;min-height:27px;margin-bottom:5px;padding:5px;border-radius:6px;border:1px solid #e5ebe7;background:#fbfcfb}
+.apezeo-landing-v2 .phone-card-mark {width:6px;height:6px;border-radius:2px;background:#047857}
+.apezeo-landing-v2 .phone-card-mark.amber {background:#f59e0b}
+.apezeo-landing-v2 .phone-lines {flex:1}
+.apezeo-landing-v2 .phone-lines span {display:block;height:3px;margin:2px 0;border-radius:10px;background:#dce6e1}
+.apezeo-landing-v2 .phone-lines span:first-child {width:75%;background:#047857}
+.apezeo-landing-v2 .library-badge {position:absolute;left:8%;bottom:9%;width:155px;padding:16px 18px;border-radius:18px;background:#fff;box-shadow:0 25px 45px -25px rgba(2,44,34,.55),0 8px 20px -12px rgba(2,44,34,.25);z-index:8}
+.apezeo-landing-v2 .badge-number {font-family:Lora,Georgia,serif;font-size:26px;font-weight:700;line-height:1;color:#064e3b}
+.apezeo-landing-v2 .badge-number span {color:#047857}
+.apezeo-landing-v2 .badge-title {margin-top:5px;font-size:11px;font-weight:700;color:#022c22}
+.apezeo-landing-v2 .badge-description {margin-top:5px;font-size:8px;line-height:1.4;color:#7a8780}
+.apezeo-landing-v2 .visual-caption {position:absolute;right:7%;bottom:3%;display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.78);font-size:7.5px}
+.apezeo-landing-v2 .caption-dot {width:5px;height:5px;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.12)}
+
+/* Responsive du nouveau hero (tablette / mobile) */
+@media(max-width:1000px){
+.apezeo-landing-v2 .hero-copy {max-width:510px}
+}
+@media(max-width:700px){
+.apezeo-landing-v2 .hero-copy {width:100%;padding:10px 0 0}
+.apezeo-landing-v2 .hero-kicker {margin-bottom:16px;font-size:8px}
+.apezeo-landing-v2 .hero-description {margin:18px 0 22px;font-size:.85rem}
+.apezeo-landing-v2 .hero-access {grid-template-columns:1fr;gap:10px}
+.apezeo-landing-v2 .access-card {min-height:150px;padding:15px}
+.apezeo-landing-v2 .access-content {margin-top:15px}
+.apezeo-landing-v2 .access-content strong {font-size:1.1rem}
+.apezeo-landing-v2 .hero-secondary-actions {align-items:flex-start;flex-direction:column;gap:11px}
+.apezeo-landing-v2 .apezeo-visual {min-height:340px;margin-top:20px}
+.apezeo-landing-v2 .saas-window {left:5%;top:10%;width:79%;height:66%;border-width:3px}
+.apezeo-landing-v2 .visual-caption {display:none}
+.apezeo-landing-v2 .library-badge {left:5%;bottom:5%;width:118px;padding:11px 13px}
+.apezeo-landing-v2 .badge-number {font-size:20px}
+.apezeo-landing-v2 .badge-title {font-size:9px}
+.apezeo-landing-v2 .badge-description {font-size:7px}
+.apezeo-landing-v2 .saas-phone {right:6%;bottom:2%;width:20%}
 }
