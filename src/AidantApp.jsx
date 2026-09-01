@@ -129,7 +129,7 @@ export function AidantApp({ onChangeMode }) {
         <MesFichesView fiches={fiches} favoris={{ liked: favoris, disliked: [] }} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
       )}
       {current.view === "quiz" && (
-        <QuizView onBack={pop} onSubmit={(q) => {
+        <QuizView onBack={pop} fichesDisponibles={fiches} onSubmit={(q) => {
           const scored = fiches.map((f) => ({ f, s: scoreFiche(f, q, { liked: favoris, disliked: [] }) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s).slice(0, 8);
           const max = 100;
           const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));

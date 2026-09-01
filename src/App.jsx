@@ -394,7 +394,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <HistoriqueView historique={historique} ficheById={ficheById} onBack={pop} />
       )}
       {current.view === "quiz" && (
-        <QuizView onBack={pop} onSubmit={(q) => {
+        <QuizView onBack={pop} fichesDisponibles={[...fiches, ...outilsFiches]} onSubmit={(q) => {
           const scored = [...fiches, ...outilsFiches].map((f) => ({ f, s: scoreFiche(f, q, favoris) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s).slice(0, 8);
           const max = 134;
           const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));

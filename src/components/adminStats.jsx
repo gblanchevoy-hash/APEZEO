@@ -1,10 +1,11 @@
 // Écran de statistiques globales, réservé au super-admin.
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Download } from "lucide-react";
 import { supabase } from "../lib/supabase.js";
 import { fetchAllRows } from "../lib/utils.js";
 import { Badge, TopBar } from "./ui.jsx";
 import { essaiJoursRestants, StatBlock } from "./adminShared.jsx";
+import { generateStatsPdfGlobal, generateStatsPdfStructures } from "../lib/statsExport.js";
 
 export function SuperAdminStatsView({ onBack }) {
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,7 @@ export function SuperAdminStatsView({ onBack }) {
   const [signalements, setSignalements] = useState([]);
   const [evenements, setEvenements] = useState([]);
   const [usageParStructure, setUsageParStructure] = useState([]);
+  const [exportBusy, setExportBusy] = useState(null); // "global" | "structures" | null
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
@@ -177,6 +179,32 @@ export function SuperAdminStatsView({ onBack }) {
   const nbExpert = fichesNonOutils.filter((f) => f.niveau_detail === "expert").length;
   const nbStandard = fichesNonOutils.length - nbExpert;
 
+  const exportGlobal = async () => {
+    setExportBusy("global");
+    try {
+      await generateStatsPdfGlobal({
+        usage, structures, parCategorie, nbStandard, nbExpert, nbOutils,
+        structStatusCounts: { actif: nbActif, essaiCours: nbEssaiCours, essaiTermine: nbEssaiTermine, suspendue: nbSuspendue },
+      });
+    } finally {
+      setExportBusy(null);
+    }
+  };
+
+  const exportStructures = async () => {
+    setExportBusy("structures");
+    try {
+      const details = {};
+      await Promise.all(structures.map(async (s) => {
+        const { data } = await supabase.rpc("stats_detail_structure", { p_structure_id: s.id });
+        details[s.id] = data || {};
+      }));
+      await generateStatsPdfStructures(structures, usageParStructure, details);
+    } finally {
+      setExportBusy(null);
+    }
+  };
+
   useEffect(() => {
     if (!categorieChartRef.current || loading || parCategorie.length === 0) return;
     let cancelled = false;
@@ -205,7 +233,14 @@ export function SuperAdminStatsView({ onBack }) {
 
   return (
     <div className="pb-10">
-      <TopBar title="Statistiques" onBack={onBack} right={<button onClick={load} className="p-2 text-emerald-700"><RefreshCw size={17} /></button>} />
+      <TopBar title="Statistiques" onBack={onBack} right={
+        <div className="flex items-center gap-1">
+          <button onClick={exportGlobal} disabled={exportBusy === "global"} className="p-2 text-emerald-700 disabled:opacity-40" title="Exporter les statistiques globales en PDF">
+            <Download size={17} />
+          </button>
+          <button onClick={load} className="p-2 text-emerald-700"><RefreshCw size={17} /></button>
+        </div>
+      } />
       <div className="p-4 space-y-8">
         {loading && <div className="text-center text-stone-400 text-sm py-10">Chargement…</div>}
         {error && <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 text-sm text-rose-700">{error}</div>}
@@ -265,7 +300,12 @@ export function SuperAdminStatsView({ onBack }) {
             <section>
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-bold text-emerald-950">Usage par structure</h2>
-                <button onClick={() => setOpenParStructure((o) => !o)} className="text-xs text-stone-400 font-semibold">{openParStructure ? "Réduire ▾" : "Détail ▸"}</button>
+                <div className="flex items-center gap-3">
+                  <button onClick={exportStructures} disabled={exportBusy === "structures"} className="text-xs text-emerald-700 font-semibold disabled:opacity-40 flex items-center gap-1">
+                    <Download size={13} /> {exportBusy === "structures" ? "Export…" : "Export PDF"}
+                  </button>
+                  <button onClick={() => setOpenParStructure((o) => !o)} className="text-xs text-stone-400 font-semibold">{openParStructure ? "Réduire ▾" : "Détail ▸"}</button>
+                </div>
               </div>
               {openParStructure && (
                 <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">

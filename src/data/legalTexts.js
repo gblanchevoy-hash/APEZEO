@@ -3,21 +3,17 @@
 
 export const MENTIONS_LEGALES = `# Mentions légales — Apézeo
 
-*Document préparé comme base de travail. Les champs entre crochets [ ] doivent être complétés avec vos informations exactes avant publication. Une relecture par un avocat spécialisé en droit du numérique est recommandée avant mise en ligne commerciale.*
+*Document préparé comme base de travail. Les champs entre crochets [ ] doivent être complétés avec vos informations exactes avant publication. Une relecture par un professionnel du droit reste recommandée, notamment compte tenu du contexte hospitalier d'usage — même à titre gratuit et non commercial.*
 
 ---
 
 ## Éditeur du site
 
-Le site et l'application Apézeo (ci-après « Apézeo » ou « le Service ») sont édités par :
+Apézeo (ci-après « Apézeo » ou « le Service ») est un projet **non professionnel et à but non lucratif**, actuellement en phase de découverte et d'expérimentation, mis à disposition gratuitement des établissements et des aidants qui le souhaitent.
 
-- **Raison sociale / Nom** : [À COMPLÉTER — ex. Apézeo SAS / votre nom si vous exercez en nom propre]
-- **Forme juridique** : [À COMPLÉTER — SAS, SASU, EI, association, etc.]
-- **Capital social** : [À COMPLÉTER, si applicable]
-- **Siège social** : [À COMPLÉTER — adresse complète]
-- **Numéro SIREN/SIRET** : [À COMPLÉTER]
-- **Numéro de TVA intracommunautaire** : [À COMPLÉTER, si applicable]
-- **Directeur de la publication** : [À COMPLÉTER — nom du responsable]
+Il est édité par une personne physique à titre non professionnel. Conformément à l'article 1-1, II de la loi n°2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, l'éditeur non professionnel n'est pas tenu de rendre publiques ses coordonnées personnelles, sous réserve de les avoir communiquées à son hébergeur.
+
+- **Directeur de la publication** : [À COMPLÉTER — votre nom]
 - **Contact** : contact@apezeo.fr
 
 ## Hébergement
@@ -61,7 +57,7 @@ Pour toute question relative aux présentes mentions légales : **contact@apezeo
 
 export const CGU = `# Conditions Générales d'Utilisation (CGU) — Apézeo
 
-*Document préparé comme base de travail, à faire relire par un avocat spécialisé en droit du numérique avant publication et avant toute signature de contrat B2B.*
+*Document préparé comme base de travail, à faire relire par un professionnel du droit avant publication définitive.*
 
 ---
 
@@ -198,7 +194,7 @@ Données de connexion et journaux techniques usuels générés par les prestatai
 | Donnée | Finalité | Base légale |
 |---|---|---|
 | Compte professionnel | Gestion de l'accès au Service, authentification | Exécution du contrat (CGU) |
-| Structure / rôle | Gestion des accès et quotas au niveau de l'établissement client | Exécution du contrat (relation B2B avec la Structure) |
+| Structure / rôle | Gestion des accès et quotas au niveau de l'établissement | Intérêt légitime, dans le cadre de la phase de découverte gratuite proposée à l'établissement |
 | Favoris / historique | Amélioration de l'expérience d'usage, aide à la décision personnalisée | Intérêt légitime de l'utilisateur et de l'éditeur |
 | Fiches personnelles | Fonctionnalité du Service | Exécution du contrat |
 

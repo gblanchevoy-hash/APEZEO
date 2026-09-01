@@ -1,13 +1,18 @@
 // Formulaire "Trouver la meilleure technique" et sa page de résultats.
 // Partagé entre les vues Pro et Aidant.
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, ChevronRight, AlertTriangle, Heart } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES } from "../data/constants.js";
 import { TopBar, Badge, CheckGroup, ScoreRing, inputCls } from "./ui.jsx";
+import { scoreFiche } from "../lib/utils.js";
 
-export function QuizView({ onBack, onSubmit }) {
+export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
   const [q, setQ] = useState({ troubleIds: [], besoin: "", stade: "", contexte: "", materielDispo: true, typeVoulu: "technique" });
   const toggleTrouble = (t) => setQ((s) => ({ ...s, troubleIds: s.troubleIds.includes(t) ? s.troubleIds.filter((x) => x !== t) : [...s.troubleIds, t] }));
+  const resultCount = useMemo(
+    () => fichesDisponibles.filter((f) => scoreFiche(f, q, null) !== null).length,
+    [fichesDisponibles, q]
+  );
   return (
     <div className="pb-10">
       <TopBar title="Trouver la meilleure technique" onBack={onBack} />
@@ -21,6 +26,12 @@ export function QuizView({ onBack, onSubmit }) {
             <div className="text-emerald-200 text-sm">Plus vous êtes précis, plus la recommandation le sera aussi.</div>
           </div>
         </div>
+        {fichesDisponibles.length > 0 && (
+          <div className="relative mt-4 pt-4 border-t border-white/15 flex items-center justify-between">
+            <span className="text-emerald-100 text-sm">Fiches correspondantes</span>
+            <span className="text-2xl font-bold tabular-nums">{resultCount}</span>
+          </div>
+        )}
       </div>
 
       <div className="p-4 lg:px-8 flex flex-col gap-3.5">
