@@ -6,7 +6,7 @@ import { Badge, Stars } from "./ui.jsx";
 // Certains croquis d'outils sont des scènes complètes (pas un objet
 // isolé sur fond uni) — ils s'affichent en pleine largeur plutôt que
 // "pinglés" sur la page de carnet, qui n'a de sens que pour un objet seul.
-export const CROQUIS_PLEINE_LARGEUR = ["Diffuseur de sons naturels"];
+export const CROQUIS_PLEINE_LARGEUR = [];
 
 export function FicheCard({ f, onClick, favState }) {
   const nonSourcee = !!f.isLocal; // toute fiche créée par l'utilisateur, quelle que soit la catégorie choisie

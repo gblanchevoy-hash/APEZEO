@@ -108,10 +108,16 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
 
 export function RecommandationsView({ title, results, suggestions, favoris, onBack, onOpenFiche }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
+  const [showAll, setShowAll] = useState(false);
+  const visibles = showAll ? results : results.slice(0, 8);
+  const reste = results.length - 8;
   return (
     <div className="pb-10">
       <TopBar title={`Pour : ${title}`} onBack={onBack} />
       <div className="p-4 flex flex-col gap-2.5">
+        {results.length > 0 && (
+          <div className="text-xs text-stone-400 mb-1">{results.length} fiche{results.length > 1 ? "s" : ""} correspondante{results.length > 1 ? "s" : ""}, classées par pertinence</div>
+        )}
         {results.length === 0 && <div className="text-center text-stone-400 text-sm py-6">Aucune fiche ne correspond exactement à ces critères.</div>}
         {results.length === 0 && suggestions && suggestions.length > 0 && (
           <div className="bg-emerald-50 border border-emerald-800/10 shadow-sm rounded-2xl p-4 mb-2">
@@ -126,7 +132,7 @@ export function RecommandationsView({ title, results, suggestions, favoris, onBa
             </div>
           </div>
         )}
-        {results.map(({ f, pct }) => {
+        {visibles.map(({ f, pct }) => {
           const isOutil = f.typeFiche === "outil";
           return (
             <button key={f.id} onClick={() => onOpenFiche(f)} className={`w-full text-left bg-white rounded-xl p-3.5 shadow-sm flex items-center gap-3 active:scale-[0.99] transition ${isOutil ? "border-l-[3px] border-violet-400" : "border border-emerald-900/5"}`}>
@@ -143,6 +149,11 @@ export function RecommandationsView({ title, results, suggestions, favoris, onBa
             </button>
           );
         })}
+        {!showAll && reste > 0 && (
+          <button onClick={() => setShowAll(true)} className="text-sm font-semibold text-emerald-700 text-center py-3 rounded-xl border border-emerald-700/20 hover:bg-emerald-50 transition-colors">
+            Voir les {reste} autre{reste > 1 ? "s" : ""} fiche{reste > 1 ? "s" : ""} correspondante{reste > 1 ? "s" : ""}
+          </button>
+        )}
       </div>
     </div>
   );

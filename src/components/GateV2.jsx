@@ -292,8 +292,7 @@ export function GateV2({ onChoose }) {
 
             <div className="flyer-panel">
               <div className="flyer-inner">
-                <div className="flyer-title">Faire passer les bonnes pratiques <span>de la formation au quotidien.</span></div>
-                <div className="flyer-sub">L'esprit du flyer, transposé en expérience web : claire, professionnelle, rassurante et orientée terrain.</div>
+                <div className="flyer-title">Utiliser des interventions non médicamenteuses <span>tout en se formant au quotidien.</span></div>
                 <div className="flyer-mini-grid">
                   <div className="mini"><b><span className="mnum">01</span>Socle commun</b><span>Les mêmes repères pour toute l'équipe.</span></div>
                   <div className="mini"><b><span className="mnum">02</span>Formation prolongée</b><span>Les connaissances restent accessibles.</span></div>

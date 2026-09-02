@@ -27,7 +27,7 @@ L'application est hébergée par :
 ### Hébergement de la base de données
 Les données sont hébergées par :
 **Supabase Inc.**
-[À COMPLÉTER — vérifier l'adresse du siège Supabase et la région de données choisie lors de la création du projet, ex. UE/Irlande ou États-Unis]
+[À CONFIRMER PAR VOUS — région du projet visible dans Supabase : Project Settings → General → Region. Si elle affiche "West EU (Ireland)" ou une autre région européenne, vos données sont dans l'UE. Sinon, voir le point d'attention ci-dessous.]
 [https://supabase.com](https://supabase.com)
 
 *Point d'attention : si l'hébergement des données Supabase n'est pas localisé dans l'Union européenne, un transfert de données hors UE a lieu — voir la section correspondante de la politique de confidentialité. Il est recommandé de vérifier/configurer la région d'hébergement Supabase sur un serveur européen si cela n'a pas déjà été fait.*
@@ -52,7 +52,7 @@ Pour toute question relative aux présentes mentions légales : **contact@apezeo
 
 ---
 
-*Dernière mise à jour : [À COMPLÉTER — date de publication]*
+*Dernière mise à jour : 1er septembre 2026*
 `;
 
 export const CGU = `# Conditions Générales d'Utilisation (CGU) — Apézeo
@@ -63,7 +63,7 @@ export const CGU = `# Conditions Générales d'Utilisation (CGU) — Apézeo
 
 ## Article 1 — Objet
 
-Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation de l'application Apézeo (ci-après « le Service »), éditée par [À COMPLÉTER — voir Mentions légales], destinée aux professionnels accompagnant des personnes atteintes de la maladie d'Alzheimer et de maladies apparentées (« Version Pro »).
+Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation de l'application Apézeo (ci-après « le Service »), éditée à titre non professionnel et non lucratif par une personne physique (voir Mentions légales), destinée aux professionnels accompagnant des personnes atteintes de la maladie d'Alzheimer et de maladies apparentées (« Version Pro »).
 
 L'utilisation du Service implique l'acceptation pleine et entière des présentes CGU, ainsi que de la [Politique de confidentialité](#) et de la [Clause de non-responsabilité](#), qui en font partie intégrante.
 
@@ -150,7 +150,7 @@ Pour toute question relative aux présentes CGU : **contact@apezeo.fr**
 
 ---
 
-*Dernière mise à jour : [À COMPLÉTER — date de publication]*
+*Dernière mise à jour : 1er septembre 2026*
 `;
 
 export const CONFIDENTIALITE = `# Politique de confidentialité — Apézeo
@@ -161,8 +161,7 @@ export const CONFIDENTIALITE = `# Politique de confidentialité — Apézeo
 
 ## 1. Responsable de traitement
 
-Le responsable du traitement des données personnelles collectées par Apézeo est :
-[À COMPLÉTER — voir Mentions légales]
+Le responsable du traitement des données personnelles collectées par Apézeo est la personne physique éditant le Service à titre non professionnel et non lucratif (voir Mentions légales, article « Éditeur du site »).
 Contact dédié aux questions de protection des données : **contact@apezeo.fr**
 
 *Point d'attention : selon le volume de comptes et le type de données traitées, la désignation d'un Délégué à la Protection des Données (DPO) pourra devenir nécessaire ou recommandée. À réévaluer avec un conseil RGPD à mesure de la croissance du Service.*
@@ -181,7 +180,7 @@ Contact dédié aux questions de protection des données : **contact@apezeo.fr**
 - Historique des essais réalisés : intensité du trouble avant/après une technique, durée, **commentaire libre**
 - Fiches personnelles créées par l'utilisateur
 
-**Point de vigilance spécifique** : le champ « commentaire » de l'historique et le contenu des fiches personnelles sont des champs de texte libre. L'éditeur demande explicitement aux utilisateurs, via les CGU, de ne jamais y saisir d'information permettant d'identifier une personne accompagnée (nom, éléments d'identification indirecte, diagnostic précis). Ces champs ne sont *pas destinés* à contenir des données de santé concernant un tiers, mais l'éditeur ne peut techniquement garantir qu'aucun utilisateur n'y contreviendra. [À COMPLÉTER une fois la stratégie de modération/filtrage éventuelle décidée avec votre conseil].
+**Point de vigilance spécifique** : le champ « commentaire » de l'historique et le contenu des fiches personnelles sont des champs de texte libre. L'éditeur demande explicitement aux utilisateurs, via les CGU, de ne jamais y saisir d'information permettant d'identifier une personne accompagnée (nom, éléments d'identification indirecte, diagnostic précis). Ces champs ne sont *pas destinés* à contenir des données de santé concernant un tiers. Aucun filtrage automatique de ces champs n'est actuellement en place ; en tant que projet porté par une seule personne, l'éditeur ne peut garantir une revue systématique de tout le contenu saisi, mais s'engage à supprimer, dans les meilleurs délais, tout contenu signalé comme contrevenant à cette règle.
 
 ### 2.3 Version Aidant
 La Version Aidant ne requiert pas de compte. Les données saisies (favoris, historique, fiches personnelles) sont conservées **localement sur l'appareil de l'utilisateur uniquement** et ne sont jamais transmises à l'éditeur.
@@ -210,7 +209,7 @@ Les données sont accessibles :
 
 | Prestataire | Rôle | Localisation | Transfert hors UE |
 |---|---|---|---|
-| Supabase Inc. | Base de données et authentification | [À COMPLÉTER — vérifier la région choisie lors de la création du projet] | [À COMPLÉTER — si hors UE, indiquer le mécanisme de transfert : clauses contractuelles types de la Commission européenne, etc.] |
+| Supabase Inc. | Base de données et authentification | [À CONFIRMER PAR VOUS — voir Mentions légales] | Si hors UE : clauses contractuelles types de la Commission européenne, incluses dans les conditions standard de Supabase (Data Processing Agreement, disponible publiquement sur supabase.com) |
 | Vercel Inc. | Hébergement de l'application | États-Unis (infrastructure mondiale) | Oui — clauses contractuelles types applicables selon la documentation Vercel |
 
 *Recommandation forte avant publication : vérifier/configurer la région d'hébergement Supabase sur un serveur situé dans l'Union européenne si ce n'est pas déjà le cas, afin de simplifier la conformité RGPD et réduire les obligations liées aux transferts internationaux de données.*
@@ -218,8 +217,8 @@ Les données sont accessibles :
 ## 6. Durée de conservation
 
 - **Compte actif** : les données sont conservées pendant toute la durée d'utilisation du Service.
-- **Compte désactivé par un administrateur de Structure** : [À COMPLÉTER — définir une durée, ex. conservation 12 mois puis anonymisation/suppression, sauf obligation légale de conservation plus longue].
-- **Compte supprimé à la demande de l'utilisateur** : suppression sous [À COMPLÉTER, ex. 30 jours].
+- **Compte désactivé par un administrateur de Structure** : les données sont conservées 12 mois à compter de la désactivation, puis anonymisées ou supprimées, sauf obligation légale de conservation plus longue.
+- **Compte supprimé à la demande de l'utilisateur** : la suppression est **immédiate** (compte et données associées supprimés dès validation de la demande, sans délai de rétention).
 - **Version Aidant** : les données restant locales à l'appareil, leur durée de conservation dépend uniquement des actions de l'utilisateur sur son propre appareil.
 
 ## 7. Droits des personnes concernées
@@ -246,7 +245,7 @@ L'éditeur met en œuvre les mesures techniques et organisationnelles raisonnabl
 
 ## 9. Cookies et traceurs
 
-[À COMPLÉTER selon l'usage réel — si l'application n'utilise que des cookies strictement nécessaires au fonctionnement (session d'authentification), le consentement CNIL n'est en principe pas requis pour ceux-ci ; toute mesure d'audience ou traceur publicitaire supplémentaire devra faire l'objet d'un bandeau de consentement conforme aux recommandations CNIL.]
+Apézeo n'utilise aucun cookie publicitaire ni traceur de mesure d'audience (pas de Google Analytics ni équivalent). La session de connexion (Version Pro) est gérée par le stockage local du navigateur (*local storage*), strictement nécessaire au fonctionnement du Service, et non par des cookies. Aucun consentement CNIL n'est donc requis pour ce mécanisme. Si un outil de mesure d'audience ou un traceur publicitaire venait à être ajouté à l'avenir, un bandeau de consentement conforme aux recommandations CNIL serait alors mis en place et cette section serait mise à jour en conséquence.
 
 ## 10. Modification de la politique
 
@@ -258,7 +257,7 @@ Pour toute question relative à la présente politique de confidentialité : **c
 
 ---
 
-*Dernière mise à jour : [À COMPLÉTER — date de publication]*
+*Dernière mise à jour : 1er septembre 2026*
 `;
 
 export const NON_RESPONSABILITE = `# Clause de non-responsabilité — Apézeo
@@ -317,7 +316,7 @@ L'utilisation d'Apézeo, notamment la création d'un compte professionnel, vaut 
 
 ---
 
-*Dernière mise à jour : [À COMPLÉTER — date de publication]*
+*Dernière mise à jour : 1er septembre 2026*
 *Contact : contact@apezeo.fr*
 `;
 
