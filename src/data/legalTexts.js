@@ -1,5 +1,6 @@
 // Textes légaux d'Apézeo — générés à partir des documents rédigés.
-// Remplacer les [À COMPLÉTER] par vos informations réelles avant publication.
+// Documents légaux complétés avec les informations réelles de l'éditeur.
+// Une relecture par un professionnel du droit reste recommandée avant publication définitive.
 
 export const MENTIONS_LEGALES = `# Mentions légales — Apézeo
 
@@ -13,7 +14,7 @@ Apézeo (ci-après « Apézeo » ou « le Service ») est un projet **non profes
 
 Il est édité par une personne physique à titre non professionnel. Conformément à l'article 1-1, II de la loi n°2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, l'éditeur non professionnel n'est pas tenu de rendre publiques ses coordonnées personnelles, sous réserve de les avoir communiquées à son hébergeur.
 
-- **Directeur de la publication** : [À COMPLÉTER — votre nom]
+- **Directeur de la publication** : Guillaume Blanchevoy
 - **Contact** : contact@apezeo.fr
 
 ## Hébergement
@@ -26,11 +27,8 @@ L'application est hébergée par :
 
 ### Hébergement de la base de données
 Les données sont hébergées par :
-**Supabase Inc.**
-[À CONFIRMER PAR VOUS — région du projet visible dans Supabase : Project Settings → General → Region. Si elle affiche "West EU (Ireland)" ou une autre région européenne, vos données sont dans l'UE. Sinon, voir le point d'attention ci-dessous.]
+**Supabase Inc.**, dans l'Union européenne (région « West EU — Ireland »).
 [https://supabase.com](https://supabase.com)
-
-*Point d'attention : si l'hébergement des données Supabase n'est pas localisé dans l'Union européenne, un transfert de données hors UE a lieu — voir la section correspondante de la politique de confidentialité. Il est recommandé de vérifier/configurer la région d'hébergement Supabase sur un serveur européen si cela n'a pas déjà été fait.*
 
 ## Propriété intellectuelle
 
@@ -209,7 +207,7 @@ Les données sont accessibles :
 
 | Prestataire | Rôle | Localisation | Transfert hors UE |
 |---|---|---|---|
-| Supabase Inc. | Base de données et authentification | [À CONFIRMER PAR VOUS — voir Mentions légales] | Si hors UE : clauses contractuelles types de la Commission européenne, incluses dans les conditions standard de Supabase (Data Processing Agreement, disponible publiquement sur supabase.com) |
+| Supabase Inc. | Base de données et authentification | Union européenne (Irlande) | Aucun — hébergement intra-UE, pas de transfert hors UE |
 | Vercel Inc. | Hébergement de l'application | États-Unis (infrastructure mondiale) | Oui — clauses contractuelles types applicables selon la documentation Vercel |
 
 *Recommandation forte avant publication : vérifier/configurer la région d'hébergement Supabase sur un serveur situé dans l'Union européenne si ce n'est pas déjà le cas, afin de simplifier la conformité RGPD et réduire les obligations liées aux transferts internationaux de données.*
