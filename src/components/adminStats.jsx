@@ -16,13 +16,14 @@ export function SuperAdminStatsView({ onBack }) {
   const [signalements, setSignalements] = useState([]);
   const [evenements, setEvenements] = useState([]);
   const [usageParStructure, setUsageParStructure] = useState([]);
+  const [temoignages, setTemoignages] = useState([]);
   const [exportBusy, setExportBusy] = useState(null); // "global" | "structures" | null
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
-    const [structRes, profRes, fichesRes, usageRes, signalRes, evenRes, usageStructRes] = await Promise.all([
+    const [structRes, profRes, fichesRes, usageRes, signalRes, evenRes, usageStructRes, temoinRes] = await Promise.all([
       fetchAllRows(supabase, "structures", "id, nom, quota, suspended, essai_duree_semaines, created_at"),
       fetchAllRows(supabase, "profiles", "id, structure_id, plan, actif, created_at"),
       fetchAllRows(supabase, "interventions", "categorie, niveau_detail, type_fiche"),
@@ -30,6 +31,7 @@ export function SuperAdminStatsView({ onBack }) {
       supabase.from("signalements").select("*").order("created_at", { ascending: false }),
       fetchAllRows(supabase, "structures_evenements", "structure_id, type_evenement, created_at"),
       supabase.rpc("stats_usage_par_structure"),
+      fetchAllRows(supabase, "temoignages", "structure_id, note, commentaire, autorise_citation, created_at"),
     ]);
     if (structRes.error || profRes.error || fichesRes.error || usageRes.error) {
       setError((structRes.error || profRes.error || fichesRes.error || usageRes.error).message);
@@ -41,6 +43,7 @@ export function SuperAdminStatsView({ onBack }) {
     setSignalements(signalRes.data || []);
     setEvenements(evenRes.data || []);
     setUsageParStructure(usageStructRes.data || []);
+    setTemoignages(temoinRes.data || []);
     setLoading(false);
   }, []);
 
@@ -183,7 +186,7 @@ export function SuperAdminStatsView({ onBack }) {
     setExportBusy("global");
     try {
       await generateStatsPdfGlobal({
-        usage, structures, parCategorie, nbStandard, nbExpert, nbOutils,
+        usage, structures, parCategorie, nbStandard, nbExpert, nbOutils, temoignages,
         structStatusCounts: { actif: nbActif, essaiCours: nbEssaiCours, essaiTermine: nbEssaiTermine, suspendue: nbSuspendue },
       });
     } finally {
@@ -324,7 +327,38 @@ export function SuperAdminStatsView({ onBack }) {
               )}
             </section>
 
-            {/* Santé commerciale */}
+            {/* Témoignages */}
+            <section>
+              <h2 className="text-sm font-bold text-emerald-950 mb-3 flex items-center gap-2">
+                Témoignages
+                {temoignages.filter((t) => t.autorise_citation).length > 0 && (
+                  <Badge tone="emerald">{temoignages.filter((t) => t.autorise_citation).length} citable{temoignages.filter((t) => t.autorise_citation).length > 1 ? "s" : ""}</Badge>
+                )}
+              </h2>
+              <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5">
+                {temoignages.length === 0 && <div className="px-4 py-3 text-sm text-stone-400">Aucun témoignage pour l'instant.</div>}
+                {temoignages.map((t, i) => {
+                  const nomStructure = structures.find((s) => s.id === t.structure_id)?.nom || "Structure";
+                  return (
+                    <div key={i} className="px-4 py-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm font-semibold text-emerald-950">{t.autorise_citation ? nomStructure : "Structure anonyme"}</span>
+                          {t.autorise_citation && <Badge tone="emerald">citable</Badge>}
+                        </div>
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((n) => <span key={n} className={`text-xs ${n <= t.note ? "text-amber-500" : "text-stone-200"}`}>★</span>)}
+                        </div>
+                      </div>
+                      {t.commentaire && <p className="text-sm text-stone-600 italic">"{t.commentaire}"</p>}
+                      <p className="text-[11px] text-stone-400 mt-1">{new Date(t.created_at).toLocaleDateString("fr-FR")}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+
             <section>
               <h2 className="text-sm font-bold text-emerald-950 mb-3">Santé commerciale</h2>
               <div className="bg-white rounded-2xl border border-emerald-900/5 divide-y divide-emerald-900/5 mb-3">
@@ -352,9 +386,21 @@ export function SuperAdminStatsView({ onBack }) {
             {/* Usage de la bibliothèque */}
             <section>
               <h2 className="text-sm font-bold text-emerald-950 mb-3">Usage de la bibliothèque</h2>
-              <div className="grid grid-cols-1 gap-3 mb-3">
+              <div className="grid grid-cols-2 gap-3 mb-3">
                 <StatBlock label="Jamais consultées" value={usage?.fiches_jamais_consultees ?? 0} tone={usage?.fiches_jamais_consultees > 0 ? "amber" : "stone"} />
+                <StatBlock label="Taux de mise en favori" value={`${usage?.taux_favoris ?? 0}%`} sub="favoris / fiches consultées" />
               </div>
+              {usage?.par_profession?.length > 0 && (
+                <div className="bg-white rounded-2xl border border-emerald-900/5 p-4 mb-3">
+                  <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-2">Répartition par métier</div>
+                  {usage.par_profession.map((p) => (
+                    <div key={p.profession} className="flex items-center justify-between py-1.5 text-sm">
+                      <span className="text-emerald-950">{p.profession}</span>
+                      <span className="font-bold text-stone-500">{p.nb}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="bg-white rounded-2xl border border-emerald-900/5 p-4 mb-3">
                 <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-2">Top fiches — ce mois</div>
                 {(!usage?.top_fiches || usage.top_fiches.length === 0) && <div className="text-sm text-stone-400 py-2">Aucune consultation ce mois-ci.</div>}

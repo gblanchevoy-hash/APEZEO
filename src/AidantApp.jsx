@@ -189,6 +189,10 @@ export function AidantApp({ onChangeMode }) {
                 <span className="font-semibold text-rose-900">SAMU</span>
                 <span className="font-bold text-rose-700 text-lg">15</span>
               </a>
+              <a href="tel:17" className="flex items-center justify-between bg-rose-50 hover:bg-rose-100 rounded-2xl px-4 py-3.5 transition">
+                <span className="font-semibold text-rose-900">Police / Gendarmerie</span>
+                <span className="font-bold text-rose-700 text-lg">17</span>
+              </a>
               <a href="tel:112" className="flex items-center justify-between bg-rose-50 hover:bg-rose-100 rounded-2xl px-4 py-3.5 transition">
                 <span className="font-semibold text-rose-900">Numéro d'urgence européen</span>
                 <span className="font-bold text-rose-700 text-lg">112</span>

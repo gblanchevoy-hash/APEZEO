@@ -1,6 +1,6 @@
 // Génération des PDF de statistiques (global ou par structure).
 // jsPDF est chargé à la demande, jamais dans le bundle principal.
-export async function generateStatsPdfGlobal({ usage, structures, structStatusCounts, parCategorie, nbStandard, nbExpert, nbOutils }) {
+export async function generateStatsPdfGlobal({ usage, structures, structStatusCounts, parCategorie, nbStandard, nbExpert, nbOutils, temoignages = [] }) {
   const { default: jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const marginX = 18, pageWidth = 210;
@@ -32,6 +32,12 @@ export async function generateStatsPdfGlobal({ usage, structures, structStatusCo
   wrap(`Vues cette semaine : ${usage?.total_vues_semaine ?? 0}`, 10);
   wrap(`PDF de fiches téléchargés ce mois : ${usage?.total_telechargements_mois ?? 0}`, 10);
   wrap(`Fiches jamais consultées : ${usage?.fiches_jamais_consultees ?? 0}`, 10);
+  wrap(`Taux de mise en favori : ${usage?.taux_favoris ?? 0}% (favoris / fiches consultées)`, 10);
+  if (usage?.par_profession?.length) {
+    y += 1;
+    wrap("Répartition par métier :", 10, "bold");
+    usage.par_profession.forEach((p) => wrap(`• ${p.profession} : ${p.nb}`, 9, "normal", [90, 90, 90], 4.5));
+  }
   y += 2; line();
 
   wrap("Structures", 13, "bold", [4, 120, 87]);
@@ -48,6 +54,17 @@ export async function generateStatsPdfGlobal({ usage, structures, structStatusCo
   if (usage?.top_fiches?.length) {
     wrap("Top fiches — ce mois (toutes structures)", 13, "bold", [4, 120, 87]);
     usage.top_fiches.forEach((t, i) => wrap(`${i + 1}. ${t.titre} — ${t.vues} vues`, 9, "normal", [90, 90, 90], 4.5));
+  }
+
+  const citables = temoignages.filter((t) => t.autorise_citation);
+  if (citables.length) {
+    y += 2; line();
+    wrap("Témoignages (citables publiquement)", 13, "bold", [4, 120, 87]);
+    citables.forEach((t) => {
+      const nom = structures.find((s) => s.id === t.structure_id)?.nom || "Structure";
+      wrap(`${nom} — ${"★".repeat(t.note)}${"☆".repeat(5 - t.note)}`, 10, "bold");
+      if (t.commentaire) wrap(`"${t.commentaire}"`, 10, "normal", [90, 90, 90]);
+    });
   }
 
   doc.save(`Apezeo - Statistiques globales - ${new Date().toISOString().slice(0, 10)}.pdf`);

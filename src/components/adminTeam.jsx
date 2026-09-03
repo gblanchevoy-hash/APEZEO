@@ -21,17 +21,24 @@ export function AdminTeamView({ structureId, onBack }) {
   const [inviting, setInviting] = useState(false);
   const [inviteMsg, setInviteMsg] = useState(null);
   const [favorisEquipe, setFavorisEquipe] = useState([]);
+  const [temoignage, setTemoignage] = useState(null);
+  const [note, setNote] = useState(0);
+  const [commentaire, setCommentaire] = useState("");
+  const [autoriseCitation, setAutoriseCitation] = useState(false);
+  const [envoiTemoignage, setEnvoiTemoignage] = useState(false);
+  const [temoignageMsg, setTemoignageMsg] = useState(null);
 
   const load = useCallback(async () => {
     if (!structureId) { setLoading(false); return; }
     setLoading(true);
-    const [{ data: structData }, { data: memberData }, { data: topData }, { data: weekData }, { data: inviteData }, { data: favData }] = await Promise.all([
+    const [{ data: structData }, { data: memberData }, { data: topData }, { data: weekData }, { data: inviteData }, { data: favData }, { data: temoinData }] = await Promise.all([
       supabase.from("structures").select("*").eq("id", structureId).single(),
       supabase.from("profiles").select("*").eq("structure_id", structureId).order("created_at", { ascending: true }),
       supabase.rpc("top_fiches_structure"),
       supabase.rpc("vues_semaine_structure"),
       supabase.from("invitations_structure").select("*").eq("structure_id", structureId).eq("utilisee", false).order("created_at", { ascending: false }),
       supabase.from("favoris_equipe").select("*").eq("structure_id", structureId).order("created_at", { ascending: false }),
+      supabase.from("temoignages").select("*").eq("structure_id", structureId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
     setStructure(structData || null);
     setMembers(memberData || []);
@@ -39,8 +46,27 @@ export function AdminTeamView({ structureId, onBack }) {
     setWeeklyStats(weekData || []);
     setInvitations(inviteData || []);
     setFavorisEquipe(favData || []);
+    setTemoignage(temoinData || null);
     setLoading(false);
   }, [structureId]);
+
+  const envoyerTemoignage = async () => {
+    if (note === 0) { setTemoignageMsg({ ok: false, text: "Merci de choisir une note." }); return; }
+    setEnvoiTemoignage(true);
+    setTemoignageMsg(null);
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase.from("temoignages").insert({
+      structure_id: structureId,
+      auteur_id: user?.id,
+      note,
+      commentaire: commentaire.trim() || null,
+      autorise_citation: autoriseCitation,
+    });
+    setEnvoiTemoignage(false);
+    if (error) { setTemoignageMsg({ ok: false, text: error.message }); return; }
+    setTemoignageMsg({ ok: true, text: "Merci pour votre retour !" });
+    load();
+  };
 
   useEffect(() => { load(); }, [load]);
 
@@ -239,6 +265,46 @@ export function AdminTeamView({ structureId, onBack }) {
             </div>
           </div>
         )}
+
+        <div className="bg-white rounded-xl p-3.5 border border-emerald-900/5 shadow-sm mb-4">
+          <div className="font-semibold text-emerald-950 text-sm mb-0.5">Donner votre avis</div>
+          {temoignage ? (
+            <div className="mt-2">
+              <p className="text-xs text-stone-400 mb-2">Merci, votre dernier retour a bien été enregistré le {new Date(temoignage.created_at).toLocaleDateString("fr-FR")}.</p>
+              <div className="flex items-center gap-1 mb-2">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <span key={n} className={`text-lg ${n <= temoignage.note ? "text-amber-500" : "text-stone-200"}`}>★</span>
+                ))}
+              </div>
+              {temoignage.commentaire && <p className="text-sm text-stone-600 italic">"{temoignage.commentaire}"</p>}
+            </div>
+          ) : (
+            <>
+              <p className="text-xs text-stone-400 mb-3">Votre avis nous aide à améliorer Apézeo. Deux minutes suffisent.</p>
+              <div className="flex items-center gap-1 mb-3">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button key={n} onClick={() => setNote(n)} className={`text-2xl transition-colors ${n <= note ? "text-amber-500" : "text-stone-200 hover:text-amber-300"}`}>★</button>
+                ))}
+              </div>
+              <textarea
+                value={commentaire} onChange={(e) => setCommentaire(e.target.value)}
+                placeholder="Qu'est-ce qui fonctionne bien ? Qu'est-ce qu'on pourrait améliorer ?"
+                className="w-full text-sm border border-stone-200 rounded-xl p-3 mb-3 resize-none" rows={3}
+              />
+              <label className="flex items-start gap-2.5 bg-emerald-50 rounded-xl p-3 mb-1 cursor-pointer">
+                <input type="checkbox" checked={autoriseCitation} onChange={(e) => setAutoriseCitation(e.target.checked)} className="mt-0.5 w-4 h-4 accent-emerald-700 shrink-0" />
+                <span className="text-xs text-emerald-900">
+                  <b>J'autorise Apézeo à citer {structure?.nom || "notre établissement"} comme référence</b> (nom de l'établissement uniquement, jamais de donnée sur les résidents). Facultatif — vous pouvez revenir sur cette autorisation à tout moment en nous contactant.
+                </span>
+              </label>
+              <p className="text-[11px] text-stone-400 mb-3 ml-6">Ça valorise votre établissement comme précurseur dans l'accompagnement non médicamenteux, et ça aide Apézeo à convaincre d'autres structures d'essayer l'outil — sans aucune obligation de votre part.</p>
+              {temoignageMsg && <div className={`text-xs mb-3 ${temoignageMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{temoignageMsg.text}</div>}
+              <button onClick={envoyerTemoignage} disabled={envoiTemoignage} className="w-full bg-emerald-700 disabled:bg-stone-300 text-white text-sm font-semibold rounded-xl py-2.5">
+                {envoiTemoignage ? "Envoi…" : "Envoyer mon avis"}
+              </button>
+            </>
+          )}
+        </div>
 
         {weeklyStats.length > 0 && (() => {
           const thisWeek = weeklyStats[0]?.total_vues || 0;
