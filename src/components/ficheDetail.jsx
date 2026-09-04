@@ -296,14 +296,9 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
         </div>
         <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
 
-        {isExpert && f.pointsCles && f.pointsCles.length > 0 && (
-          <div className="bg-emerald-900 text-white rounded-2xl p-4 mb-6">
-            <div className="text-xs font-bold uppercase tracking-wider text-emerald-300 mb-2">Points clés à retenir</div>
-            <ul className="space-y-1.5">{f.pointsCles.map((p, i) => <li key={i} className="text-sm flex gap-2"><span className="text-amber-300 mt-0.5">•</span><span>{p}</span></li>)}</ul>
-          </div>
+        {!isExpert && (
+          <CollapsibleSection title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></CollapsibleSection>
         )}
-
-        <CollapsibleSection title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></CollapsibleSection>
 
         {isExpert ? (
           <>
@@ -314,9 +309,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
                 {f.frequence && <div><span className="text-stone-400">Fréquence : </span><span className="text-stone-700 font-medium">{f.frequence}</span></div>}
               </div>
             )}
-            <CollapsibleSection title="Objectifs"><BulletList items={f.objectifsObservables} /></CollapsibleSection>
             <Section title="Matériel"><BulletList items={f.materiel} /></Section>
-            <CollapsibleSection title="Préparation"><BulletList items={f.preparation} /></CollapsibleSection>
             {f.deroulement && f.deroulement.length > 0 && (
               <Section title="Déroulement">
                 <div className="flex flex-col gap-3">
@@ -349,19 +342,6 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
                 </div>
               </Section>
             )}
-            {f.adaptationStades && (f.adaptationStades.leger?.length || f.adaptationStades.modere?.length || f.adaptationStades.severe?.length) && (
-              <CollapsibleSection title="Adaptation selon le stade">
-                <div className="flex flex-col gap-2.5">
-                  {[["Léger", f.adaptationStades.leger], ["Modéré", f.adaptationStades.modere], ["Sévère", f.adaptationStades.severe]].map(([label, items]) => items && items.length > 0 && (
-                    <div key={label} className="bg-stone-50 rounded-xl p-3">
-                      <div className="text-xs font-bold text-emerald-700 mb-1">{label}</div>
-                      <BulletList items={items} />
-                    </div>
-                  ))}
-                </div>
-              </CollapsibleSection>
-            )}
-            <CollapsibleSection title="Conditions favorables"><BulletList items={f.conditionsFavorables} /></CollapsibleSection>
             {f.pointsVigilance && f.pointsVigilance.length > 0 && (
               <Section title="Points de vigilance">
                 <div className="flex flex-col gap-2">
@@ -387,13 +367,36 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
               </Section>
             )}
             <Section title="Précautions"><BulletList items={f.precautions} /></Section>
+            <Section title="Comment évaluer l'efficacité"><BulletList items={f.commentEvaluerEfficacite} /></Section>
+
+            {/* Volets roulants, tous groupés ensemble juste avant les sources */}
+            {f.pointsCles && f.pointsCles.length > 0 && (
+              <CollapsibleSection title="Points clés à retenir">
+                <ul className="space-y-1.5">{f.pointsCles.map((p, i) => <li key={i} className="text-sm flex gap-2"><span className="text-amber-600 mt-0.5">•</span><span className="text-stone-700">{p}</span></li>)}</ul>
+              </CollapsibleSection>
+            )}
+            <CollapsibleSection title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></CollapsibleSection>
+            <CollapsibleSection title="Objectifs"><BulletList items={f.objectifsObservables} /></CollapsibleSection>
+            <CollapsibleSection title="Préparation"><BulletList items={f.preparation} /></CollapsibleSection>
+            {f.adaptationStades && (f.adaptationStades.leger?.length || f.adaptationStades.modere?.length || f.adaptationStades.severe?.length) && (
+              <CollapsibleSection title="Adaptation selon le stade">
+                <div className="flex flex-col gap-2.5">
+                  {[["Léger", f.adaptationStades.leger], ["Modéré", f.adaptationStades.modere], ["Sévère", f.adaptationStades.severe]].map(([label, items]) => items && items.length > 0 && (
+                    <div key={label} className="bg-stone-50 rounded-xl p-3">
+                      <div className="text-xs font-bold text-emerald-700 mb-1">{label}</div>
+                      <BulletList items={items} />
+                    </div>
+                  ))}
+                </div>
+              </CollapsibleSection>
+            )}
+            <CollapsibleSection title="Conditions favorables"><BulletList items={f.conditionsFavorables} /></CollapsibleSection>
             {(f.fondementPrincipe || f.fondementApplication) && (
               <CollapsibleSection title="Fondements">
                 {f.fondementPrincipe && <p className="text-sm text-stone-700 leading-relaxed mb-4"><span className="font-semibold text-emerald-800">Principe — </span>{f.fondementPrincipe}</p>}
                 {f.fondementApplication && <StructuredText text={f.fondementApplication} />}
               </CollapsibleSection>
             )}
-            <Section title="Comment évaluer l'efficacité"><BulletList items={f.commentEvaluerEfficacite} /></Section>
           </>
         ) : (
           <>
