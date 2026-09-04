@@ -7,7 +7,7 @@ import { FAMILLES, TROUBLES, STADES } from "../data/constants.js";
 import { supabase } from "../lib/supabase.js";
 import { generateFichePdf } from "../lib/pdfExport.js";
 import { linesToArray, arrayToLines } from "../lib/utils.js";
-import { Badge, TopBar, Field, inputCls, CheckGroup, StructuredText, Section, BulletList, Stars } from "./ui.jsx";
+import { Badge, TopBar, Field, inputCls, CheckGroup, StructuredText, Section, CollapsibleSection, BulletList, Stars } from "./ui.jsx";
 import { CROQUIS_PLEINE_LARGEUR } from "./FicheCard.jsx";
 import { SourcesLine } from "./legal.jsx";
 
@@ -303,7 +303,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
           </div>
         )}
 
-        <Section title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></Section>
+        <CollapsibleSection title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></CollapsibleSection>
 
         {isExpert ? (
           <>
@@ -314,9 +314,9 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
                 {f.frequence && <div><span className="text-stone-400">Fréquence : </span><span className="text-stone-700 font-medium">{f.frequence}</span></div>}
               </div>
             )}
-            <Section title="Objectifs"><BulletList items={f.objectifsObservables} /></Section>
+            <CollapsibleSection title="Objectifs"><BulletList items={f.objectifsObservables} /></CollapsibleSection>
             <Section title="Matériel"><BulletList items={f.materiel} /></Section>
-            <Section title="Préparation"><BulletList items={f.preparation} /></Section>
+            <CollapsibleSection title="Préparation"><BulletList items={f.preparation} /></CollapsibleSection>
             {f.deroulement && f.deroulement.length > 0 && (
               <Section title="Déroulement">
                 <div className="flex flex-col gap-3">
@@ -350,7 +350,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
               </Section>
             )}
             {f.adaptationStades && (f.adaptationStades.leger?.length || f.adaptationStades.modere?.length || f.adaptationStades.severe?.length) && (
-              <Section title="Adaptation selon le stade">
+              <CollapsibleSection title="Adaptation selon le stade">
                 <div className="flex flex-col gap-2.5">
                   {[["Léger", f.adaptationStades.leger], ["Modéré", f.adaptationStades.modere], ["Sévère", f.adaptationStades.severe]].map(([label, items]) => items && items.length > 0 && (
                     <div key={label} className="bg-stone-50 rounded-xl p-3">
@@ -359,9 +359,9 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
                     </div>
                   ))}
                 </div>
-              </Section>
+              </CollapsibleSection>
             )}
-            <Section title="Conditions favorables"><BulletList items={f.conditionsFavorables} /></Section>
+            <CollapsibleSection title="Conditions favorables"><BulletList items={f.conditionsFavorables} /></CollapsibleSection>
             {f.pointsVigilance && f.pointsVigilance.length > 0 && (
               <Section title="Points de vigilance">
                 <div className="flex flex-col gap-2">
@@ -388,10 +388,10 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
             )}
             <Section title="Précautions"><BulletList items={f.precautions} /></Section>
             {(f.fondementPrincipe || f.fondementApplication) && (
-              <Section title="Fondements">
+              <CollapsibleSection title="Fondements">
                 {f.fondementPrincipe && <p className="text-sm text-stone-700 leading-relaxed mb-4"><span className="font-semibold text-emerald-800">Principe — </span>{f.fondementPrincipe}</p>}
                 {f.fondementApplication && <StructuredText text={f.fondementApplication} />}
-              </Section>
+              </CollapsibleSection>
             )}
             <Section title="Comment évaluer l'efficacité"><BulletList items={f.commentEvaluerEfficacite} /></Section>
           </>

@@ -1,8 +1,8 @@
 // Briques d'interface génériques, réutilisées dans tout Apézeo (vue
 // Pro comme vue Aidant). Extraites de App.jsx : ce fichier ne contient
 // aucune logique métier, uniquement de l'affichage.
-import React, { createContext, useContext } from "react";
-import { Star, ArrowLeft, Home, ChevronRight } from "lucide-react";
+import React, { createContext, useContext, useState } from "react";
+import { Star, ArrowLeft, Home, ChevronRight, ChevronDown } from "lucide-react";
 
 export function Stars({ n }) {
   return (
@@ -155,6 +155,29 @@ export function Section({ title, children }) {
   const isEmptyParagraph = React.isValidElement(children) && children.type === "p" && (!children.props.children || (typeof children.props.children === "string" && children.props.children.trim() === ""));
   if (!children || isEmptyBulletList || isEmptyParagraph || (Array.isArray(children) && children.length === 0)) return null;
   return <div className="mb-6"><div className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">{title}</div>{children}</div>;
+}
+
+// Comme Section, mais repliée par défaut -- pour les blocs qui alourdissent
+// la lecture d'une fiche Expert sans être ce qu'on cherche en premier
+// (Description, Fondements...). Le bouton reste bien visible (fond,
+// bordure, flèche) pour qu'on ne le prenne jamais pour un simple titre.
+export function CollapsibleSection({ title, defaultOpen = false, children }) {
+  const [open, setOpen] = useState(defaultOpen);
+  const isEmptyBulletList = React.isValidElement(children) && children.type === BulletList && (!children.props.items || children.props.items.length === 0);
+  const isEmptyParagraph = React.isValidElement(children) && children.type === "p" && (!children.props.children || (typeof children.props.children === "string" && children.props.children.trim() === ""));
+  if (!children || isEmptyBulletList || isEmptyParagraph || (Array.isArray(children) && children.length === 0)) return null;
+  return (
+    <div className="mb-6 bg-stone-50 rounded-2xl border border-stone-200 overflow-hidden">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left"
+      >
+        <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">{title}</span>
+        <ChevronDown size={16} className={`text-emerald-700 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && <div className="px-4 pb-4">{children}</div>}
+    </div>
+  );
 }
 
 export function ScoreRing({ pct, violet }) {
