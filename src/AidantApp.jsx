@@ -144,11 +144,12 @@ export function AidantApp({ onChangeMode }) {
         }} />
       )}
       {current.view === "recommandations" && (
-        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={{ liked: favoris, disliked: [] }} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={{ liked: favoris, disliked: [] }} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f, fromRecherche: true })} />
       )}
       {current.view === "fiche" && (
         <FicheDetailView
           fiche={ficheById(current.fiche.id) || current.fiche} favoris={{ liked: favoris, disliked: [] }} onBack={pop} simple onlyLike
+          fromRecherche={current.fromRecherche}
           onToggleLike={() => toggleFav(current.fiche.id)}
           onLog={() => push({ view: "log", fiche: current.fiche })}
           onEdit={current.fiche.isLocal ? () => push({ view: "form", fiche: ficheById(current.fiche.id) || current.fiche }) : null}

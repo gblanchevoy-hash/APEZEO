@@ -409,13 +409,14 @@ function AuthenticatedApp({ session, onChangeMode }) {
         }} />
       )}
       {current.view === "recommandations" && (
-        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f })} />
+        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f, fromRecherche: true })} />
       )}
       {current.view === "fiche" && (
         <FicheDetailView
           fiche={ficheById(current.fiche.id) || current.fiche} favoris={favoris} onBack={pop}
           allFiches={fiches}
-          onOpenFiche={(nf) => push({ view: "fiche", fiche: nf })}
+          fromRecherche={current.fromRecherche}
+          onOpenFiche={(nf) => push({ view: "fiche", fiche: nf, fromRecherche: current.fromRecherche })}
           onToggleLike={() => toggleFav(current.fiche.id, "liked")}
           onToggleDislike={() => toggleFav(current.fiche.id, "disliked")}
           onLog={() => push({ view: "log", fiche: current.fiche })}

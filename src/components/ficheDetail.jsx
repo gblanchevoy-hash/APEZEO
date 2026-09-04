@@ -11,7 +11,7 @@ import { Badge, TopBar, Field, inputCls, CheckGroup, StructuredText, Section, Co
 import { CROQUIS_PLEINE_LARGEUR } from "./FicheCard.jsx";
 import { SourcesLine } from "./legal.jsx";
 
-export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche, teamAdminStructureId }) {
+export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche, teamAdminStructureId, fromRecherche }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [showSignal, setShowSignal] = useState(false);
@@ -294,7 +294,6 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
           {!simple && !isExpert && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
         </div>
-        <div className="flex gap-2 flex-wrap mb-6">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
 
         {!isExpert && (
           <CollapsibleSection title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></CollapsibleSection>
@@ -411,6 +410,11 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
               <Section title="Contre-indications"><div className="bg-rose-50 rounded-2xl p-4"><BulletList items={f.contreIndications} /></div></Section>
             )}
           </>
+        )}
+        {f.troubles && f.troubles.length > 0 && (
+          <CollapsibleSection title="Symptômes et troubles concernés" defaultOpen={!!fromRecherche}>
+            <div className="flex gap-2 flex-wrap">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
+          </CollapsibleSection>
         )}
         {!simple && <SourcesLine sources={f.sources} dateMaj={f.dateMaj} />}
 
