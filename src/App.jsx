@@ -398,7 +398,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           const scored = [...fiches, ...outilsFiches].map((f) => ({ f, s: scoreFiche(f, q, favoris) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s);
           const max = 134;
           const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));
-          const label = [q.troubleIds.join(", "), q.besoin].filter(Boolean).join(" · ");
+          const label = [q.troubleIds.join(", "), q.besoin, q.stade, q.contexte].filter(Boolean).join(" · ");
           let suggestions = [];
           if (results.length === 0 && q.troubleIds.length > 0) {
             suggestions = [...fiches, ...outilsFiches]
@@ -409,14 +409,14 @@ function AuthenticatedApp({ session, onChangeMode }) {
         }} />
       )}
       {current.view === "recommandations" && (
-        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f, fromRecherche: true })} />
+        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f, rechercheLabel: current.trouble })} />
       )}
       {current.view === "fiche" && (
         <FicheDetailView
           fiche={ficheById(current.fiche.id) || current.fiche} favoris={favoris} onBack={pop}
           allFiches={fiches}
-          fromRecherche={current.fromRecherche}
-          onOpenFiche={(nf) => push({ view: "fiche", fiche: nf, fromRecherche: current.fromRecherche })}
+          rechercheLabel={current.rechercheLabel}
+          onOpenFiche={(nf) => push({ view: "fiche", fiche: nf, rechercheLabel: current.rechercheLabel })}
           onToggleLike={() => toggleFav(current.fiche.id, "liked")}
           onToggleDislike={() => toggleFav(current.fiche.id, "disliked")}
           onLog={() => push({ view: "log", fiche: current.fiche })}

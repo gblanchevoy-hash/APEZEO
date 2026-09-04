@@ -11,7 +11,7 @@ import { Badge, TopBar, Field, inputCls, CheckGroup, StructuredText, Section, Co
 import { CROQUIS_PLEINE_LARGEUR } from "./FicheCard.jsx";
 import { SourcesLine } from "./legal.jsx";
 
-export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche, teamAdminStructureId, fromRecherche }) {
+export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onToggleDislike, onLog, onEdit, onDelete, simple, onlyLike, allFiches, onOpenFiche, teamAdminStructureId, rechercheLabel }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [showSignal, setShowSignal] = useState(false);
@@ -179,6 +179,11 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
     return (
       <div className="pb-28">
         <TopBar title={f.categorie} onBack={onBack} />
+        {rechercheLabel && (
+          <div className="sticky top-0 z-20 mx-4 mt-2 px-4 py-2.5 bg-emerald-950/95 backdrop-blur text-white rounded-xl shadow-lg text-sm font-medium">
+            {rechercheLabel}
+          </div>
+        )}
         <div className="bg-gradient-to-b from-emerald-50 to-[#F4F6F2] px-6 pt-2 pb-5">
           <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mb-4">
             <Leaf size={26} className="text-emerald-700" />
@@ -259,6 +264,11 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
   return (
     <div className="pb-28">
       <TopBar title={f.categorie} onBack={onBack} />
+      {rechercheLabel && (
+        <div className="sticky top-0 z-20 mx-5 lg:mx-9 mt-2 px-4 py-2.5 bg-emerald-950/95 backdrop-blur text-white rounded-xl shadow-lg text-sm font-medium">
+          {rechercheLabel}
+        </div>
+      )}
       <div className="p-5 lg:p-9 lg:max-w-5xl">
         <div className="flex items-center gap-2 mb-2">
           {isExpert && <Badge tone="expert">Expert</Badge>}
@@ -301,13 +311,6 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
 
         {isExpert ? (
           <>
-            {(f.duree || f.tempsMiseEnOeuvre || f.frequence) && (
-              <div className="flex flex-wrap gap-4 mb-6 text-sm">
-                {f.duree && <div><span className="text-stone-400">Durée : </span><span className="text-stone-700 font-medium">{f.duree}</span></div>}
-                {f.tempsMiseEnOeuvre && <div><span className="text-stone-400">Mise en œuvre : </span><span className="text-stone-700 font-medium">{f.tempsMiseEnOeuvre}</span></div>}
-                {f.frequence && <div><span className="text-stone-400">Fréquence : </span><span className="text-stone-700 font-medium">{f.frequence}</span></div>}
-              </div>
-            )}
             <Section title="Matériel"><BulletList items={f.materiel} /></Section>
             {f.deroulement && f.deroulement.length > 0 && (
               <Section title="Déroulement">
@@ -396,6 +399,15 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
                 {f.fondementApplication && <StructuredText text={f.fondementApplication} />}
               </CollapsibleSection>
             )}
+            {(f.duree || f.tempsMiseEnOeuvre || f.frequence) && (
+              <CollapsibleSection title="Temps de mise en œuvre et fréquence">
+                <div className="flex flex-col gap-1.5 text-sm">
+                  {f.duree && <div><span className="text-stone-400">Durée : </span><span className="text-stone-700 font-medium">{f.duree}</span></div>}
+                  {f.tempsMiseEnOeuvre && <div><span className="text-stone-400">Mise en œuvre : </span><span className="text-stone-700 font-medium">{f.tempsMiseEnOeuvre}</span></div>}
+                  {f.frequence && <div><span className="text-stone-400">Fréquence : </span><span className="text-stone-700 font-medium">{f.frequence}</span></div>}
+                </div>
+              </CollapsibleSection>
+            )}
           </>
         ) : (
           <>
@@ -412,7 +424,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
           </>
         )}
         {f.troubles && f.troubles.length > 0 && (
-          <CollapsibleSection title="Symptômes et troubles concernés" defaultOpen={!!fromRecherche}>
+          <CollapsibleSection title="Symptômes et troubles concernés">
             <div className="flex gap-2 flex-wrap">{f.troubles.map((t) => <Badge key={t} tone="emerald">{t}</Badge>)}</div>
           </CollapsibleSection>
         )}
