@@ -167,7 +167,7 @@ export function CollapsibleSection({ title, defaultOpen = false, children }) {
   const isEmptyParagraph = React.isValidElement(children) && children.type === "p" && (!children.props.children || (typeof children.props.children === "string" && children.props.children.trim() === ""));
   if (!children || isEmptyBulletList || isEmptyParagraph || (Array.isArray(children) && children.length === 0)) return null;
   return (
-    <div className="mb-6 bg-stone-50 rounded-2xl border border-stone-200 overflow-hidden">
+    <div className="mb-6 bg-stone-50 rounded-2xl border border-stone-200 overflow-hidden" style={{ overflowAnchor: "none" }}>
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left"
