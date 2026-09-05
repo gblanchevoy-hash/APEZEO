@@ -405,11 +405,12 @@
  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;
  padding:18px 20px;margin-bottom:26px;max-width:320px
 }
-.apezeo-landing-v2 .mobile-gate-tagline {font-family:Lora,Georgia,serif;font-size:1.1rem;line-height:1.3;margin-bottom:8px}
+.apezeo-landing-v2 .mobile-gate-tagline {font-family:Lora,Georgia,serif;font-size:1.1rem;line-height:1.3;margin-bottom:8px;color:#fff}
 .apezeo-landing-v2 .mobile-gate-desc {font-size:.8rem;line-height:1.5;color:rgba(255,255,255,.72);margin:0}
-.apezeo-landing-v2 .mobile-gate-actions {display:flex;flex-direction:column;gap:16px;width:100%;max-width:340px}
-.apezeo-landing-v2 .mobile-gate-choice {display:flex;flex-direction:column;align-items:center;gap:6px}
-.apezeo-landing-v2 .mobile-gate-actions .btn {width:100%}
-.apezeo-landing-v2 .mobile-gate-sub {font-size:.72rem;color:rgba(255,255,255,.6)}
+.apezeo-landing-v2 .mobile-gate-actions {display:flex;gap:10px;width:100%;max-width:340px;padding:14px 0}
+.apezeo-landing-v2 .mobile-gate-btn {flex:1;padding:16px 8px;font-size:.8rem;letter-spacing:.01em;transition:transform .2s ease,box-shadow .2s ease}
+.apezeo-landing-v2 .mobile-gate-btn.btn-amber {background:linear-gradient(150deg,#fbbf24,#d97706);box-shadow:0 10px 24px -6px rgba(217,119,6,.5)}
+.apezeo-landing-v2 .mobile-gate-btn.btn-green {background:linear-gradient(150deg,#10b981,#064e3b);box-shadow:0 10px 24px -6px rgba(4,120,87,.5)}
+.apezeo-landing-v2 .mobile-gate-btn:active {transform:scale(.97)}
 .apezeo-landing-v2 .mobile-gate-login {margin-top:26px;background:none;border:0;color:rgba(255,255,255,.65);font-size:.8rem;text-decoration:underline;text-underline-offset:3px}
 }
