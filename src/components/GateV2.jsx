@@ -17,12 +17,23 @@ export function GateV2({ onChoose }) {
       <div className="mobile-gate">
         <img className="mobile-gate-logo" src="/logo-phoenix.png" alt="" onError={(e) => { e.target.style.display = "none"; }} />
         <div className="mobile-gate-brand">Apézeo</div>
-        <p className="mobile-gate-tagline">La bonne pratique, au bon moment, pour tous.</p>
-        <p className="mobile-gate-desc">Bibliothèque de pratiques non médicamenteuses pour accompagner les personnes vivant avec des troubles neurocognitifs.</p>
-        <div className="mobile-gate-actions">
-          <button className="btn btn-green" onClick={() => onChoose("pro")}>Je suis professionnel →</button>
-          <button className="btn btn-amber" onClick={() => onChoose("aidant")}>Je suis aidant, accès gratuit →</button>
+
+        <div className="mobile-gate-box">
+          <p className="mobile-gate-tagline">La bonne pratique, au bon moment, pour tous.</p>
+          <p className="mobile-gate-desc">Bibliothèque de pratiques non médicamenteuses pour accompagner les personnes vivant avec des troubles neurocognitifs.</p>
         </div>
+
+        <div className="mobile-gate-actions">
+          <div className="mobile-gate-choice">
+            <button className="btn btn-green" onClick={() => onChoose("pro")}>Je suis professionnel →</button>
+            <span className="mobile-gate-sub">Pour les équipes de soin</span>
+          </div>
+          <div className="mobile-gate-choice">
+            <button className="btn btn-amber" onClick={() => onChoose("aidant")}>Je suis aidant →</button>
+            <span className="mobile-gate-sub">Gratuit, pour les proches</span>
+          </div>
+        </div>
+
         <button className="mobile-gate-login" onClick={() => onChoose("pro")}>Déjà inscrit ? Se connecter</button>
       </div>
 
