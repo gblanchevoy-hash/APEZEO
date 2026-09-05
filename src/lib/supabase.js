@@ -5,7 +5,14 @@ const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabaseReady = Boolean(url && key);
 
-export const supabase = supabaseReady ? createClient(url, key) : null;
+// Empêche le navigateur de réutiliser une ancienne réponse HTTP mise en
+// cache pour une requête Supabase (profil, structure, favoris...). Sans
+// ça, une reconnexion peut parfois afficher un profil obsolète (par
+// exemple un ancien statut "gratuit") tant qu'un rechargement complet
+// ne force pas une vraie requête réseau.
+const noStoreFetch = (input, init = {}) => fetch(input, { ...init, cache: "no-store" });
+
+export const supabase = supabaseReady ? createClient(url, key, { global: { fetch: noStoreFetch } }) : null;
 
 /* Convertit une ligne de la table `interventions` (snake_case, Supabase)
    en fiche utilisée par l'app (camelCase). */

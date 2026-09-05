@@ -4,6 +4,28 @@ import App from "./App.jsx";
 import "./index.css";
 import { initErrorTracking, ErrorBoundary } from "./lib/errorTracking.js";
 
+// Quand une mise à jour est déployée pendant qu'un onglet reste ouvert,
+// un fichier chargé à la demande (export PDF, graphiques...) peut
+// pointer vers une version qui n'existe plus sur le serveur. Plutôt que
+// de planter, on recharge une seule fois la page pour récupérer la
+// version à jour -- sans boucle infinie si le souci persiste vraiment.
+const RELOAD_KEY = "apezeo-reload-apres-echec-import";
+window.addEventListener("vite:preloadError", () => {
+  if (!sessionStorage.getItem(RELOAD_KEY)) {
+    sessionStorage.setItem(RELOAD_KEY, "1");
+    window.location.reload();
+  }
+});
+window.addEventListener("unhandledrejection", (event) => {
+  const msg = event?.reason?.message || "";
+  if (/Failed to fetch dynamically imported module|error loading dynamically imported module/i.test(msg)) {
+    if (!sessionStorage.getItem(RELOAD_KEY)) {
+      sessionStorage.setItem(RELOAD_KEY, "1");
+      window.location.reload();
+    }
+  }
+});
+
 initErrorTracking();
 
 function CrashFallback() {
