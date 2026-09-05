@@ -384,3 +384,26 @@
 .apezeo-landing-v2 .badge-description {font-size:7px}
 .apezeo-landing-v2 .saas-phone {right:6%;bottom:2%;width:20%}
 }
+
+/* =========================================================
+   ÉCRAN D'ACCUEIL MOBILE — simplifié, une seule vue sans
+   défilement. Remplace toute la landing "desktop" en dessous
+   de 700px ; au-dessus, c'est l'inverse.
+   ========================================================= */
+.apezeo-landing-v2 .mobile-gate {display:none}
+@media(max-width:700px){
+.apezeo-landing-v2 .desktop-gate {display:none}
+.apezeo-landing-v2 .mobile-gate {
+ display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+ min-height:100vh;min-height:100dvh;padding:32px 24px;gap:6px;
+ background:linear-gradient(160deg,var(--navy) 0%,#07385d 60%,#075a5b 100%);
+ color:#fff
+}
+.apezeo-landing-v2 .mobile-gate-logo {width:72px;height:72px;object-fit:contain;margin-bottom:10px}
+.apezeo-landing-v2 .mobile-gate-brand {font-family:Lora,Georgia,serif;font-weight:700;font-size:2.1rem;letter-spacing:-.01em;margin-bottom:14px}
+.apezeo-landing-v2 .mobile-gate-tagline {font-family:Lora,Georgia,serif;font-size:1.15rem;line-height:1.3;max-width:320px;margin-bottom:10px}
+.apezeo-landing-v2 .mobile-gate-desc {font-size:.85rem;line-height:1.5;color:rgba(255,255,255,.72);max-width:300px;margin-bottom:28px}
+.apezeo-landing-v2 .mobile-gate-actions {display:flex;flex-direction:column;gap:11px;width:100%;max-width:340px}
+.apezeo-landing-v2 .mobile-gate-actions .btn {width:100%}
+.apezeo-landing-v2 .mobile-gate-login {margin-top:18px;background:none;border:0;color:rgba(255,255,255,.65);font-size:.8rem;text-decoration:underline;text-underline-offset:3px}
+}

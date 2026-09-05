@@ -25,6 +25,7 @@ export function AdminTeamView({ structureId, onBack }) {
   const [note, setNote] = useState(0);
   const [commentaire, setCommentaire] = useState("");
   const [autoriseCitation, setAutoriseCitation] = useState(false);
+  const [certifieAuthentique, setCertifieAuthentique] = useState(false);
   const [envoiTemoignage, setEnvoiTemoignage] = useState(false);
   const [temoignageMsg, setTemoignageMsg] = useState(null);
 
@@ -52,6 +53,7 @@ export function AdminTeamView({ structureId, onBack }) {
 
   const envoyerTemoignage = async () => {
     if (note === 0) { setTemoignageMsg({ ok: false, text: "Merci de choisir une note." }); return; }
+    if (!certifieAuthentique) { setTemoignageMsg({ ok: false, text: "Merci de cocher la certification avant d'envoyer." }); return; }
     setEnvoiTemoignage(true);
     setTemoignageMsg(null);
     const { data: { user } } = await supabase.auth.getUser();
@@ -61,6 +63,7 @@ export function AdminTeamView({ structureId, onBack }) {
       note,
       commentaire: commentaire.trim() || null,
       autorise_citation: autoriseCitation,
+      certifie_authentique: certifieAuthentique,
     });
     setEnvoiTemoignage(false);
     if (error) { setTemoignageMsg({ ok: false, text: error.message }); return; }
@@ -291,6 +294,12 @@ export function AdminTeamView({ structureId, onBack }) {
                 placeholder="Qu'est-ce qui fonctionne bien ? Qu'est-ce qu'on pourrait améliorer ?"
                 className="w-full text-sm border border-stone-200 rounded-xl p-3 mb-3 resize-none" rows={3}
               />
+              <label className="flex items-start gap-2.5 bg-stone-50 rounded-xl p-3 mb-3 cursor-pointer">
+                <input type="checkbox" checked={certifieAuthentique} onChange={(e) => setCertifieAuthentique(e.target.checked)} className="mt-0.5 w-4 h-4 accent-emerald-700 shrink-0" />
+                <span className="text-xs text-stone-700">
+                  Je certifie que cet avis reflète l'usage réel d'Apézeo par {structure?.nom || "notre établissement"}.
+                </span>
+              </label>
               <label className="flex items-start gap-2.5 bg-emerald-50 rounded-xl p-3 mb-1 cursor-pointer">
                 <input type="checkbox" checked={autoriseCitation} onChange={(e) => setAutoriseCitation(e.target.checked)} className="mt-0.5 w-4 h-4 accent-emerald-700 shrink-0" />
                 <span className="text-xs text-emerald-900">
@@ -299,7 +308,7 @@ export function AdminTeamView({ structureId, onBack }) {
               </label>
               <p className="text-[11px] text-stone-400 mb-3 ml-6">Ça valorise votre établissement comme précurseur dans l'accompagnement non médicamenteux, et ça aide Apézeo à convaincre d'autres structures d'essayer l'outil — sans aucune obligation de votre part.</p>
               {temoignageMsg && <div className={`text-xs mb-3 ${temoignageMsg.ok ? "text-emerald-700" : "text-rose-600"}`}>{temoignageMsg.text}</div>}
-              <button onClick={envoyerTemoignage} disabled={envoiTemoignage} className="w-full bg-emerald-700 disabled:bg-stone-300 text-white text-sm font-semibold rounded-xl py-2.5">
+              <button onClick={envoyerTemoignage} disabled={envoiTemoignage || !certifieAuthentique} className="w-full bg-emerald-700 disabled:bg-stone-300 text-white text-sm font-semibold rounded-xl py-2.5">
                 {envoiTemoignage ? "Envoi…" : "Envoyer mon avis"}
               </button>
             </>

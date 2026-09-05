@@ -6,7 +6,7 @@ import { supabase } from "../lib/supabase.js";
 import { Field, inputCls } from "./ui.jsx";
 import { LegalView, LegalFooterLinks } from "./legal.jsx";
 
-export function AuthView({ onChangeMode }) {
+export function AuthView({ onChooseAidant }) {
   const [legalDoc, setLegalDoc] = useState(null);
   const [accepted, setAccepted] = useState(false);
   const [mode, setMode] = useState("login"); // "login" | "signup"
@@ -78,7 +78,7 @@ export function AuthView({ onChangeMode }) {
         </div>
         <p className="text-sm text-stone-500 text-center mb-2">Réservé aux professionnels accompagnant des personnes atteintes d'Alzheimer et maladies apparentées.</p>
         <div className="text-center mb-6">
-          <button onClick={onChangeMode} className="text-xs text-emerald-700 underline">Vous êtes un aidant familial ?</button>
+          <button onClick={onChooseAidant} className="text-xs text-emerald-700 underline">Vous êtes un aidant familial ?</button>
         </div>
 
         <div className="bg-white rounded-3xl shadow-[0_4px_24px_-6px_rgba(6,78,59,0.12)] p-6">

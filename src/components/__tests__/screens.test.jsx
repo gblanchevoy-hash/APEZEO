@@ -59,7 +59,7 @@ describe("GateV2 (nouvelle landing page)", () => {
 
 describe("AuthView", () => {
   it("s'affiche sans planter", () => {
-    render(<AuthView onChangeMode={noop} />);
+    render(<AuthView onChooseAidant={noop} />);
     expect(screen.getByText("Connexion")).toBeInTheDocument();
   });
 });

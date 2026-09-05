@@ -11,6 +11,22 @@ export function GateV2({ onChoose }) {
 
   return (
     <div className="apezeo-landing-v2">
+
+      {/* Écran d'accueil simplifié, uniquement affiché sur mobile — pas
+          de défilement, l'essentiel en un coup d'œil. */}
+      <div className="mobile-gate">
+        <img className="mobile-gate-logo" src="/logo-phoenix.png" alt="" onError={(e) => { e.target.style.display = "none"; }} />
+        <div className="mobile-gate-brand">Apézeo</div>
+        <p className="mobile-gate-tagline">La bonne pratique, au bon moment, pour tous.</p>
+        <p className="mobile-gate-desc">Bibliothèque de pratiques non médicamenteuses pour accompagner les personnes vivant avec des troubles neurocognitifs.</p>
+        <div className="mobile-gate-actions">
+          <button className="btn btn-green" onClick={() => onChoose("pro")}>Je suis professionnel →</button>
+          <button className="btn btn-amber" onClick={() => onChoose("aidant")}>Je suis aidant, accès gratuit →</button>
+        </div>
+        <button className="mobile-gate-login" onClick={() => onChoose("pro")}>Déjà inscrit ? Se connecter</button>
+      </div>
+
+      <div className="desktop-gate">
       <header>
         <div className="container nav">
           <a className="brand" href="#top" aria-label="Accueil Apézeo">
@@ -95,7 +111,7 @@ export function GateV2({ onChoose }) {
               <div className="hero-secondary-actions">
                 <button className="login-link" onClick={() => onChoose("pro")}>
                   <span className="login-dot" />
-                  Déjà professionnel ?
+                  Déjà inscrit ?
                   <strong>Se connecter</strong>
                   <span>→</span>
                 </button>
@@ -350,6 +366,7 @@ export function GateV2({ onChoose }) {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
