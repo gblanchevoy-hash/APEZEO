@@ -246,7 +246,7 @@ export const AIDANT_FICHES = [
     "troubles": [
       "Cris répétés",
       "Anxiété",
-      "Dépression"
+      "Symptômes dépressifs"
     ],
     "stades": [
       "Modéré",
@@ -711,7 +711,7 @@ export const AIDANT_FICHES = [
     "quandUtiliser": "En dehors des périodes de fatigue, comme activité régulière.",
     "quandEviter": "",
     "troubles": [
-      "Dépression",
+      "Symptômes dépressifs",
       "Apathie",
       "Anxiété",
       "Répétitions verbales"
@@ -756,7 +756,7 @@ export const AIDANT_FICHES = [
     "quandEviter": "",
     "troubles": [
       "Anxiété",
-      "Dépression",
+      "Symptômes dépressifs",
       "Apathie",
       "Agressivité"
     ],
@@ -1654,7 +1654,7 @@ export const AIDANT_FICHES = [
     "quandEviter": "",
     "troubles": [
       "Anxiété",
-      "Dépression",
+      "Symptômes dépressifs",
       "Troubles nocturnes"
     ],
     "stades": [
@@ -1695,7 +1695,7 @@ export const AIDANT_FICHES = [
     "troubles": [
       "Agitation",
       "Apathie",
-      "Dépression"
+      "Symptômes dépressifs"
     ],
     "stades": [
       "Léger",
@@ -1735,7 +1735,7 @@ export const AIDANT_FICHES = [
     "quandEviter": "",
     "troubles": [
       "Apathie",
-      "Dépression",
+      "Symptômes dépressifs",
       "Anxiété"
     ],
     "stades": [
@@ -2215,7 +2215,7 @@ export const AIDANT_FICHES = [
     "quandEviter": "la personne n'a jamais exprimé d'attachement particulier à une pratique — ne pas en imposer une nouvelle.",
     "troubles": [
       "Anxiété",
-      "Dépression",
+      "Symptômes dépressifs",
       "Apathie"
     ],
     "stades": [
@@ -2372,7 +2372,7 @@ export const AIDANT_FICHES = [
     "troubles": [
       "Anxiété",
       "Idées délirantes",
-      "Dépression",
+      "Symptômes dépressifs",
       "Répétitions verbales"
     ],
     "stades": [
@@ -2527,7 +2527,7 @@ export const AIDANT_FICHES = [
     "troubles": [
       "Anxiété",
       "Apathie",
-      "Dépression"
+      "Symptômes dépressifs"
     ],
     "stades": [
       "Léger",
@@ -3864,7 +3864,7 @@ export const AIDANT_FICHES = [
     "quandEviter": "jamais à éviter.",
     "troubles": [
       "Stress de l'aidant",
-      "Dépression"
+      "Symptômes dépressifs"
     ],
     "stades": [
       "Léger",
@@ -4009,7 +4009,7 @@ export const AIDANT_FICHES = [
     "quandEviter": "jamais à éviter.",
     "troubles": [
       "Stress de l'aidant",
-      "Dépression"
+      "Symptômes dépressifs"
     ],
     "stades": [
       "Léger",

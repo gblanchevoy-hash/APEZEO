@@ -1,7 +1,7 @@
 export const TROUBLES = [
   "Agitation", "Agressivité", "Anxiété", "Déambulation", "Refus de soins",
   "Cris répétés", "Hallucinations", "Idées délirantes", "Opposition",
-  "Apathie", "Dépression", "Sommeil perturbé", "Syndrome crépusculaire",
+  "Apathie", "Symptômes dépressifs", "Sommeil perturbé", "Syndrome crépusculaire",
   "Désorientation", "Errance", "Répétitions verbales", "Sortie inopinée",
   "Comportements sexuels inadaptés", "Refus alimentaire",
   "Troubles pendant la toilette", "Troubles pendant les repas",
@@ -63,7 +63,7 @@ export const SITUATIONS_TYPES = [
   { id: "reveils-nuit", titre: "Réveils répétés la nuit", contexte: "La personne se réveille plusieurs fois pendant la nuit.", troubles: ["Troubles nocturnes", "Sommeil perturbé"] },
   { id: "deambulation-nocturne", titre: "Déambulations nocturnes dans les couloirs", contexte: "La personne marche dans les couloirs pendant la nuit.", troubles: ["Déambulation", "Troubles nocturnes"] },
   { id: "anxiete-marquee", titre: "Anxiété marquée, inquiétude envahissante", contexte: "Une inquiétude forte et persistante prend le dessus.", troubles: ["Anxiété"] },
-  { id: "retrait-tristesse", titre: "Personne triste, en retrait, qui ne fait plus rien", contexte: "La personne se retire, ne participe plus aux activités habituelles.", troubles: ["Dépression", "Apathie"] },
+  { id: "retrait-tristesse", titre: "Personne triste, en retrait, qui ne fait plus rien", contexte: "La personne se retire, ne participe plus aux activités habituelles.", troubles: ["Symptômes dépressifs", "Apathie"] },
   { id: "confusion-lieu-temps", titre: "Confusion sur le lieu ou le moment", contexte: "La personne ne sait plus où elle se trouve ou quel moment de la journée c'est.", troubles: ["Désorientation"] },
   { id: "propos-inquietants", titre: "Propos ou croyances qui inquiètent l'entourage", contexte: "Des propos ou des convictions inhabituelles inquiètent les proches ou l'équipe.", troubles: ["Idées délirantes", "Hallucinations"] },
   { id: "sortie-non-accompagnee", titre: "Tentative de sortie non accompagnée", contexte: "La personne cherche à sortir seule, sans accompagnement.", troubles: ["Sortie inopinée"] },
