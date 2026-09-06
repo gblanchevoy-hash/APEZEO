@@ -106,7 +106,7 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
   );
 }
 
-export function RecommandationsView({ title, results, suggestions, favoris, onBack, onOpenFiche }) {
+export function RecommandationsView({ title, results, suggestions, situationContexte, favoris, onBack, onOpenFiche }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   const [showAll, setShowAll] = useState(false);
   const visibles = showAll ? results : results.slice(0, 8);
@@ -115,6 +115,12 @@ export function RecommandationsView({ title, results, suggestions, favoris, onBa
     <div className="pb-10">
       <TopBar title={`Pour : ${title}`} onBack={onBack} />
       <div className="p-4 flex flex-col gap-2.5">
+        {situationContexte && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 mb-1">
+            <p className="text-sm text-amber-900">{situationContexte}</p>
+            <p className="text-xs text-amber-700 mt-1.5 italic">Quelques pistes à adapter selon la personne, pas une marche à suivre.</p>
+          </div>
+        )}
         {results.length > 0 && (
           <div className="text-xs text-stone-400 mb-1">{results.length} fiche{results.length > 1 ? "s" : ""} correspondante{results.length > 1 ? "s" : ""}, classées par pertinence</div>
         )}

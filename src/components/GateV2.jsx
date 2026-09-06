@@ -24,8 +24,14 @@ export function GateV2({ onChoose }) {
         </div>
 
         <div className="mobile-gate-actions">
-          <button className="btn btn-amber mobile-gate-btn" onClick={() => onChoose("aidant")}>Je suis aidant →</button>
-          <button className="btn btn-green mobile-gate-btn" onClick={() => onChoose("pro")}>Je suis professionnel →</button>
+          <button className="btn btn-amber mobile-gate-btn" onClick={() => onChoose("aidant")}>
+            <img src="/landing/icone-aidants.png" alt="" className="mobile-gate-icon" />
+            Je suis aidant →
+          </button>
+          <button className="btn btn-green mobile-gate-btn" onClick={() => onChoose("pro")}>
+            <img src="/landing/icone-professionnels.png" alt="" className="mobile-gate-icon" />
+            Je suis professionnel →
+          </button>
         </div>
 
         <button className="mobile-gate-login" onClick={() => onChoose("pro")}>Déjà inscrit ? Se connecter</button>

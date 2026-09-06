@@ -1,12 +1,12 @@
 // Écran d'accueil de la version Pro (après connexion).
 import {
   ArrowLeftRight, BookOpen, Info, Lock, LogOut, Plus, RefreshCw, Users,
-  Activity, AlertTriangle, Box, FileText, Filter, Heart, Search, Stethoscope, Star,
+  Activity, AlertTriangle, Box, FileText, Filter, Heart, Search, Stethoscope, Star, Compass,
 } from "lucide-react";
 import { NavCard } from "./ui.jsx";
 import { LegalFooterLinks } from "./legal.jsx";
 
-export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, essaisExpires, signalementsNonResolus, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onRefresh, onLogout, onChangeMode }) {
+export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, essaisExpires, signalementsNonResolus, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenSituations, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onOpenNouveautes, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       {isSuperAdmin && essaisExpires?.length > 0 && (
@@ -70,6 +70,7 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
         </div>
       </div>
       <div className="px-5 lg:px-8 mt-6 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
+        <NavCard icon={Compass} label="Situations fréquentes" sub="Refus de toilette, agitation du soir, cris répétés…" onClick={onOpenSituations} accent="amber" />
         <NavCard icon={AlertTriangle} label="Choisir un trouble" sub="Agitation, cris, refus de soins…" onClick={onOpenTroubles} accent="emerald" />
         <NavCard icon={Filter} label="Rechercher par besoin" sub="Communication, musique, toucher…" onClick={onOpenBesoins} accent="emerald" />
         <NavCard icon={Box} label="Outils et soins spécifiques" sub="Poupées, luminothérapie, objets sensoriels…" onClick={onOpenOutils} accent="violet" />
@@ -93,8 +94,10 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
           <span>En cas de danger immédiat, ou si les troubles deviennent fréquents et intenses, consultez un médecin ou un gériatre.</span>
         </div>
       </div>
-      <div className="text-center">
+      <div className="text-center flex items-center justify-center gap-3">
         <button onClick={onOpenCompte} className="text-xs text-stone-400 underline">Mon compte</button>
+        <span className="text-stone-300">·</span>
+        <button onClick={onOpenNouveautes} className="text-xs text-stone-400 underline">Nouveautés</button>
       </div>
       <LegalFooterLinks onOpen={onOpenLegal} />
     </div>

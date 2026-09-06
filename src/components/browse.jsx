@@ -4,10 +4,29 @@
 // d'aucun état propre à AuthenticatedApp/AidantApp.
 import { useState, useMemo, useEffect } from "react";
 import { Search, ChevronRight, Heart } from "lucide-react";
-import { TROUBLES, FAMILLES, OUTILS_TYPES } from "../data/constants.js";
+import { TROUBLES, FAMILLES, OUTILS_TYPES, SITUATIONS_TYPES } from "../data/constants.js";
 import { supabase } from "../lib/supabase.js";
 import { TopBar, Badge } from "./ui.jsx";
 import { FicheCard } from "./FicheCard.jsx";
+
+export function SituationsView({ onBack, onOpenSituation }) {
+  return (
+    <div className="pb-10">
+      <TopBar title="Situations fréquentes" onBack={onBack} />
+      <div className="px-5 lg:px-9 pt-3 pb-1">
+        <p className="text-sm text-stone-500">Des situations de terrain courantes, avec quelques pistes à adapter selon la personne — pas une marche à suivre.</p>
+      </div>
+      <div className="p-5 lg:px-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {SITUATIONS_TYPES.map((s) => (
+          <button key={s.id} onClick={() => onOpenSituation(s)} className="bg-white rounded-2xl p-4 text-left border-l-[3px] border-amber-500 shadow-[0_2px_10px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_18px_-6px_rgba(6,78,59,0.15)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+            <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight mb-1.5">{s.titre}</div>
+            <div className="text-xs text-stone-500 leading-relaxed">{s.contexte}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function TroublesView({ fiches, onBack, onOpenTrouble }) {
   return (

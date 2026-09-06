@@ -8,9 +8,10 @@ import { getLocal, setLocal } from "./lib/localStore.js";
 
 import { NavCard, HomeContext } from "./components/ui.jsx";
 import { LegalView } from "./components/legal.jsx";
-import { TroublesView, OutilsView, FamillesView, FicheListView, SearchView, FavorisView, MesFichesView, HistoriqueView, FavorisEquipeView } from "./components/browse.jsx";
+import { TroublesView, OutilsView, FamillesView, FicheListView, SearchView, FavorisView, MesFichesView, HistoriqueView, FavorisEquipeView, SituationsView } from "./components/browse.jsx";
 import { QuizView, RecommandationsView } from "./components/quiz.jsx";
 import { FicheDetailView, LogView, FicheFormView } from "./components/ficheDetail.jsx";
+import { NouveautesView } from "./components/nouveautes.jsx";
 import { SuperAdminStatsView } from "./components/adminStats.jsx";
 import { CreateStructureView } from "./components/adminStructures.jsx";
 import { MonCompteView } from "./components/adminAccount.jsx";
@@ -342,7 +343,9 @@ function AuthenticatedApp({ session, onChangeMode }) {
           onOpenMesFiches={() => push({ view: "mes-fiches" })}
           onOpenLegal={(doc) => push({ view: "legal", doc })}
           onOpenCompte={() => push({ view: "compte" })}
+          onOpenNouveautes={() => push({ view: "nouveautes" })}
           onOpenTeam={() => push({ view: "team" })}
+          onOpenSituations={() => push({ view: "situations" })}
           onOpenTroubles={() => push({ view: "troubles" })}
           onOpenBesoins={() => push({ view: "besoins" })}
           onOpenOutils={() => push({ view: "outils" })}
@@ -357,6 +360,17 @@ function AuthenticatedApp({ session, onChangeMode }) {
         />
       )}
 
+      {current.view === "situations" && (
+        <SituationsView onBack={pop} onOpenSituation={(s) => {
+          const matched = fichesRecherchables
+            .map((f) => ({ f, n: (f.troubles || []).filter((t) => s.troubles.includes(t)).length }))
+            .filter((x) => x.n > 0)
+            .sort((a, b) => b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve);
+          const max = Math.max(1, ...matched.map((x) => x.n));
+          const results = matched.map((x) => ({ f: x.f, pct: Math.max(20, Math.round((x.n / max) * 100)) }));
+          push({ view: "recommandations", results, trouble: s.titre, situationContexte: s.contexte });
+        }} />
+      )}
       {current.view === "troubles" && (
         <TroublesView fiches={fichesRecherchables} onBack={pop} onOpenTrouble={(t) => push({ view: "trouble-detail", trouble: t })} />
       )}
@@ -409,7 +423,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         }} />
       )}
       {current.view === "recommandations" && (
-        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f, rechercheLabel: current.trouble })} />
+        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} situationContexte={current.situationContexte} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f, rechercheLabel: current.trouble })} />
       )}
       {current.view === "fiche" && (
         <FicheDetailView
@@ -439,6 +453,9 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
       {current.view === "compte" && (
         <MonCompteView email={session?.user?.email} profile={profile} onProfileUpdated={(patch) => setProfile((p) => ({ ...p, ...patch }))} onBack={pop} ficheById={ficheById} />
+      )}
+      {current.view === "nouveautes" && (
+        <NouveautesView onBack={pop} />
       )}
       {current.view === "create-structure" && (
         <CreateStructureView onBack={pop} />

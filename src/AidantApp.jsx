@@ -12,6 +12,7 @@ import { LegalView, LegalFooterLinks } from "./components/legal.jsx";
 import { TroublesView, FicheListView, SearchView, MesFichesView, AidantFavorisView } from "./components/browse.jsx";
 import { QuizView, RecommandationsView } from "./components/quiz.jsx";
 import { FicheDetailView, LogView, FicheFormView } from "./components/ficheDetail.jsx";
+import { NouveautesView } from "./components/nouveautes.jsx";
 
 export function AidantApp({ onChangeMode }) {
   const [localFiches, setLocalFiches] = useState(() => getLocal("aidant-local-fiches", []));
@@ -103,8 +104,15 @@ export function AidantApp({ onChangeMode }) {
               <span>En cas de danger immédiat, ou si les troubles deviennent fréquents et intenses, consultez un médecin ou un gériatre.</span>
             </div>
           </div>
+          <div className="text-center mt-4">
+            <button onClick={() => push({ view: "nouveautes" })} className="text-xs text-stone-400 underline">Nouveautés</button>
+          </div>
           <LegalFooterLinks onOpen={(doc) => push({ view: "legal", doc })} />
         </div>
+      )}
+
+      {current.view === "nouveautes" && (
+        <NouveautesView onBack={pop} />
       )}
 
       {current.view === "legal" && (
