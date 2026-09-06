@@ -5,7 +5,7 @@ export const NOUVEAUTES = [
   {
     date: "2026-09",
     titre: "Situations fréquentes",
-    description: "Un nouvel accès rapide pour partir directement d'une situation de terrain (refus de toilette, agitation du soir, cris répétés...) plutôt que de chercher trouble par trouble.",
+    description: "24 situations de terrain (refus de toilette, agitation du soir, cris répétés, vouloir « rentrer chez soi »...) pour retrouver directement les fiches pertinentes, sans chercher trouble par trouble.",
   },
   {
     date: "2026-09",

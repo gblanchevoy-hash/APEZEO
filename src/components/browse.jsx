@@ -18,7 +18,7 @@ export function SituationsView({ onBack, onOpenSituation }) {
       </div>
       <div className="p-5 lg:px-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {SITUATIONS_TYPES.map((s) => (
-          <button key={s.id} onClick={() => onOpenSituation(s)} className="bg-white rounded-2xl p-4 text-left border-l-[3px] border-amber-500 shadow-[0_2px_10px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_18px_-6px_rgba(6,78,59,0.15)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+          <button key={s.id} onClick={() => onOpenSituation(s)} className="bg-white rounded-2xl p-4 text-left border-l-[3px] border-[#c8a04d] shadow-[0_2px_10px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_18px_-6px_rgba(6,78,59,0.15)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
             <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight mb-1.5">{s.titre}</div>
             <div className="text-xs text-stone-500 leading-relaxed">{s.contexte}</div>
           </button>

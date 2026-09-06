@@ -399,7 +399,7 @@
  background:linear-gradient(160deg,var(--navy) 0%,#07385d 60%,#075a5b 100%);
  color:#fff
 }
-.apezeo-landing-v2 .mobile-gate-logo {width:104px;height:104px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
+.apezeo-landing-v2 .mobile-gate-logo {width:130px;height:130px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
 .apezeo-landing-v2 .mobile-gate-brand {font-family:Lora,Georgia,serif;font-weight:700;font-size:2.3rem;letter-spacing:-.01em;margin-bottom:20px}
 .apezeo-landing-v2 .mobile-gate-box {
  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;
@@ -409,7 +409,8 @@
 .apezeo-landing-v2 .mobile-gate-desc {font-size:.8rem;line-height:1.5;color:rgba(255,255,255,.72);margin:0}
 .apezeo-landing-v2 .mobile-gate-actions {display:flex;gap:10px;width:100%;max-width:340px;padding:14px 0}
 .apezeo-landing-v2 .mobile-gate-btn {flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 6px 14px;font-size:.78rem;letter-spacing:.01em;transition:transform .2s ease,box-shadow .2s ease}
-.apezeo-landing-v2 .mobile-gate-icon {width:54px;height:auto;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.18))}
+.apezeo-landing-v2 .mobile-gate-icon {width:70px;height:auto;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.18))}
+.apezeo-landing-v2 .mobile-gate-icon.icon-aidant {width:84px}
 .apezeo-landing-v2 .mobile-gate-btn.btn-amber {background:linear-gradient(150deg,#fbbf24,#d97706);box-shadow:0 10px 24px -6px rgba(217,119,6,.5)}
 .apezeo-landing-v2 .mobile-gate-btn.btn-green {background:linear-gradient(150deg,#10b981,#064e3b);box-shadow:0 10px 24px -6px rgba(4,120,87,.5)}
 .apezeo-landing-v2 .mobile-gate-btn:active {transform:scale(.97)}

@@ -306,7 +306,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
         </div>
 
         {!isExpert && (
-          <CollapsibleSection title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></CollapsibleSection>
+          <Section title="Description"><p className="text-sm text-stone-700 leading-relaxed whitespace-pre-line">{f.description}</p></Section>
         )}
 
         {isExpert ? (

@@ -1,7 +1,7 @@
 // Écran d'accueil de la version Pro (après connexion).
 import {
   ArrowLeftRight, BookOpen, Info, Lock, LogOut, Plus, RefreshCw, Users,
-  Activity, AlertTriangle, Box, FileText, Filter, Heart, Search, Stethoscope, Star, Compass,
+  Activity, AlertTriangle, Box, FileText, Filter, Heart, Search, Stethoscope, Star, ListChecks,
 } from "lucide-react";
 import { NavCard } from "./ui.jsx";
 import { LegalFooterLinks } from "./legal.jsx";
@@ -70,7 +70,7 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
         </div>
       </div>
       <div className="px-5 lg:px-8 mt-6 flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-4">
-        <NavCard icon={Compass} label="Situations fréquentes" sub="Refus de toilette, agitation du soir, cris répétés…" onClick={onOpenSituations} accent="amber" />
+        <NavCard icon={ListChecks} label="Situations fréquentes" sub="Refus de toilette, agitation du soir, cris répétés…" onClick={onOpenSituations} accent="emerald" />
         <NavCard icon={AlertTriangle} label="Choisir un trouble" sub="Agitation, cris, refus de soins…" onClick={onOpenTroubles} accent="emerald" />
         <NavCard icon={Filter} label="Rechercher par besoin" sub="Communication, musique, toucher…" onClick={onOpenBesoins} accent="emerald" />
         <NavCard icon={Box} label="Outils et soins spécifiques" sub="Poupées, luminothérapie, objets sensoriels…" onClick={onOpenOutils} accent="violet" />

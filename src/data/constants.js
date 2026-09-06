@@ -69,4 +69,10 @@ export const SITUATIONS_TYPES = [
   { id: "sortie-non-accompagnee", titre: "Tentative de sortie non accompagnée", contexte: "La personne cherche à sortir seule, sans accompagnement.", troubles: ["Sortie inopinée"] },
   { id: "arrivee-recente", titre: "Arrivée récente en structure, période d'adaptation difficile", contexte: "Une entrée récente en structure s'accompagne d'une période d'adaptation difficile.", troubles: ["Anxiété", "Opposition"] },
   { id: "aidant-epuise", titre: "Aidant épuisé, qui ne sait plus quoi faire", contexte: "L'aidant se sent débordé et cherche des repères pour souffler.", troubles: ["Stress de l'aidant"] },
+  { id: "refus-medicaments", titre: "Refus de prendre ses médicaments", contexte: "La personne refuse ou repousse la prise de son traitement.", troubles: ["Refus de soins"] },
+  { id: "question-boucle", titre: "Répéter sans arrêt la même question", contexte: "Une même question revient en boucle, quelle que soit la réponse donnée.", troubles: ["Répétitions verbales"] },
+  { id: "rentrer-chez-soi", titre: "Vouloir « rentrer chez soi » ou retrouver un proche", contexte: "La personne insiste pour rejoindre son domicile ou une personne absente.", troubles: ["Errance", "Anxiété"] },
+  { id: "repli-activites", titre: "Réticence à participer, repli sur soi", contexte: "La personne se tient à l'écart des activités et des échanges collectifs.", troubles: ["Apathie", "Opposition"] },
+  { id: "reaction-selon-personne", titre: "Réagit différemment selon la personne présente", contexte: "Un soin ou une consigne est accepté avec l'un, refusé avec l'autre.", troubles: ["Opposition"] },
+  { id: "gestes-repetitifs", titre: "Gestes répétitifs sans but apparent", contexte: "La personne plie, trie ou manipule des objets de façon répétée, sans finalité claire.", troubles: ["Agitation"] },
 ];
