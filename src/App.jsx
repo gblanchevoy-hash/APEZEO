@@ -410,8 +410,8 @@ function AuthenticatedApp({ session, onChangeMode }) {
       {current.view === "quiz" && (
         <QuizView onBack={pop} fichesDisponibles={[...fiches, ...outilsFiches]} onSubmit={(q) => {
           const scored = [...fiches, ...outilsFiches].map((f) => ({ f, s: scoreFiche(f, q, favoris) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s);
-          const max = 134;
-          const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));
+          const max = Math.max(1, ...scored.map((x) => x.s));
+          const results = scored.map((x) => ({ ...x, pct: Math.max(20, Math.round((x.s / max) * 100)) }));
           const label = [q.troubleIds.join(", "), q.besoin, q.stade, q.contexte].filter(Boolean).join(" · ");
           let suggestions = [];
           if (results.length === 0 && q.troubleIds.length > 0) {

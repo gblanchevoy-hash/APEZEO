@@ -299,7 +299,12 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
           </div>
         )}
         <div className="flex items-center gap-2 flex-wrap mb-3">
-          {!simple && !isExpert && <Stars n={f.niveauPreuve} />}
+          {!simple && !isExpert && (
+            <span className="flex items-center gap-1.5">
+              <Stars n={f.niveauPreuve} />
+              <span className="text-[11px] text-stone-400">Niveau de preuve</span>
+            </span>
+          )}
           {f.dureeMinutes > 0 ? <Badge><Clock size={11} className="inline mr-1" />{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
           {!simple && !isExpert && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}

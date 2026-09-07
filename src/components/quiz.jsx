@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search, ChevronRight, AlertTriangle, Heart } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES } from "../data/constants.js";
-import { TopBar, Badge, CheckGroup, ScoreRing, inputCls } from "./ui.jsx";
+import { TopBar, Badge, CheckGroup, ScoreRing, inputCls, Stars } from "./ui.jsx";
 import { scoreFiche } from "../lib/utils.js";
 
 export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
@@ -151,6 +151,12 @@ export function RecommandationsView({ title, results, suggestions, situationCont
                 </div>
                 <div className={`font-semibold ${isOutil ? "text-violet-950" : "text-emerald-950"}`}>{f.titre}</div>
                 <div className="text-sm text-stone-500 line-clamp-2">{f.description}</div>
+                {!isOutil && f.niveauDetail !== "expert" && (
+                  <div className="mt-1.5 flex items-center gap-1.5">
+                    <Stars n={f.niveauPreuve} />
+                    <span className="text-[11px] text-stone-400">Niveau de preuve</span>
+                  </div>
+                )}
               </div>
             </button>
           );

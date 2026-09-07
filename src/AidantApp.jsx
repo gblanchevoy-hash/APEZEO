@@ -139,8 +139,8 @@ export function AidantApp({ onChangeMode }) {
       {current.view === "quiz" && (
         <QuizView onBack={pop} fichesDisponibles={fiches} onSubmit={(q) => {
           const scored = fiches.map((f) => ({ f, s: scoreFiche(f, q, { liked: favoris, disliked: [] }) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s);
-          const max = 100;
-          const results = scored.map((x) => ({ ...x, pct: Math.max(5, Math.min(99, Math.round((x.s / max) * 100))) }));
+          const max = Math.max(1, ...scored.map((x) => x.s));
+          const results = scored.map((x) => ({ ...x, pct: Math.max(20, Math.round((x.s / max) * 100)) }));
           const label = [q.troubleIds.join(", "), q.besoin].filter(Boolean).join(" · ");
           let suggestions = [];
           if (results.length === 0 && q.troubleIds.length > 0) {

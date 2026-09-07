@@ -34,7 +34,12 @@ export function FicheCard({ f, onClick, favState }) {
         </div>
         <div className={`font-semibold truncate tracking-tight ${isOutil ? "text-violet-950" : isConcept ? "text-sky-950" : "text-emerald-950"}`}>{f.titre}</div>
         <div className="text-sm text-stone-500 line-clamp-2 mt-0.5">{f.description}</div>
-        {!isOutil && f.niveauDetail !== "expert" && <div className="mt-1.5"><Stars n={f.niveauPreuve} /></div>}
+        {!isOutil && f.niveauDetail !== "expert" && (
+          <div className="mt-1.5 flex items-center gap-1.5">
+            <Stars n={f.niveauPreuve} />
+            <span className="text-[11px] text-stone-400">Niveau de preuve</span>
+          </div>
+        )}
       </div>
       <ChevronRight size={18} className="text-stone-300 mt-1 shrink-0" />
     </button>
