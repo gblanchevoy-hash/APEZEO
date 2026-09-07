@@ -305,7 +305,7 @@ export function FicheDetailView({ fiche: f, favoris, onBack, onToggleLike, onTog
               <span className="text-[11px] text-stone-400">Niveau de preuve</span>
             </span>
           )}
-          {f.dureeMinutes > 0 ? <Badge><Clock size={11} className="inline mr-1" />{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
+          {f.dureeMinutes > 0 ? <Badge><Clock size={11} className="inline mr-1" />Environ {f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge><Clock size={11} className="inline mr-1" />Durée : {f.dureeLabel}</Badge> : null}
           {!simple && !isExpert && <Badge>{f.difficulte}</Badge>}
           {f.isLocal && <Badge tone="amber">Fiche personnelle</Badge>}
         </div>

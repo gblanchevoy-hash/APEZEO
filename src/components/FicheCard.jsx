@@ -28,7 +28,7 @@ export function FicheCard({ f, onClick, favState }) {
           {f.alerteOutil && <span className="flex items-center gap-1 text-xs font-semibold text-red-600 bg-red-50 rounded-full px-2 py-0.5"><AlertTriangle size={11} /> Vigilance</span>}
           {f.niveauDetail === "expert" && <Badge tone="expert">Expert</Badge>}
           {nonSourcee && <Badge tone="rose">Non sourcée</Badge>}
-          {f.dureeMinutes > 0 ? <Badge>{f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>{f.dureeLabel}</Badge> : null}
+          {f.dureeMinutes > 0 ? <Badge>Environ {f.dureeMinutes} min</Badge> : f.dureeLabel ? <Badge>Durée : {f.dureeLabel}</Badge> : null}
           {f.isLocal && <Badge tone="amber">Personnelle</Badge>}
           {favState === "liked" && <Heart size={14} className="fill-rose-500 text-rose-500" />}
         </div>
