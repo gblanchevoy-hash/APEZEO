@@ -25,8 +25,33 @@ function PageInfo({ title, onBack, children }) {
 
 function PagePourquoi({ onBack }) {
   return (
-    <PageInfo title="Pourquoi choisir Apézeo ?" onBack={onBack}>
-      <p className="info-lead">Les mêmes repères, une ressource disponible au moment où la situation se présente.</p>
+    <PageInfo title="Pourquoi Apézeo ?" onBack={onBack}>
+      <p className="info-lead">Un besoin de terrain, documenté par les chiffres et reconnu par les autorités de santé elles-mêmes.</p>
+
+      <div className="stat-grid">
+        <div className="stat-card">
+          <div className="stat-num">1,2 à 1,4 M</div>
+          <div className="stat-label">personnes vivent avec la maladie d'Alzheimer ou une maladie apparentée en France</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-num">×2</div>
+          <div className="stat-label">c'est la progression attendue du nombre de personnes touchées d'ici 2050</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-num">~225 000</div>
+          <div className="stat-label">nouveaux cas sont diagnostiqués chaque année en France</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-num">~1 résident sur 2</div>
+          <div className="stat-label">en EHPAD présente des troubles cognitifs, sur environ 700 000 résidents au total</div>
+        </div>
+      </div>
+
+      <div className="callout">
+        <p>La Haute Autorité de Santé recommande les approches non médicamenteuses en première intention face aux troubles du comportement liés aux maladies neurocognitives. Mais elle constate elle-même qu'une grande partie des professionnels de terrain manque de formation spécifique sur ce sujet — un écart documenté aussi par l'IGAS, qui pointe des moyens de formation jugés insuffisants dans de nombreux établissements.</p>
+      </div>
+
+      <p className="info-lead" style={{ marginTop: 30 }}>Ce que ça change concrètement pour les équipes</p>
       <div className="number-grid">
         <article className="number-card"><div className="number">1</div><h3>Un socle commun</h3><p>Du professionnel nouvellement arrivé à l'encadrement, chacun retrouve les mêmes repères.</p></article>
         <article className="number-card"><div className="number">2</div><h3>La formation se prolonge</h3><p>Une ressource complémentaire aux formations ponctuelles, accessible dans le quotidien.</p></article>
@@ -34,6 +59,8 @@ function PagePourquoi({ onBack }) {
         <article className="number-card"><div className="number">4</div><h3>Une bibliothèque, pas un diagnostic</h3><p>Apézeo n'est ni un outil diagnostique ni un outil d'aide à la décision clinique.</p></article>
         <article className="number-card"><div className="number">5</div><h3>Accessible partout</h3><p>PWA responsive, utilisable sur ordinateur, tablette et smartphone.</p></article>
       </div>
+
+      <p className="sources-note">Sources : Santé publique France, France Alzheimer, Alzheimer Europe (rapport de prévalence 2025-2026), Haute Autorité de Santé, IGAS — Évaluation des dispositifs spécialisés de prise en charge des personnes atteintes de maladies neurodégénératives.</p>
     </PageInfo>
   );
 }
@@ -138,78 +165,43 @@ export function GateV2({ onChoose }) {
           en dessous : pas de long défilement. */}
       <div className="desktop-gate">
         {page === "hero" && (
-          <main className="v4-page">
-            <span className="v4-ring tl" /><span className="v4-ring tr" />
-            <span className="v4-ring bl" /><span className="v4-ring br" />
+          <main className="h5-page">
+            <div className="h5-glow tl" /><div className="h5-glow tr" />
 
-            <header className="v4-header">
-              <div className="v4-logo">
-                <span className="v4-logo-leaves" />
-                Ap<span className="v4-orange">é</span>zeo
+            <header className="h5-brand">
+              <div className="h5-logo-row">
+                <img className="h5-logo" src="/logo-phoenix.png" alt="" />
+                <div className="h5-word">Ap<span className="h5-e">é</span>zeo</div>
               </div>
-              <div className="v4-tagline">La bonne pratique<br />au bon moment pour chacun</div>
+              <div className="h5-tagline">La bonne pratique, au bon moment, pour tous.</div>
             </header>
 
-            <section className="v4-hero" aria-label="Choisissez votre espace">
-              <div className="v4-field left" aria-hidden="true">
-                <svg viewBox="0 0 815 690" preserveAspectRatio="none">
-                  <path className="v4-left-fill" d="M0,70 C130,8 290,32 405,112 C495,175 505,250 610,307 C700,355 785,386 815,460 L815,690 L95,690 C48,648 14,580 0,525 Z" />
-                </svg>
-              </div>
-              <div className="v4-field right" aria-hidden="true">
-                <svg viewBox="0 0 815 690" preserveAspectRatio="none">
-                  <path className="v4-right-fill" d="M815,70 C685,8 525,32 410,112 C320,175 310,250 205,307 C115,355 30,386 0,460 L0,690 L720,690 C767,648 801,580 815,525 Z" />
-                </svg>
-              </div>
-
-              <div className="v4-photo prof"><img src="/landing/photo-pro.jpg" alt="Soignante en blouse blanche auprès d'une personne âgée" /></div>
-              <div className="v4-photo aid"><img src="/landing/photo-aid.jpg" alt="Homme âgé et sa fille partageant un moment chaleureux" /></div>
-
-              <article className="v4-panel-content prof">
-                <div className="v4-round-icon teal" aria-hidden="true">
-                  <svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="10" r="4.2" /><circle cx="22" cy="10" r="4.2" /><path d="M3.8 25c.5-5 3.1-7.7 7.2-7.7s6.7 2.7 7.2 7.7" /><path d="M14.8 25c.5-5 3-7.7 7.1-7.7 3.9 0 6.2 2.7 6.6 7.7" /></svg>
+            <section className="h5-cards" aria-label="Choisir un espace">
+              <article className="h5-card pro">
+                <div className="h5-card-glow" aria-hidden="true" />
+                <div className="h5-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
                 </div>
                 <h2>Professionnels</h2>
-                <p className="v4-description">
-                  Accédez à une bibliothèque<br />
-                  <strong>complète et fiable</strong> de techniques<br />
-                  <strong>non médicamenteuses</strong><br />
-                  pour accompagner au quotidien.
-                </p>
-                <div className="v4-feature-list">
-                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><rect x="8" y="5" width="16" height="22" rx="2" /><path d="M12 11h8M12 16h8M12 21h5" /></svg></span><span>Des fiches pratiques validées<br />par des sources officielles</span></div>
-                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="m16 5.5 3.2 6.5 7.2 1-5.2 5.1 1.2 7.2-6.4-3.4-6.4 3.4 1.2-7.2-5.2-5.1 7.2-1L16 5.5Z" /></svg></span><span>2 bibliothèques : Standard<br />(simplifiée) &amp; Expert (approfondie)</span></div>
-                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5v15M10.5 14.5 16 20l5.5-5.5M7 25h18" /></svg></span><span>Plus de 1500 fiches téléchargeables<br />et des outils avec liens vers les études</span></div>
-                </div>
-                <button className="v4-cta teal" onClick={() => onChoose("pro")}>Accéder à l'espace professionnel <span className="v4-arrow">→</span></button>
+                <p>Une bibliothèque de référence pour harmoniser les pratiques de votre équipe au quotidien.</p>
+                <button className="h5-cta" onClick={() => onChoose("pro")}>Découvrir l'espace professionnel <span>→</span></button>
               </article>
 
-              <article className="v4-panel-content aid">
-                <div className="v4-round-icon orange" aria-hidden="true">
-                  <svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27.1S5.2 20.4 5.2 12.5C5.2 8.9 7.7 6.5 11 6.5c2.1 0 4 1.1 5 2.9 1-1.8 2.9-2.9 5-2.9 3.3 0 5.8 2.4 5.8 6 0 7.9-10.8 14.6-10.8 14.6Z" /></svg>
+              <article className="h5-card aid">
+                <div className="h5-card-glow" aria-hidden="true" />
+                <div className="h5-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
                 </div>
                 <h2>Aidants</h2>
-                <p className="v4-description">
-                  Trouvez des solutions concrètes<br />
-                  et bienveillantes pour mieux vivre<br />
-                  le quotidien avec votre proche<br />
-                  atteint de la maladie d'Alzheimer.
-                </p>
-                <div className="v4-feature-list">
-                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 22h10M12 26h8M10.2 18.7C8.9 17.2 8 15.3 8 13.2a8 8 0 0 1 16 0c0 2.1-.9 4-2.2 5.5-.9 1-1.4 2-1.6 3.3h-8.4c-.2-1.3-.7-2.3-1.6-3.3Z" /><path d="M16 2v2M4.8 6.1l1.4 1M27.2 6.1l-1.4 1" /></svg></span><span>Des conseils simples et accessibles<br />à mettre en place</span></div>
-                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="10" r="4.2" /><circle cx="22" cy="10" r="4.2" /><path d="M3.8 25c.5-5 3.1-7.7 7.2-7.7s6.7 2.7 7.2 7.7" /><path d="M14.8 25c.5-5 3-7.7 7.1-7.7 3.9 0 6.2 2.7 6.6 7.7" /></svg></span><span>Des techniques adaptées<br />aux situations du quotidien</span></div>
-                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27.1S5.2 20.4 5.2 12.5C5.2 8.9 7.7 6.5 11 6.5c2.1 0 4 1.1 5 2.9 1-1.8 2.9-2.9 5-2.9 3.3 0 5.8 2.4 5.8 6 0 7.9-10.8 14.6-10.8 14.6Z" /></svg></span><span>Un soutien pour vous sentir<br />plus serein et accompagné</span></div>
-                </div>
-                <button className="v4-cta orange" onClick={() => onChoose("aidant")}>Accéder à l'espace aidant <span className="v4-arrow">→</span></button>
+                <p>Des repères simples et bienveillants pour accompagner votre proche, où que vous soyez.</p>
+                <button className="h5-cta" onClick={() => onChoose("aidant")}>Accéder à l'espace aidant <span>→</span></button>
               </article>
-
-              <div className="v4-seam" aria-hidden="true" />
             </section>
 
-            <section className="v4-trust">
-              <div className="v4-trust-item"><span className="v4-trust-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 26 8v7c0 6.2-4.1 10.7-10 13-5.9-2.3-10-6.8-10-13V8l10-4Z" /><path d="m11.8 15.9 2.7 2.7 5.8-6" /></svg></span><span>Basé sur les recommandations<br />HAS, NICE et autres sources officielles</span></div>
-              <div className="v4-trust-item"><span className="v4-trust-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="14" width="18" height="13" rx="2" /><path d="M11 14V9.8a5 5 0 0 1 10 0V14M16 19v3" /></svg></span><span>Données sécurisées<br />et respect de la confidentialité</span></div>
-              <div className="v4-trust-item"><span className="v4-trust-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" /><path d="m10.5 16.2 3.5 3.5 7.5-8" /></svg></span><span>Conçu pour les professionnels<br />et les aidants, ensemble</span></div>
+            <section className="h5-trust">
+              <div className="h5-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2 4 5v6c0 5.2 3.4 9.4 8 11 4.6-1.6 8-5.8 8-11V5z" /><polyline points="9 12 11 14 15 10" /></svg><span>Basé sur les recommandations<br />HAS, NICE et sources officielles</span></div>
+              <div className="h5-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><span>Données sécurisées et respect<br />de la confidentialité</span></div>
+              <div className="h5-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="8 12 11 15 16 9" /></svg><span>Conçu pour les professionnels<br />et les aidants</span></div>
             </section>
 
             <nav className="dg-info-nav" aria-label="En savoir plus">
@@ -224,7 +216,7 @@ export function GateV2({ onChoose }) {
               <button onClick={() => onChoose("pro")}>Connexion</button>
             </nav>
 
-            <footer className="v4-footer">© Apézeo — Ressources d'accompagnement non médicamenteuses</footer>
+            <footer className="h5-footer">© Apézeo — Ressources d'accompagnement non médicamenteuses</footer>
           </main>
         )}
 

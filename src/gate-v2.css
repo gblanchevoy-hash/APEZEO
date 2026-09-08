@@ -128,137 +128,86 @@
 }
 
 /* =========================================================
-   HERO DESKTOP (v4-*) -- reproduction fidèle de la maquette
-   approuvée (reference-approved.png). Composition, couleurs et
-   formes organiques reprises telles quelles ; les icônes sont de
-   vrais SVG (jamais de glyphes Unicode, pour un rendu identique
-   partout) ; la hauteur du hero est calibrée pour que les deux
-   boutons et la barre de réassurance ne se chevauchent jamais.
+   HERO DESKTOP (h5-*) -- design simple, sans photo, sobre mais
+   habillé (dégradés de la marque, légers halos de fond), avec
+   le vrai logo. Le détail (fonctionnalités, chiffres, install...)
+   vit dans des sous-pages dédiées, jamais répété ici.
    ========================================================= */
-.apezeo-landing-v2 .v4-page{
- position:relative;padding-bottom:1px;width:100%;min-height:100vh;overflow:hidden;
- background:#fff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- color:#172F30
+.apezeo-landing-v2 .h5-page{
+ position:relative;min-height:100vh;overflow:hidden;padding:44px 24px 30px;
+ font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+ color:#1c3536;text-align:center;
+ background:
+  radial-gradient(circle at 10% 6%, rgba(8,127,128,.07), transparent 40%),
+  radial-gradient(circle at 90% 16%, rgba(255,152,21,.08), transparent 42%),
+  linear-gradient(180deg,#fbfdfc 0%,#f6f9f8 100%)
 }
-.apezeo-landing-v2 .v4-ring{position:absolute;border:2px solid;border-radius:50%;pointer-events:none;opacity:.38}
-.apezeo-landing-v2 .v4-ring.tl{width:285px;height:285px;left:-120px;top:24px;border-color:#BFE3DF}
-.apezeo-landing-v2 .v4-ring.tr{width:380px;height:380px;right:-165px;top:-115px;border-color:#F9D7A1}
-.apezeo-landing-v2 .v4-ring.bl{width:315px;height:315px;left:-155px;bottom:-145px;border-color:#C7E5E1}
-.apezeo-landing-v2 .v4-ring.br{width:350px;height:350px;right:-155px;bottom:-120px;border-color:#F8D6A0}
+.apezeo-landing-v2 .h5-glow{position:absolute;border-radius:50%;pointer-events:none;filter:blur(2px)}
+.apezeo-landing-v2 .h5-glow.tl{width:280px;height:280px;left:-140px;top:20px;border:1px solid rgba(8,127,128,.08)}
+.apezeo-landing-v2 .h5-glow.tr{width:340px;height:340px;right:-160px;top:-90px;border:1px solid rgba(255,152,21,.1)}
 
-.apezeo-landing-v2 .v4-header{position:relative;z-index:20;text-align:center;padding-top:23px}
-.apezeo-landing-v2 .v4-logo{
- position:relative;display:inline-block;color:#087F80;
- font-family:Lora,Georgia,serif;font-weight:600;
- font-size:clamp(58px,6.5vw,91px);line-height:.92;letter-spacing:-3px
+.apezeo-landing-v2 .h5-brand{position:relative;z-index:5;max-width:760px;margin:0 auto}
+.apezeo-landing-v2 .h5-logo-row{display:inline-flex;align-items:center;gap:16px}
+.apezeo-landing-v2 .h5-logo{width:76px;height:76px;border-radius:50%;object-fit:cover;box-shadow:0 10px 26px rgba(6,78,59,.28)}
+.apezeo-landing-v2 .h5-word{font-family:Lora,Georgia,serif;font-weight:600;font-size:clamp(42px,6vw,58px);letter-spacing:-1.5px;color:#075F62;line-height:1}
+.apezeo-landing-v2 .h5-e{color:#FF9815}
+.apezeo-landing-v2 .h5-tagline{margin-top:14px;font-size:clamp(16px,2vw,19px);font-weight:650;color:#075F62}
+
+.apezeo-landing-v2 .h5-cards{position:relative;z-index:5;max-width:900px;margin:34px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.apezeo-landing-v2 .h5-card{position:relative;overflow:hidden;border-radius:24px;padding:34px 28px;text-align:left}
+.apezeo-landing-v2 .h5-card.pro{background:linear-gradient(155deg,#064e3b,#0a8c82);box-shadow:0 20px 40px -18px rgba(6,78,59,.48)}
+.apezeo-landing-v2 .h5-card.aid{background:linear-gradient(155deg,#FF9815,#E98208);box-shadow:0 20px 40px -18px rgba(217,130,8,.48)}
+.apezeo-landing-v2 .h5-card-glow{position:absolute;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.07);right:-50px;top:-60px;pointer-events:none}
+.apezeo-landing-v2 .h5-icon{position:relative;width:54px;height:54px;border-radius:16px;background:rgba(255,255,255,.16);display:grid;place-items:center;margin-bottom:20px}
+.apezeo-landing-v2 .h5-icon svg{width:26px;height:26px}
+.apezeo-landing-v2 .h5-card h2{position:relative;margin:0 0 10px;font-family:Lora,Georgia,serif;font-weight:600;font-size:26px;color:#fff}
+.apezeo-landing-v2 .h5-card p{position:relative;margin:0 0 24px;font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.86)}
+.apezeo-landing-v2 .h5-cta{
+ position:relative;display:inline-flex;align-items:center;gap:10px;width:100%;justify-content:center;
+ background:#fff;border:0;border-radius:999px;padding:13px 18px;font-size:14px;font-weight:700;cursor:pointer;
+ transition:transform .18s ease,box-shadow .18s ease
 }
-.apezeo-landing-v2 .v4-logo .v4-orange{color:#FF9815}
-.apezeo-landing-v2 .v4-logo-leaves{position:absolute;width:47px;height:61px;left:50%;top:-25px;transform:translateX(-1px)}
-.apezeo-landing-v2 .v4-logo-leaves:before,.apezeo-landing-v2 .v4-logo-leaves:after{content:"";position:absolute;width:22px;height:38px;border-radius:100% 0 100% 0}
-.apezeo-landing-v2 .v4-logo-leaves:before{left:1px;top:16px;background:#79C0BA;transform:rotate(-25deg)}
-.apezeo-landing-v2 .v4-logo-leaves:after{right:1px;top:1px;background:#FFB340;transform:rotate(24deg)}
+.apezeo-landing-v2 .h5-cta:hover{transform:translateY(-2px)}
+.apezeo-landing-v2 .h5-card.pro .h5-cta{color:#075F62}
+.apezeo-landing-v2 .h5-card.aid .h5-cta{color:#B85E00}
 
-.apezeo-landing-v2 .v4-tagline{margin-top:25px;color:#075F62;font-size:clamp(19px,2vw,28px);line-height:1.25;font-weight:650}
-.apezeo-landing-v2 .v4-tagline:after{content:"";display:block;width:71px;height:4px;margin:23px auto 0;border-radius:9px;background:#FF9815}
+.apezeo-landing-v2 .h5-trust{position:relative;z-index:5;max-width:900px;margin:26px auto 0;display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid rgba(8,127,128,.12);padding-top:22px}
+.apezeo-landing-v2 .h5-trust-item{display:flex;align-items:center;justify-content:center;gap:10px;text-align:left;padding:0 16px;color:#22595A;font-size:12.5px;line-height:1.35}
+.apezeo-landing-v2 .h5-trust-item+.h5-trust-item{border-left:1px solid rgba(8,127,128,.12)}
+.apezeo-landing-v2 .h5-trust-item svg{width:22px;height:22px;flex-shrink:0;color:#087F80}
 
-.apezeo-landing-v2 .v4-hero{position:relative;z-index:2;width:min(1536px,100vw);height:min(800px,73vw);min-height:760px;margin:38px auto 0}
-.apezeo-landing-v2 .v4-field{position:absolute;top:0;height:100%;pointer-events:none}
-.apezeo-landing-v2 .v4-field.left{left:0;width:53%}
-.apezeo-landing-v2 .v4-field.right{right:0;width:53%}
-.apezeo-landing-v2 .v4-field svg{width:100%;height:100%;display:block}
-.apezeo-landing-v2 .v4-left-fill{fill:#ECF7F6}
-.apezeo-landing-v2 .v4-right-fill{fill:#FFF1DE}
-
-.apezeo-landing-v2 .v4-photo{position:absolute;z-index:3;top:0;width:39%;height:52%;overflow:hidden}
-.apezeo-landing-v2 .v4-photo.prof{left:0;border-radius:0 0 115px 0;clip-path:polygon(0 4%,17% 0,61% 11%,84% 31%,100% 52%,81% 71%,54% 83%,31% 96%,0 96%)}
-.apezeo-landing-v2 .v4-photo.aid{right:0;border-radius:0 0 0 115px;clip-path:polygon(17% 8%,49% 0,79% 4%,100% 18%,100% 92%,79% 100%,51% 94%,28% 82%,0 63%,0 31%)}
-.apezeo-landing-v2 .v4-photo img{width:100%;height:100%;display:block;object-fit:cover;object-position:center}
-
-.apezeo-landing-v2 .v4-panel-content{position:absolute;z-index:10;top:228px;width:42%;text-align:center}
-.apezeo-landing-v2 .v4-panel-content.prof{left:8%}
-.apezeo-landing-v2 .v4-panel-content.aid{right:8%}
-
-.apezeo-landing-v2 .v4-round-icon{width:70px;height:70px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.08)}
-.apezeo-landing-v2 .v4-round-icon.teal{background:#087F80}
-.apezeo-landing-v2 .v4-round-icon.orange{background:#FF9815}
-
-.apezeo-landing-v2 .v4-icon-svg{width:25px;height:25px;display:block;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.apezeo-landing-v2 .v4-round-icon .v4-icon-svg{width:38px;height:38px;stroke-width:1.8}
-.apezeo-landing-v2 .v4-feature-icon .v4-icon-svg{width:20px;height:20px;stroke-width:2}
-.apezeo-landing-v2 .v4-trust-icon .v4-icon-svg{width:27px;height:27px;stroke-width:1.8}
-
-.apezeo-landing-v2 .v4-panel-content h2{margin:0;font-size:clamp(34px,3.2vw,45px);line-height:1;letter-spacing:-1.5px;font-weight:720;font-family:Inter,sans-serif}
-.apezeo-landing-v2 .v4-panel-content.prof h2{color:#087F80}
-.apezeo-landing-v2 .v4-panel-content.aid h2{color:#E98208}
-
-.apezeo-landing-v2 .v4-description{margin:17px auto 25px;max-width:510px;font-size:17px;line-height:1.55;color:#1F3435}
-.apezeo-landing-v2 .v4-description strong{font-weight:750}
-
-.apezeo-landing-v2 .v4-feature-list{width:min(500px,100%);margin:0 auto 26px;display:grid;gap:12px;text-align:left}
-.apezeo-landing-v2 .v4-feature{display:grid;grid-template-columns:39px 1fr;gap:13px;align-items:center;font-size:15.2px;line-height:1.35}
-.apezeo-landing-v2 .v4-feature-icon{width:39px;height:39px;border-radius:50%;display:grid;place-items:center;color:#fff}
-.apezeo-landing-v2 .v4-panel-content.prof .v4-feature-icon{background:#087F80}
-.apezeo-landing-v2 .v4-panel-content.aid .v4-feature-icon{background:#FF9815}
-
-.apezeo-landing-v2 .v4-cta{
- width:400px;max-width:100%;margin:0 auto;padding:15px 20px;border-radius:999px;
- display:flex;justify-content:center;align-items:center;gap:14px;
- color:#fff;font-size:16px;font-weight:750;white-space:nowrap;border:0;cursor:pointer;
- box-shadow:0 10px 20px rgba(0,0,0,.10);transition:transform .18s ease,box-shadow .18s ease
-}
-.apezeo-landing-v2 .v4-cta:hover{transform:translateY(-2px);box-shadow:0 13px 25px rgba(0,0,0,.14)}
-.apezeo-landing-v2 .v4-cta.teal{background:#087F80}
-.apezeo-landing-v2 .v4-cta.orange{background:#FF9815}
-.apezeo-landing-v2 .v4-arrow{font-size:25px;line-height:0}
-
-.apezeo-landing-v2 .v4-seam{
- position:absolute;z-index:15;left:50%;top:53%;width:78px;height:172px;transform:translate(-50%,-50%);
- border-radius:50%;background:linear-gradient(90deg,#087F80 0%,#77BDB6 48%,#FF9815 100%);opacity:.92
-}
-.apezeo-landing-v2 .v4-seam:after{content:"";position:absolute;left:50%;top:50%;width:1px;height:85px;transform:translate(-50%,-50%);background:rgba(255,255,255,.32)}
-
-.apezeo-landing-v2 .v4-trust{position:relative;z-index:30;width:min(940px,88vw);margin:16px auto 0;display:grid;grid-template-columns:1fr 1fr 1fr}
-.apezeo-landing-v2 .v4-trust-item{min-height:48px;padding:0 20px;display:flex;justify-content:center;align-items:center;gap:10px;text-align:left;color:#22595A;font-size:12.5px;line-height:1.35}
-.apezeo-landing-v2 .v4-trust-item+.v4-trust-item{border-left:1px solid rgba(8,127,128,.25)}
-.apezeo-landing-v2 .v4-trust-icon{color:#087F80}
-
-.apezeo-landing-v2 .v4-footer{position:relative;z-index:20;text-align:center;margin:18px 0 10px;color:#718989;font-size:10px}
-
-.apezeo-landing-v2 .dg-info-nav{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin-top:6px;margin-bottom:14px;position:relative;z-index:20}
+.apezeo-landing-v2 .dg-info-nav{position:relative;z-index:5;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin-top:26px}
 .apezeo-landing-v2 .dg-info-nav button{border:0;background:none;cursor:pointer;color:#087F80;font-size:.82rem;font-weight:600;padding:4px}
 .apezeo-landing-v2 .dg-info-nav button:hover{text-decoration:underline}
 .apezeo-landing-v2 .dg-info-nav span{color:#c3d3d2;font-size:.8rem}
 
-@media(max-width:1050px){
-.apezeo-landing-v2 .v4-hero{height:735px;min-height:735px;margin-top:28px}
-.apezeo-landing-v2 .v4-panel-content{top:252px;width:43%}
-.apezeo-landing-v2 .v4-panel-content.prof{left:5%}
-.apezeo-landing-v2 .v4-panel-content.aid{right:5%}
-.apezeo-landing-v2 .v4-photo{width:42%;height:49%}
-.apezeo-landing-v2 .v4-seam{top:53%;width:66px;height:150px}
-.apezeo-landing-v2 .v4-description{font-size:15px}
-.apezeo-landing-v2 .v4-feature{font-size:14px}
-}
+.apezeo-landing-v2 .h5-footer{position:relative;z-index:5;text-align:center;margin-top:22px;color:#7a8f8f;font-size:11px}
+
 @media(max-width:760px){
-.apezeo-landing-v2 .v4-header{padding-top:18px}
-.apezeo-landing-v2 .v4-logo{font-size:56px}
-.apezeo-landing-v2 .v4-tagline{font-size:20px;margin-top:20px}
-.apezeo-landing-v2 .v4-hero{height:auto;min-height:0;margin-top:28px;padding:0 14px}
-.apezeo-landing-v2 .v4-field{display:none}
-.apezeo-landing-v2 .v4-photo{position:relative;top:auto;left:auto!important;right:auto!important;width:100%;height:245px;margin:0}
-.apezeo-landing-v2 .v4-photo.prof,.apezeo-landing-v2 .v4-photo.aid{clip-path:none;border-radius:34px 34px 0 0}
-.apezeo-landing-v2 .v4-panel-content{
- position:relative;top:auto!important;left:auto!important;right:auto!important;
- width:100%;padding:25px 25px 35px;margin:0 0 18px;border-radius:0 0 34px 34px
+.apezeo-landing-v2 .h5-page{padding:32px 16px 24px}
+.apezeo-landing-v2 .h5-logo{width:56px;height:56px}
+.apezeo-landing-v2 .h5-cards{grid-template-columns:1fr;gap:16px;margin-top:26px}
+.apezeo-landing-v2 .h5-trust{grid-template-columns:1fr;gap:14px}
+.apezeo-landing-v2 .h5-trust-item{justify-content:center;text-align:center}
+.apezeo-landing-v2 .h5-trust-item+.h5-trust-item{border-left:0}
 }
-.apezeo-landing-v2 .v4-panel-content.prof{background:#EAF6F5}
-.apezeo-landing-v2 .v4-panel-content.aid{background:#FFF2DF}
-.apezeo-landing-v2 .v4-panel-content .v4-round-icon{margin-top:-59px;position:relative}
-.apezeo-landing-v2 .v4-seam{display:none}
-.apezeo-landing-v2 .v4-trust{grid-template-columns:1fr;width:92%;gap:13px;margin-top:8px}
-.apezeo-landing-v2 .v4-trust-item{justify-content:center;text-align:center}
-.apezeo-landing-v2 .v4-trust-item+.v4-trust-item{border-left:0}
+
+/* =========================================================
+   Contenu de "Pourquoi Apézeo" : chiffres clés et encart de
+   contexte, dans le même esprit visuel que le reste des
+   sous-pages.
+   ========================================================= */
+.apezeo-landing-v2 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+.apezeo-landing-v2 .stat-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px 16px;text-align:left}
+.apezeo-landing-v2 .stat-num{font-family:Lora,Georgia,serif;font-size:1.7rem;font-weight:600;color:var(--dg-teal-dark);line-height:1;margin-bottom:8px}
+.apezeo-landing-v2 .stat-label{font-size:.78rem;line-height:1.4;color:var(--muted)}
+.apezeo-landing-v2 .callout{background:var(--dg-panel-teal-2);border-left:3px solid var(--dg-teal);border-radius:0 16px 16px 0;padding:18px 22px}
+.apezeo-landing-v2 .callout p{margin:0;font-size:.92rem;line-height:1.6;color:#183938}
+.apezeo-landing-v2 .sources-note{margin-top:24px;font-size:.72rem;color:#9aa8a8;line-height:1.5}
+@media(max-width:760px){
+.apezeo-landing-v2 .stat-grid{grid-template-columns:1fr 1fr}
 }
+
 
 
 /* =========================================================
