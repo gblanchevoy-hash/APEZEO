@@ -122,11 +122,9 @@ export function GateV2({ onChoose }) {
 
         <div className="mobile-gate-actions">
           <button className="btn btn-amber mobile-gate-btn" onClick={() => onChoose("aidant")}>
-            <img src="/landing/icone-aidants.png" alt="" className="mobile-gate-icon icon-aidant" />
             Je suis aidant →
           </button>
           <button className="btn btn-green mobile-gate-btn" onClick={() => onChoose("pro")}>
-            <img src="/landing/icone-professionnels.png" alt="" className="mobile-gate-icon" />
             Je suis professionnel →
           </button>
         </div>
@@ -140,81 +138,78 @@ export function GateV2({ onChoose }) {
           en dessous : pas de long défilement. */}
       <div className="desktop-gate">
         {page === "hero" && (
-          <main className="dg-hero">
-            <div className="dg-dots" aria-hidden="true" />
-            <header className="dg-brand">
-              <div className="dg-logo-row">
-                <img className="dg-logo-mark" src="/logo-phoenix.png" alt="" />
-                <div className="dg-logo-word" aria-label="Apézeo">Ap<span className="e">é</span>zeo</div>
+          <main className="v4-page">
+            <span className="v4-ring tl" /><span className="v4-ring tr" />
+            <span className="v4-ring bl" /><span className="v4-ring br" />
+
+            <header className="v4-header">
+              <div className="v4-logo">
+                <span className="v4-logo-leaves" />
+                Ap<span className="v4-orange">é</span>zeo
               </div>
-              <div className="dg-tagline">la bonne pratique<br />au bon moment pour chacun</div>
+              <div className="v4-tagline">La bonne pratique<br />au bon moment pour chacun</div>
             </header>
 
-            <section className="dg-switcher" aria-label="Choisir un espace">
-              <article className="dg-panel dg-pro">
-                <div className="dg-photo"><img src="/landing/photo-pro.jpg" alt="Soignante en blouse blanche souriant avec une personne âgée" /></div>
-                <div className="dg-icon-main" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+            <section className="v4-hero" aria-label="Choisissez votre espace">
+              <div className="v4-field left" aria-hidden="true">
+                <svg viewBox="0 0 815 690" preserveAspectRatio="none">
+                  <path className="v4-left-fill" d="M0,70 C130,8 290,32 405,112 C495,175 505,250 610,307 C700,355 785,386 815,460 L815,690 L95,690 C48,648 14,580 0,525 Z" />
+                </svg>
+              </div>
+              <div className="v4-field right" aria-hidden="true">
+                <svg viewBox="0 0 815 690" preserveAspectRatio="none">
+                  <path className="v4-right-fill" d="M815,70 C685,8 525,32 410,112 C320,175 310,250 205,307 C115,355 30,386 0,460 L0,690 L720,690 C767,648 801,580 815,525 Z" />
+                </svg>
+              </div>
+
+              <div className="v4-photo prof"><img src="/landing/photo-pro.jpg" alt="Soignante en blouse blanche auprès d'une personne âgée" /></div>
+              <div className="v4-photo aid"><img src="/landing/photo-aid.jpg" alt="Homme âgé et sa fille partageant un moment chaleureux" /></div>
+
+              <article className="v4-panel-content prof">
+                <div className="v4-round-icon teal" aria-hidden="true">
+                  <svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="10" r="4.2" /><circle cx="22" cy="10" r="4.2" /><path d="M3.8 25c.5-5 3.1-7.7 7.2-7.7s6.7 2.7 7.2 7.7" /><path d="M14.8 25c.5-5 3-7.7 7.1-7.7 3.9 0 6.2 2.7 6.6 7.7" /></svg>
                 </div>
                 <h2>Professionnels</h2>
-                <p className="dg-intro">Accédez à une bibliothèque <strong>complète et fiable</strong> de techniques <strong>non médicamenteuses</strong> pour accompagner au quotidien.</p>
-                <div className="dg-features">
-                  <div className="dg-feature">
-                    <span className="dg-bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M9 13h6M9 17h6" /></svg></span>
-                    <span>Des fiches pratiques validées<br />par des sources officielles</span>
-                  </div>
-                  <div className="dg-feature">
-                    <span className="dg-bullet"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z" /></svg></span>
-                    <span>2 bibliothèques : Standard<br />(simplifiée) &amp; Expert (approfondie)</span>
-                  </div>
-                  <div className="dg-feature">
-                    <span className="dg-bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg></span>
-                    <span>Plus de 1500 fiches téléchargeables<br />et des outils avec liens vers les études</span>
-                  </div>
+                <p className="v4-description">
+                  Accédez à une bibliothèque<br />
+                  <strong>complète et fiable</strong> de techniques<br />
+                  <strong>non médicamenteuses</strong><br />
+                  pour accompagner au quotidien.
+                </p>
+                <div className="v4-feature-list">
+                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><rect x="8" y="5" width="16" height="22" rx="2" /><path d="M12 11h8M12 16h8M12 21h5" /></svg></span><span>Des fiches pratiques validées<br />par des sources officielles</span></div>
+                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="m16 5.5 3.2 6.5 7.2 1-5.2 5.1 1.2 7.2-6.4-3.4-6.4 3.4 1.2-7.2-5.2-5.1 7.2-1L16 5.5Z" /></svg></span><span>2 bibliothèques : Standard<br />(simplifiée) &amp; Expert (approfondie)</span></div>
+                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5v15M10.5 14.5 16 20l5.5-5.5M7 25h18" /></svg></span><span>Plus de 1500 fiches téléchargeables<br />et des outils avec liens vers les études</span></div>
                 </div>
-                <button className="dg-cta" onClick={() => onChoose("pro")}>
-                  Accéder à l'espace professionnel
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-                </button>
+                <button className="v4-cta teal" onClick={() => onChoose("pro")}>Accéder à l'espace professionnel <span className="v4-arrow">→</span></button>
               </article>
 
-              <article className="dg-panel dg-aid">
-                <div className="dg-photo"><img src="/landing/photo-aid.jpg" alt="Homme âgé souriant avec sa fille, moment chaleureux" /></div>
-                <div className="dg-icon-main" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 21s-7.5-4.87-10.2-9.24C.24 9.2 1.4 5.5 4.9 4.5c2-.57 4 .2 5.1 1.9 1.1-1.7 3.1-2.47 5.1-1.9 3.5 1 4.66 4.7 3.1 7.26C19.5 16.13 12 21 12 21z" /></svg>
+              <article className="v4-panel-content aid">
+                <div className="v4-round-icon orange" aria-hidden="true">
+                  <svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27.1S5.2 20.4 5.2 12.5C5.2 8.9 7.7 6.5 11 6.5c2.1 0 4 1.1 5 2.9 1-1.8 2.9-2.9 5-2.9 3.3 0 5.8 2.4 5.8 6 0 7.9-10.8 14.6-10.8 14.6Z" /></svg>
                 </div>
                 <h2>Aidants</h2>
-                <p className="dg-intro">Trouvez des solutions <strong>concrètes et bienveillantes</strong> pour mieux vivre le quotidien avec votre proche atteint de la maladie d'Alzheimer.</p>
-                <div className="dg-features">
-                  <div className="dg-feature">
-                    <span className="dg-bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18h6M10 21h4" /><circle cx="12" cy="10" r="6" /><path d="M12 6v1" /></svg></span>
-                    <span>Des conseils simples et accessibles<br />à mettre en place</span>
-                  </div>
-                  <div className="dg-feature">
-                    <span className="dg-bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg></span>
-                    <span>Des techniques adaptées<br />aux situations du quotidien</span>
-                  </div>
-                  <div className="dg-feature">
-                    <span className="dg-bullet"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 21s-7.5-4.87-10.2-9.24C.24 9.2 1.4 5.5 4.9 4.5c2-.57 4 .2 5.1 1.9 1.1-1.7 3.1-2.47 5.1-1.9 3.5 1 4.66 4.7 3.1 7.26C19.5 16.13 12 21 12 21z" /></svg></span>
-                    <span>Un soutien pour vous sentir<br />plus serein et accompagné</span>
-                  </div>
+                <p className="v4-description">
+                  Trouvez des solutions concrètes<br />
+                  et bienveillantes pour mieux vivre<br />
+                  le quotidien avec votre proche<br />
+                  atteint de la maladie d'Alzheimer.
+                </p>
+                <div className="v4-feature-list">
+                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 22h10M12 26h8M10.2 18.7C8.9 17.2 8 15.3 8 13.2a8 8 0 0 1 16 0c0 2.1-.9 4-2.2 5.5-.9 1-1.4 2-1.6 3.3h-8.4c-.2-1.3-.7-2.3-1.6-3.3Z" /><path d="M16 2v2M4.8 6.1l1.4 1M27.2 6.1l-1.4 1" /></svg></span><span>Des conseils simples et accessibles<br />à mettre en place</span></div>
+                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="10" r="4.2" /><circle cx="22" cy="10" r="4.2" /><path d="M3.8 25c.5-5 3.1-7.7 7.2-7.7s6.7 2.7 7.2 7.7" /><path d="M14.8 25c.5-5 3-7.7 7.1-7.7 3.9 0 6.2 2.7 6.6 7.7" /></svg></span><span>Des techniques adaptées<br />aux situations du quotidien</span></div>
+                  <div className="v4-feature"><span className="v4-feature-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27.1S5.2 20.4 5.2 12.5C5.2 8.9 7.7 6.5 11 6.5c2.1 0 4 1.1 5 2.9 1-1.8 2.9-2.9 5-2.9 3.3 0 5.8 2.4 5.8 6 0 7.9-10.8 14.6-10.8 14.6Z" /></svg></span><span>Un soutien pour vous sentir<br />plus serein et accompagné</span></div>
                 </div>
-                <button className="dg-cta" onClick={() => onChoose("aidant")}>
-                  Accéder à l'espace aidant
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-                </button>
+                <button className="v4-cta orange" onClick={() => onChoose("aidant")}>Accéder à l'espace aidant <span className="v4-arrow">→</span></button>
               </article>
 
-              <div className="dg-overlap-wrap" aria-hidden="true">
-                <div className="dg-overlap" />
-                <div className="dg-leaf-mark"><i /><i /></div>
-              </div>
+              <div className="v4-seam" aria-hidden="true" />
             </section>
 
-            <section className="dg-trust">
-              <div className="dg-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2 4 5v6c0 5.2 3.4 9.4 8 11 4.6-1.6 8-5.8 8-11V5z" /><polyline points="9 12 11 14 15 10" /></svg><span>Basé sur les recommandations<br />HAS, NICE et autres sources officielles</span></div>
-              <div className="dg-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><span>Données sécurisées<br />et respect de la confidentialité</span></div>
-              <div className="dg-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="8 12 11 15 16 9" /></svg><span>Conçu pour les professionnels<br />et les aidants, ensemble</span></div>
+            <section className="v4-trust">
+              <div className="v4-trust-item"><span className="v4-trust-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 26 8v7c0 6.2-4.1 10.7-10 13-5.9-2.3-10-6.8-10-13V8l10-4Z" /><path d="m11.8 15.9 2.7 2.7 5.8-6" /></svg></span><span>Basé sur les recommandations<br />HAS, NICE et autres sources officielles</span></div>
+              <div className="v4-trust-item"><span className="v4-trust-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="14" width="18" height="13" rx="2" /><path d="M11 14V9.8a5 5 0 0 1 10 0V14M16 19v3" /></svg></span><span>Données sécurisées<br />et respect de la confidentialité</span></div>
+              <div className="v4-trust-item"><span className="v4-trust-icon"><svg className="v4-icon-svg" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" /><path d="m10.5 16.2 3.5 3.5 7.5-8" /></svg></span><span>Conçu pour les professionnels<br />et les aidants, ensemble</span></div>
             </section>
 
             <nav className="dg-info-nav" aria-label="En savoir plus">
@@ -229,10 +224,7 @@ export function GateV2({ onChoose }) {
               <button onClick={() => onChoose("pro")}>Connexion</button>
             </nav>
 
-            <footer className="dg-footer">
-              <div className="dg-footer-brand"><img src="/logo-phoenix.png" alt="" /><span>Apézeo</span></div>
-              <a className="dg-footer-mail" href="mailto:contact@apezeo.fr">contact@apezeo.fr</a>
-            </footer>
+            <footer className="v4-footer">© Apézeo — Ressources d'accompagnement non médicamenteuses</footer>
           </main>
         )}
 
