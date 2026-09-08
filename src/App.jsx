@@ -114,8 +114,24 @@ function AuthenticatedApp({ session, onChangeMode }) {
     // plan, sans bloquer le reste : profil, favoris et historique sont
     // minuscules et peuvent débloquer l'écran d'accueil bien avant.
     fetchAllRows(supabase, "interventions", "*", "id").then((interv) => {
-      if (interv.error) { setDbError(interv.error.message); }
-      else { setDbFiches((interv.data || []).map(rowToFiche)); setDbError(null); }
+      if (interv.error) {
+        // "JWT issued at future" : décalage d'horloge transitoire (côté
+        // Supabase ou côté appareil), qui se résout presque toujours de
+        // lui-même en quelques secondes -- on retente une fois avant
+        // d'afficher un message d'erreur à la personne.
+        const transitoire = /issued at future|iat/i.test(interv.error.message || "");
+        if (transitoire) {
+          setTimeout(() => {
+            fetchAllRows(supabase, "interventions", "*", "id").then((retry) => {
+              if (retry.error) { setDbError(retry.error.message); }
+              else { setDbFiches((retry.data || []).map(rowToFiche)); setDbError(null); }
+              setLibraryLoading(false);
+            });
+          }, 4000);
+          return;
+        }
+        setDbError(interv.error.message);
+      } else { setDbFiches((interv.data || []).map(rowToFiche)); setDbError(null); }
       setLibraryLoading(false);
     });
 
