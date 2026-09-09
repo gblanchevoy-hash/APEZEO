@@ -27,10 +27,8 @@ export function GateV2({ onChoose }) {
 
           <header className="hero">
             <div className="brand-word">Ap<span className="e">é</span>zeo</div>
-            <p className="tagline">La bonne pratique, au bon moment, pour tous.</p>
 
             <h1 className="headline">Une ressource pensée pour<br /><span>ceux qui accompagnent.</span></h1>
-            <p className="subhead">Deux espaces, une même approche : rendre les bonnes pratiques accessibles au moment où elles sont nécessaires.</p>
 
             <section className="choices" aria-label="Choisir son espace">
               <article className="card prof">
@@ -77,13 +75,13 @@ export function GateV2({ onChoose }) {
             <p className="section-intro">Apézeo prolonge la formation et facilite l'accès aux pratiques d'accompagnement non médicamenteuses dans les situations rencontrées sur le terrain.</p>
 
             <div className="stats">
-              <div className="stat"><strong>1,2 à 1,4 M</strong><span>personnes vivent avec la maladie d'Alzheimer ou une maladie apparentée en France</span></div>
-              <div className="stat"><strong>×2</strong><span>progression attendue du nombre de personnes touchées d'ici 2050</span></div>
-              <div className="stat"><strong>~225 000</strong><span>nouveaux cas diagnostiqués chaque année en France</span></div>
-              <div className="stat"><strong>~1 sur 2</strong><span>résidents d'EHPAD présente des troubles cognitifs</span></div>
+              <div className="stat"><strong>1,2 à 1,4 M<sup><a href="#src-1">1</a><a href="#src-2">2</a></sup></strong><span>personnes vivent avec la maladie d'Alzheimer ou une maladie apparentée en France</span></div>
+              <div className="stat"><strong>×2<sup><a href="#src-1">1</a></sup></strong><span>progression attendue du nombre de personnes touchées d'ici 2050</span></div>
+              <div className="stat"><strong>~225 000<sup><a href="#src-4">4</a></sup></strong><span>nouveaux cas diagnostiqués chaque année en France</span></div>
+              <div className="stat"><strong>~1 sur 2<sup><a href="#src-5">5</a></sup></strong><span>résidents d'EHPAD présente des troubles cognitifs</span></div>
             </div>
 
-            <div className="callout">La Haute Autorité de Santé recommande les approches non médicamenteuses en première intention face aux troubles du comportement liés aux maladies neurocognitives — mais elle constate elle-même qu'une grande partie des professionnels de terrain manque de formation spécifique sur ce sujet.</div>
+            <div className="callout">La Haute Autorité de Santé recommande les approches non médicamenteuses en première intention face aux troubles du comportement liés aux maladies neurocognitives<sup><a href="#src-6">6</a></sup> — mais elle constate elle-même qu'une grande partie des professionnels de terrain manque de formation spécifique sur ce sujet<sup><a href="#src-7">7</a></sup>.</div>
 
             <div className="values">
               <article className="value"><div className="number">01</div><h4>Un socle commun</h4><p>Les mêmes repères pour les équipes, du nouvel arrivant à l'encadrement.</p></article>
@@ -91,18 +89,18 @@ export function GateV2({ onChoose }) {
               <article className="value"><div className="number">03</div><h4>Une bibliothèque, pas un diagnostic</h4><p>Des pratiques et ressources d'accompagnement, sans se substituer au jugement clinique.</p></article>
             </div>
 
-            <div className="sources-block">
-              <div className="sources-title">Sources</div>
+            <details className="sources-block">
+              <summary className="sources-title">Sources et références</summary>
               <ol className="sources-list">
-                <li><a href="https://www.francealzheimer.org/prevalence-de-la-maladie-dalzheimer-et-des-maladies-apparentees-14-m-de-personnes-malades-en-2025/" target="_blank" rel="noopener noreferrer">France Alzheimer — « Prévalence de la maladie d'Alzheimer et des maladies apparentées : 1,4 M de personnes malades en 2025 », 13 mars 2025</a></li>
-                <li><a href="https://www.santepubliquefrance.fr/maladie-dalzheimer-et-autres-demences/donnees" target="_blank" rel="noopener noreferrer">Santé publique France — Surveillance épidémiologique de la maladie d'Alzheimer et autres démences</a></li>
-                <li><a href="https://www.fondation-mederic-alzheimer.org/alzheimer-en-chiffres/" target="_blank" rel="noopener noreferrer">Fondation Médéric Alzheimer — « Alzheimer en chiffres », d'après Alzheimer Europe, Dementia Prevalence Report 2025</a></li>
-                <li><a href="https://www.vaincrealzheimer.org/la-maladie/quelques-chiffres/" target="_blank" rel="noopener noreferrer">Fondation Vaincre Alzheimer — « Alzheimer en quelques chiffres » (nouveaux cas diagnostiqués chaque année)</a></li>
-                <li><a href="https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/des-residents-de-plus-en-plus-ages-et" target="_blank" rel="noopener noreferrer">DREES — « Des résidents de plus en plus âgés et dépendants dans les Ehpad » (part des résidents atteints d'une maladie neurodégénérative)</a></li>
-                <li><a href="https://www.has-sante.fr" target="_blank" rel="noopener noreferrer">Haute Autorité de Santé — Recommandations sur les interventions non médicamenteuses dans les troubles du comportement liés aux maladies neurocognitives</a></li>
-                <li><a href="https://www.igas.gouv.fr/sites/igas/files/2024-04/Evaluation%20des%20dispositifs%20sp%C3%A9cialis%C3%A9s%20de%20prise%20en%20charge%20des%20personnes%20atteintes%20de%20maladies%20neurod%C3%A9g%C3%A9n%C3%A9ratives.pdf" target="_blank" rel="noopener noreferrer">IGAS — Évaluation des dispositifs spécialisés de prise en charge des personnes atteintes de maladies neurodégénératives, 2024</a></li>
+                <li id="src-1"><a href="https://www.francealzheimer.org/prevalence-de-la-maladie-dalzheimer-et-des-maladies-apparentees-14-m-de-personnes-malades-en-2025/" target="_blank" rel="noopener noreferrer">France Alzheimer — « Prévalence de la maladie d'Alzheimer et des maladies apparentées : 1,4 M de personnes malades en 2025 », 13 mars 2025</a></li>
+                <li id="src-2"><a href="https://www.santepubliquefrance.fr/maladie-dalzheimer-et-autres-demences/donnees" target="_blank" rel="noopener noreferrer">Santé publique France — Surveillance épidémiologique de la maladie d'Alzheimer et autres démences</a></li>
+                <li id="src-3"><a href="https://www.fondation-mederic-alzheimer.org/alzheimer-en-chiffres/" target="_blank" rel="noopener noreferrer">Fondation Médéric Alzheimer — « Alzheimer en chiffres », d'après Alzheimer Europe, Dementia Prevalence Report 2025</a></li>
+                <li id="src-4"><a href="https://www.vaincrealzheimer.org/la-maladie/quelques-chiffres/" target="_blank" rel="noopener noreferrer">Fondation Vaincre Alzheimer — « Alzheimer en quelques chiffres » (nouveaux cas diagnostiqués chaque année)</a></li>
+                <li id="src-5"><a href="https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/des-residents-de-plus-en-plus-ages-et" target="_blank" rel="noopener noreferrer">DREES — « Des résidents de plus en plus âgés et dépendants dans les Ehpad » (part des résidents atteints d'une maladie neurodégénérative)</a></li>
+                <li id="src-6"><a href="https://www.has-sante.fr" target="_blank" rel="noopener noreferrer">Haute Autorité de Santé — Recommandations sur les interventions non médicamenteuses dans les troubles du comportement liés aux maladies neurocognitives</a></li>
+                <li id="src-7"><a href="https://www.igas.gouv.fr/sites/igas/files/2024-04/Evaluation%20des%20dispositifs%20sp%C3%A9cialis%C3%A9s%20de%20prise%20en%20charge%20des%20personnes%20atteintes%20de%20maladies%20neurod%C3%A9g%C3%A9n%C3%A9ratives.pdf" target="_blank" rel="noopener noreferrer">IGAS — Évaluation des dispositifs spécialisés de prise en charge des personnes atteintes de maladies neurodégénératives, 2024</a></li>
               </ol>
-            </div>
+            </details>
           </section>
 
           <section className="section" id="fonctionnalites">

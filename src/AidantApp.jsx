@@ -63,7 +63,7 @@ export function AidantApp({ onChangeMode }) {
       <div className="lg:max-w-5xl xl:max-w-6xl lg:mx-auto">
       {current.view === "home" && (
         <div className="pb-10">
-          <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
+          <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-sky-900 to-sky-700 text-white rounded-[28px]">
             <svg className="absolute inset-x-0 bottom-0 w-full h-24 lg:h-32 pointer-events-none" viewBox="0 0 400 100" preserveAspectRatio="none">
               <path d="M0,55 C80,80 140,30 220,50 C290,68 340,40 400,58 L400,100 L0,100 Z" fill="rgba(255,255,255,0.05)" />
               <path d="M0,68 C90,45 160,85 240,65 C310,48 350,75 400,62 L400,100 L0,100 Z" fill="rgba(255,255,255,0.07)" />
@@ -73,15 +73,15 @@ export function AidantApp({ onChangeMode }) {
             <div className="relative flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9 rounded-full object-cover shadow-sm" />
-                <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Ap<span className="text-amber-400">é</span>zeo</span>
+                <span className="uppercase tracking-widest text-xs font-semibold text-sky-200">Ap<span className="text-amber-400">é</span>zeo</span>
               </div>
               <button onClick={onChangeMode} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Changer de mode"><ArrowLeftRight size={15} /></button>
             </div>
 
             <h1 className="relative text-2xl lg:text-3xl font-bold mb-1.5 tracking-tight">Un geste apaisant, tout de suite.</h1>
-            <p className="relative text-emerald-200 text-sm mb-7">Des idées simples à essayer, pas à pas.</p>
+            <p className="relative text-sky-200 text-sm mb-7">Des idées simples à essayer, pas à pas.</p>
             <div className="relative">
-              <button onClick={() => push({ view: "quiz" })} className="relative w-full overflow-hidden bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">
+              <button onClick={() => push({ view: "quiz" })} className="relative w-full overflow-hidden bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-sky-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">
                 <span className="cta-shine" />
                 Que faire maintenant ?
               </button>

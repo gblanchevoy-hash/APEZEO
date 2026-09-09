@@ -17,7 +17,7 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
           </span>
         </button>
       )}
-      <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px]">
+      <div className="mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 bg-gradient-to-br from-[#142842] to-[#2c5282] text-white rounded-[28px]">
         {/* Motif de vague — plusieurs profondeurs, très discret, jamais agité */}
         <svg className="absolute inset-x-0 bottom-0 w-full h-24 lg:h-32 pointer-events-none" viewBox="0 0 400 100" preserveAspectRatio="none">
           <path d="M0,55 C80,80 140,30 220,50 C290,68 340,40 400,58 L400,100 L0,100 Z" fill="rgba(255,255,255,0.05)" />
@@ -28,7 +28,7 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9 rounded-full object-cover shadow-sm" />
-            <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Ap<span className="text-amber-400">é</span>zeo</span>
+            <span className="uppercase tracking-widest text-xs font-semibold text-sky-200">Ap<span className="text-amber-400">é</span>zeo</span>
             <span className="text-[11px] bg-white/15 rounded-full px-2 py-0.5">Version Pro</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -39,31 +39,31 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
         </div>
 
         <div className="relative flex mb-4 bg-white/10 rounded-full p-0.5 w-fit">
-          <button onClick={() => modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${!modeExpert ? "bg-white text-emerald-800" : "text-emerald-100"}`}>Bibliothèque Standard</button>
+          <button onClick={() => modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${!modeExpert ? "bg-white text-sky-800" : "text-sky-100"}`}>Bibliothèque Standard</button>
           {canToggleExpert ? (
-            <button onClick={() => !modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${modeExpert ? "bg-emerald-950 text-amber-300" : "text-emerald-100"}`}>Bibliothèque Expert</button>
+            <button onClick={() => !modeExpert && onToggleAffichage()} className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${modeExpert ? "bg-sky-950 text-amber-300" : "text-sky-100"}`}>Bibliothèque Expert</button>
           ) : (
-            <button onClick={onLockedExpertClick} className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full text-emerald-100/50" aria-label="Bibliothèque Expert — accès réservé">
+            <button onClick={onLockedExpertClick} className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full text-sky-100/50" aria-label="Bibliothèque Expert — accès réservé">
               <Lock size={11} /> Bibliothèque Expert
             </button>
           )}
         </div>
 
         <h1 className="relative text-2xl lg:text-3xl font-bold mb-1.5 tracking-tight">Un geste apaisant, tout de suite.</h1>
-        {profession && <p className="relative text-emerald-200 text-xs mb-2.5">Connecté en tant que {profession}</p>}
-        <div className="relative flex items-center gap-3 text-emerald-100 text-sm mb-7">
+        {profession && <p className="relative text-sky-200 text-xs mb-2.5">Connecté en tant que {profession}</p>}
+        <div className="relative flex items-center gap-3 text-sky-100 text-sm mb-7">
           {libraryLoading ? (
-            <span className="flex items-center gap-1.5 text-emerald-200/80"><RefreshCw size={13} className="animate-spin" /> Chargement de la bibliothèque…</span>
+            <span className="flex items-center gap-1.5 text-sky-200/80"><RefreshCw size={13} className="animate-spin" /> Chargement de la bibliothèque…</span>
           ) : (
             <>
-              <span className="flex items-center gap-1.5"><BookOpen size={15} className="text-emerald-300" /> {fiches.length} techniques</span>
-              <span className="text-emerald-400/50">|</span>
-              <span className="flex items-center gap-1.5"><Users size={15} className="text-emerald-300" /> Bibliothèque complète : {dbCount}</span>
+              <span className="flex items-center gap-1.5"><BookOpen size={15} className="text-sky-300" /> {fiches.length} techniques</span>
+              <span className="text-sky-400/50">|</span>
+              <span className="flex items-center gap-1.5"><Users size={15} className="text-sky-300" /> Bibliothèque complète : {dbCount}</span>
             </>
           )}
         </div>
         <div className="relative">
-          <button onClick={onOpenQuiz} className="relative w-full overflow-hidden bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-emerald-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">
+          <button onClick={onOpenQuiz} className="relative w-full overflow-hidden bg-amber-400 hover:bg-amber-300 hover:-translate-y-0.5 hover:shadow-xl text-sky-950 font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg ring-1 ring-white/40 active:scale-[0.98] transition-all duration-200">
             <span className="cta-shine" />
             Trouver la meilleure technique maintenant
           </button>
