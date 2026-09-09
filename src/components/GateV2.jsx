@@ -15,10 +15,7 @@ export function GateV2({ onChoose }) {
         <div className="container">
 
           <nav className="nav" aria-label="Navigation principale">
-            <div className="nav-brand-logo">
-              <img className="nav-logo-mark" src="/logo-phoenix.png" alt="" />
-              <span className="nav-logo-word">Ap<span className="e">é</span>zeo</span>
-            </div>
+            <img className="nav-logo-mark" src="/logo-phoenix.png" alt="Apézeo" />
             <div className="nav-links">
               <a href="#pourquoi">Pourquoi Apézeo</a>
               <a href="#fonctionnalites">Fonctionnalités</a>
@@ -29,6 +26,7 @@ export function GateV2({ onChoose }) {
           </nav>
 
           <header className="hero">
+            <div className="brand-word">Ap<span className="e">é</span>zeo</div>
             <p className="tagline">La bonne pratique, au bon moment, pour tous.</p>
 
             <h1 className="headline">Une ressource pensée pour<br /><span>ceux qui accompagnent.</span></h1>
@@ -93,7 +91,18 @@ export function GateV2({ onChoose }) {
               <article className="value"><div className="number">03</div><h4>Une bibliothèque, pas un diagnostic</h4><p>Des pratiques et ressources d'accompagnement, sans se substituer au jugement clinique.</p></article>
             </div>
 
-            <p className="sources-note">Sources : Santé publique France, France Alzheimer, Alzheimer Europe (rapport de prévalence 2025-2026), Haute Autorité de Santé, IGAS.</p>
+            <div className="sources-block">
+              <div className="sources-title">Sources</div>
+              <ol className="sources-list">
+                <li><a href="https://www.francealzheimer.org/prevalence-de-la-maladie-dalzheimer-et-des-maladies-apparentees-14-m-de-personnes-malades-en-2025/" target="_blank" rel="noopener noreferrer">France Alzheimer — « Prévalence de la maladie d'Alzheimer et des maladies apparentées : 1,4 M de personnes malades en 2025 », 13 mars 2025</a></li>
+                <li><a href="https://www.santepubliquefrance.fr/maladie-dalzheimer-et-autres-demences/donnees" target="_blank" rel="noopener noreferrer">Santé publique France — Surveillance épidémiologique de la maladie d'Alzheimer et autres démences</a></li>
+                <li><a href="https://www.fondation-mederic-alzheimer.org/alzheimer-en-chiffres/" target="_blank" rel="noopener noreferrer">Fondation Médéric Alzheimer — « Alzheimer en chiffres », d'après Alzheimer Europe, Dementia Prevalence Report 2025</a></li>
+                <li><a href="https://www.vaincrealzheimer.org/la-maladie/quelques-chiffres/" target="_blank" rel="noopener noreferrer">Fondation Vaincre Alzheimer — « Alzheimer en quelques chiffres » (nouveaux cas diagnostiqués chaque année)</a></li>
+                <li><a href="https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/des-residents-de-plus-en-plus-ages-et" target="_blank" rel="noopener noreferrer">DREES — « Des résidents de plus en plus âgés et dépendants dans les Ehpad » (part des résidents atteints d'une maladie neurodégénérative)</a></li>
+                <li><a href="https://www.has-sante.fr" target="_blank" rel="noopener noreferrer">Haute Autorité de Santé — Recommandations sur les interventions non médicamenteuses dans les troubles du comportement liés aux maladies neurocognitives</a></li>
+                <li><a href="https://www.igas.gouv.fr/sites/igas/files/2024-04/Evaluation%20des%20dispositifs%20sp%C3%A9cialis%C3%A9s%20de%20prise%20en%20charge%20des%20personnes%20atteintes%20de%20maladies%20neurod%C3%A9g%C3%A9n%C3%A9ratives.pdf" target="_blank" rel="noopener noreferrer">IGAS — Évaluation des dispositifs spécialisés de prise en charge des personnes atteintes de maladies neurodégénératives, 2024</a></li>
+              </ol>
+            </div>
           </section>
 
           <section className="section" id="fonctionnalites">

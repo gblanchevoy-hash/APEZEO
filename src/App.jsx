@@ -380,10 +380,34 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <SituationsView onBack={pop} onOpenSituation={(s) => {
           const matched = fichesRecherchables
             .map((f) => ({ f, n: (f.troubles || []).filter((t) => s.troubles.includes(t)).length }))
-            .filter((x) => x.n > 0)
-            .sort((a, b) => b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve);
+            .filter((x) => x.n > 0);
+
+          // Diversification par catégorie de pratique (communication,
+          // relaxation, activité physique...) : sans ça, une situation
+          // très représentée dans une seule famille (ex. "communication")
+          // noie les techniques d'action concrète (ex. "relaxation") très
+          // loin dans les résultats. On trie d'abord chaque catégorie par
+          // pertinence, puis on les entrelace à tour de rôle.
+          const parCategorie = new Map();
+          for (const x of matched) {
+            const cat = x.f.categorie || "Autres";
+            if (!parCategorie.has(cat)) parCategorie.set(cat, []);
+            parCategorie.get(cat).push(x);
+          }
+          const groupes = [...parCategorie.values()]
+            .map((g) => g.sort((a, b) => b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
+            .sort((a, b) => (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
+          const diversifie = [];
+          let restant = true;
+          while (restant) {
+            restant = false;
+            for (const g of groupes) {
+              if (g.length) { diversifie.push(g.shift()); restant = true; }
+            }
+          }
+
           const max = Math.max(1, ...matched.map((x) => x.n));
-          const results = matched.map((x) => ({ f: x.f, pct: Math.max(20, Math.round((x.n / max) * 100)) }));
+          const results = diversifie.map((x) => ({ f: x.f, pct: Math.max(20, Math.round((x.n / max) * 100)) }));
           push({ view: "recommandations", results, trouble: s.titre, situationContexte: s.contexte });
         }} />
       )}

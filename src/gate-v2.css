@@ -39,11 +39,10 @@
 
 .apezeo-landing-v2 .ic{width:1em;height:1em;display:inline-block;vertical-align:-0.14em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-.apezeo-landing-v2 .nav{min-height:112px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:14px 0}
-.apezeo-landing-v2 .nav-brand-logo{display:flex;align-items:center;gap:12px}
-.apezeo-landing-v2 .nav-logo-mark{width:64px;height:64px;border-radius:50%;object-fit:cover;box-shadow:0 6px 16px rgba(23,65,67,.25)}
-.apezeo-landing-v2 .nav-logo-word{font-family:Lora,Georgia,serif;font-weight:600;font-size:30px;letter-spacing:-1px;color:var(--teal-dark)}
-.apezeo-landing-v2 .nav-logo-word .e{color:var(--orange)}
+.apezeo-landing-v2 .nav{min-height:132px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:14px 0}
+.apezeo-landing-v2 .nav-logo-mark{width:104px;height:104px;border-radius:50%;object-fit:cover;box-shadow:0 8px 22px rgba(23,65,67,.28)}
+.apezeo-landing-v2 .brand-word{font-family:Lora,Georgia,serif;font-weight:600;font-size:52px;letter-spacing:-1.5px;color:var(--teal-dark);line-height:1;margin-bottom:14px}
+.apezeo-landing-v2 .brand-word .e{color:var(--orange)}
 .apezeo-landing-v2 .nav-links{display:flex;align-items:center;gap:30px;font-size:14px;font-weight:650;color:#226c6c}
 .apezeo-landing-v2 .nav-links a{transition:opacity .2s}
 .apezeo-landing-v2 .nav-links a:hover{opacity:.65}
@@ -99,7 +98,12 @@
 .apezeo-landing-v2 .number{width:32px;height:32px;border-radius:50%;background:var(--teal-soft);display:grid;place-items:center;color:var(--teal);font-size:12px;font-weight:800;margin-bottom:13px}
 .apezeo-landing-v2 .value h4{margin:0 0 7px;font-size:15px;color:#123c3e}
 .apezeo-landing-v2 .value p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.5}
-.apezeo-landing-v2 .sources-note{margin-top:22px;font-size:11px;color:#93a5a5;line-height:1.5}
+.apezeo-landing-v2 .sources-block{margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+.apezeo-landing-v2 .sources-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#93a5a5;margin-bottom:10px}
+.apezeo-landing-v2 .sources-list{margin:0;padding-left:18px;display:grid;gap:6px}
+.apezeo-landing-v2 .sources-list li{font-size:11.5px;line-height:1.5;color:#8a9c9c}
+.apezeo-landing-v2 .sources-list a{color:#3c7d7a;text-decoration:underline;text-underline-offset:2px}
+.apezeo-landing-v2 .sources-list a:hover{color:var(--teal)}
 
 .apezeo-landing-v2 .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:26px}
 .apezeo-landing-v2 .feat{background:white;border:1px solid #dce5e3;border-radius:18px;padding:20px;display:flex;gap:14px;align-items:flex-start}
@@ -175,8 +179,8 @@
 }
 @media(max-width:560px){
  .apezeo-landing-v2 .container{width:calc(100% - 28px)}
- .apezeo-landing-v2 .nav-logo-mark{width:44px;height:44px}
- .apezeo-landing-v2 .nav-logo-word{font-size:22px}
+ .apezeo-landing-v2 .nav-logo-mark{width:64px;height:64px}
+ .apezeo-landing-v2 .brand-word{font-size:36px}
  .apezeo-landing-v2 .headline{font-size:30px;letter-spacing:-.5px}
  .apezeo-landing-v2 .nav-links{gap:8px}
  .apezeo-landing-v2 .hero{padding-top:10px}
