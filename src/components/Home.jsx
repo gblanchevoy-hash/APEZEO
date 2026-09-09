@@ -28,7 +28,7 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
         <div className="relative flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9 rounded-full object-cover shadow-sm" />
-            <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
+            <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Ap<span className="text-amber-400">é</span>zeo</span>
             <span className="text-[11px] bg-white/15 rounded-full px-2 py-0.5">Version Pro</span>
           </div>
           <div className="flex items-center gap-1.5">

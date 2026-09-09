@@ -6,7 +6,7 @@ import { supabase } from "../lib/supabase.js";
 import { Field, inputCls } from "./ui.jsx";
 import { LegalView, LegalFooterLinks } from "./legal.jsx";
 
-export function AuthView({ onChooseAidant }) {
+export function AuthView({ onChooseAidant, onBackToLanding }) {
   const [legalDoc, setLegalDoc] = useState(null);
   const [accepted, setAccepted] = useState(false);
   const [mode, setMode] = useState("login"); // "login" | "signup"
@@ -53,10 +53,16 @@ export function AuthView({ onChooseAidant }) {
   return (
     <div className="min-h-screen bg-[#F4F6F2] flex items-center justify-center p-5">
       <div className="w-full max-w-sm">
+        {onBackToLanding && (
+          <button onClick={onBackToLanding} className="flex items-center gap-1.5 text-sm text-emerald-700 font-medium mb-4">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            Retour à l'accueil
+          </button>
+        )}
         {/* Vitrine commerciale */}
         <div className="text-center mb-6">
           <img src="/logo-phoenix.png" alt="Apézeo" className="w-36 h-36 mx-auto mb-4 drop-shadow-lg" />
-          <h1 className="text-4xl font-bold text-emerald-950 tracking-tight">Apézeo</h1>
+          <h1 className="text-4xl font-bold text-emerald-950 tracking-tight">Ap<span className="text-amber-500">é</span>zeo</h1>
           <p className="text-base text-stone-500 mt-1">Version Pro</p>
         </div>
         <div className="relative overflow-hidden bg-gradient-to-br from-emerald-900 to-emerald-700 text-white rounded-[28px] p-6 mb-6">

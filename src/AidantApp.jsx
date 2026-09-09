@@ -73,7 +73,7 @@ export function AidantApp({ onChangeMode }) {
             <div className="relative flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <img src="/logo-phoenix.png" alt="Apézeo" className="w-9 h-9 rounded-full object-cover shadow-sm" />
-                <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Apézeo</span>
+                <span className="uppercase tracking-widest text-xs font-semibold text-emerald-200">Ap<span className="text-amber-400">é</span>zeo</span>
               </div>
               <button onClick={onChangeMode} className="p-2 rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/60 active:scale-95 transition" aria-label="Changer de mode"><ArrowLeftRight size={15} /></button>
             </div>

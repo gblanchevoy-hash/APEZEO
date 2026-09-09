@@ -67,6 +67,6 @@ describe("AuthView", () => {
 describe("AidantApp", () => {
   it("s'affiche sans planter (accueil aidant, après clic sur la carte ambre de la landing)", () => {
     render(<AidantApp onChangeMode={noop} />);
-    expect(screen.getAllByText(/Apézeo/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText((_, node) => node?.textContent === "Apézeo").length).toBeGreaterThan(0);
   });
 });

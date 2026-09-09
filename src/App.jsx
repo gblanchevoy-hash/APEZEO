@@ -552,7 +552,7 @@ export default function App() {
     );
   }
 
-  if (!session) return <AuthView onChooseAidant={() => chooseMode("aidant")} />;
+  if (!session) return <AuthView onChooseAidant={() => chooseMode("aidant")} onBackToLanding={changeMode} />;
 
   return <AuthenticatedApp session={session} onChangeMode={changeMode} />;
 }

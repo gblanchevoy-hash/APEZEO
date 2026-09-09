@@ -15,7 +15,10 @@ export function GateV2({ onChoose }) {
         <div className="container">
 
           <nav className="nav" aria-label="Navigation principale">
-            <div className="nav-brand">Apézeo</div>
+            <div className="nav-brand-logo">
+              <img className="nav-logo-mark" src="/logo-phoenix.png" alt="" />
+              <span className="nav-logo-word">Ap<span className="e">é</span>zeo</span>
+            </div>
             <div className="nav-links">
               <a href="#pourquoi">Pourquoi Apézeo</a>
               <a href="#fonctionnalites">Fonctionnalités</a>
@@ -26,10 +29,6 @@ export function GateV2({ onChoose }) {
           </nav>
 
           <header className="hero">
-            <div className="logo-row">
-              <img className="logo-mark" src="/logo-phoenix.png" alt="" />
-              <div className="logo-word">Ap<span className="e">é</span>zeo</div>
-            </div>
             <p className="tagline">La bonne pratique, au bon moment, pour tous.</p>
 
             <h1 className="headline">Une ressource pensée pour<br /><span>ceux qui accompagnent.</span></h1>
@@ -111,8 +110,29 @@ export function GateV2({ onChoose }) {
 
             <div className="flyer">
               <div className="flyer-inner">
-                <div className="flyer-title">Utiliser des interventions non médicamenteuses <span>tout en se formant au quotidien.</span></div>
-                <div className="flyer-count"><b>1500+</b><span>fiches de techniques non médicamenteuses et d'outils de compréhension des troubles, sourcées HAS, NICE, France Alzheimer, OMS et sociétés savantes.</span></div>
+                <div className="flyer-text">
+                  <div className="flyer-title">Utiliser des interventions non médicamenteuses <span>tout en se formant au quotidien.</span></div>
+                  <div className="flyer-count"><b>1500+</b><span>fiches de techniques non médicamenteuses et d'outils de compréhension des troubles, sourcées HAS, NICE, France Alzheimer, OMS et sociétés savantes.</span></div>
+                </div>
+                <div className="flyer-devices" aria-hidden="true">
+                  <div className="device tablet">
+                    <div className="device-head"><img src="/logo-phoenix.png" alt="" /><span>Apézeo</span></div>
+                    <div className="mock-fiche">
+                      <div className="mock-badge" />
+                      <div className="mock-line w70" />
+                      <div className="mock-line w90" />
+                      <div className="mock-line w50" />
+                      <div className="mock-chip" />
+                    </div>
+                  </div>
+                  <div className="device phone">
+                    <div className="mock-fiche small">
+                      <div className="mock-badge sm" />
+                      <div className="mock-line w80" />
+                      <div className="mock-line w60" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
