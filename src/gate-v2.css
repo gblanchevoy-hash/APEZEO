@@ -40,17 +40,18 @@
 .apezeo-landing-v2 .ic{width:1em;height:1em;display:inline-block;vertical-align:-0.14em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
 .apezeo-landing-v2 .nav{min-height:190px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:14px 0}
-.apezeo-landing-v2 .nav-logo-mark{width:160px;height:160px;border-radius:50%;object-fit:cover;box-shadow:0 12px 32px rgba(23,65,67,.32)}
+.apezeo-landing-v2 .nav-logo-mark{width:160px;height:160px;margin-top:28px;border-radius:50%;object-fit:cover;box-shadow:0 12px 32px rgba(23,65,67,.32)}
 .apezeo-landing-v2 .brand-word{font-family:Lora,Georgia,serif;font-weight:600;font-size:92px;letter-spacing:-2.5px;color:var(--teal-dark);line-height:1;margin-bottom:18px}
 .apezeo-landing-v2 .brand-word .e{color:var(--orange)}
-.apezeo-landing-v2 .nav-links{display:flex;align-items:center;gap:30px;font-size:14px;font-weight:650;color:#226c6c}
-.apezeo-landing-v2 .nav-links a{transition:opacity .2s}
-.apezeo-landing-v2 .nav-links a:hover{opacity:.65}
-.apezeo-landing-v2 .nav-login{border:1px solid rgba(10,119,116,.25);border-radius:999px;padding:10px 17px;color:#226c6c;font-weight:650;font-size:14px}
+.apezeo-landing-v2 .nav-links{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:650}
+.apezeo-landing-v2 .nav-links a{padding:10px 16px;border-radius:999px;color:#226c6c;background:rgba(10,119,116,.07);transition:background .18s ease,color .18s ease,transform .18s ease}
+.apezeo-landing-v2 .nav-links a:hover{background:rgba(10,119,116,.14);transform:translateY(-1px)}
+.apezeo-landing-v2 .nav-login{border:0;border-radius:999px;padding:11px 22px;color:#fff;font-weight:700;font-size:13.5px;background:linear-gradient(135deg,var(--teal-dark),var(--teal));box-shadow:0 8px 18px -6px rgba(10,119,116,.5);transition:transform .18s ease,box-shadow .18s ease}
+.apezeo-landing-v2 .nav-login:hover{transform:translateY(-1px);box-shadow:0 12px 22px -6px rgba(10,119,116,.55)}
 
 .apezeo-landing-v2 .hero{text-align:center;padding:22px 0 0}
 .apezeo-landing-v2 .tagline{color:var(--teal-dark);font-size:17px;font-weight:700;margin:26px 0 30px}
-.apezeo-landing-v2 .headline{max-width:900px;margin:34px auto 34px;font-family:Lora,Georgia,serif;font-weight:600;font-size:44px;line-height:1.15;letter-spacing:-1px}
+.apezeo-landing-v2 .headline{max-width:900px;margin:56px auto 56px;font-family:Lora,Georgia,serif;font-weight:600;font-size:44px;line-height:1.15;letter-spacing:-1px}
 .apezeo-landing-v2 .headline span{color:var(--teal)}
 .apezeo-landing-v2 .subhead{max-width:720px;margin:0 auto 36px;font-size:17px;line-height:1.55;color:var(--muted)}
 

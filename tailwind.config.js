@@ -1,25 +1,23 @@
 import colors from "tailwindcss/colors";
 
+// "emerald" est la seule famille de couleur qui change de sens selon le
+// contexte (vert en bibliothèque Standard, ardoise en bibliothèque
+// Expert) -- elle pointe donc vers des variables CSS (définies dans
+// src/theme.css), pas des couleurs figées. Ainsi, TOUTE classe
+// emerald-XXX utilisée n'importe où dans l'app -- même une nouvelle,
+// jamais listée nulle part -- bascule automatiquement de couleur sous
+// .theme-expert, sans liste à maintenir à la main.
+const emeraldVar = (shade) => `rgb(var(--emerald-${shade}) / <alpha-value>)`;
+
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
-        // Harmonisées sur les couleurs de la landing page (gate-v2.css)
-        // pour que le même vert et le même orange soient utilisés dans
-        // toute l'application, pas seulement sur la page d'accueil.
         emerald: {
-          50: "#eef8f7",
-          100: "#d7f0ed",
-          200: "#aee1db",
-          300: "#7fcec5",
-          400: "#4bb3a8",
-          500: "#0a7774",
-          600: "#096a67",
-          700: "#0a5654",
-          800: "#0c4442",
-          900: "#174143",
-          950: "#0a2827",
+          50: emeraldVar(50), 100: emeraldVar(100), 200: emeraldVar(200), 300: emeraldVar(300),
+          400: emeraldVar(400), 500: emeraldVar(500), 600: emeraldVar(600), 700: emeraldVar(700),
+          800: emeraldVar(800), 900: emeraldVar(900), 950: emeraldVar(950),
         },
         amber: {
           50: "#fff3e0",

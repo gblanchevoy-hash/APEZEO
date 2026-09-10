@@ -109,8 +109,18 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
 export function RecommandationsView({ title, results, suggestions, situationContexte, favoris, onBack, onOpenFiche }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   const [showAll, setShowAll] = useState(false);
-  const visibles = showAll ? results : results.slice(0, 8);
-  const reste = results.length - 8;
+  const [offset, setOffset] = useState(0);
+  const PAGE = 8;
+  // Pour une situation fréquente, "Proposer un autre choix" avance dans le
+  // classement déjà diversifié (communication/compréhension/action) plutôt
+  // que d'accumuler. On ne propose ce bouton que s'il reste assez de fiches
+  // en lien avec la situation pour un mix vraiment nouveau -- mieux vaut
+  // remontrer les mêmes fiches que d'aller piocher hors du besoin réel.
+  const isSituation = Boolean(situationContexte);
+  const visibles = isSituation ? results.slice(offset, offset + PAGE) : (showAll ? results : results.slice(0, PAGE));
+  const reste = results.length - PAGE;
+  const resteApresOffset = results.length - (offset + PAGE);
+  const peutProposerNouveauMix = isSituation && resteApresOffset >= Math.min(4, PAGE);
   return (
     <div className="pb-10">
       <TopBar title={`Pour : ${title}`} onBack={onBack} />
@@ -161,10 +171,18 @@ export function RecommandationsView({ title, results, suggestions, situationCont
             </button>
           );
         })}
-        {!showAll && reste > 0 && (
+        {!isSituation && !showAll && reste > 0 && (
           <button onClick={() => setShowAll(true)} className="text-sm font-semibold text-emerald-700 text-center py-3 rounded-xl border border-emerald-700/20 hover:bg-emerald-50 transition-colors">
             Voir les {reste} autre{reste > 1 ? "s" : ""} fiche{reste > 1 ? "s" : ""} correspondante{reste > 1 ? "s" : ""}
           </button>
+        )}
+        {peutProposerNouveauMix && (
+          <button onClick={() => setOffset(offset + PAGE)} className="text-sm font-semibold text-amber-700 text-center py-3 rounded-xl border border-amber-700/20 hover:bg-amber-50 transition-colors">
+            Proposer un autre choix de fiches
+          </button>
+        )}
+        {isSituation && !peutProposerNouveauMix && offset > 0 && (
+          <div className="text-xs text-stone-400 text-center py-2">Ce sont toutes les fiches disponibles pour cette situation.</div>
         )}
       </div>
     </div>
