@@ -379,6 +379,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
       {current.view === "situations" && (
         <SituationsView onBack={pop} onOpenSituation={(s) => {
           const matched = fichesRecherchables
+            .filter((f) => !(s.exclure || []).includes(f.titre))
             .map((f) => ({ f, n: (f.troubles || []).filter((t) => s.troubles.includes(t)).length }))
             .filter((x) => x.n > 0);
 

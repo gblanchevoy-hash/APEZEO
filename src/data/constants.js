@@ -61,7 +61,7 @@ export const SITUATIONS_TYPES = [
   { id: "agressivite-soudaine", titre: "Comportement agressif soudain", contexte: "Un comportement agressif, verbal ou physique, apparaît sans prévenir.", troubles: ["Agressivité"] },
   { id: "geste-sexuel-inadapte", titre: "Geste ou parole déplacée à caractère sexuel", contexte: "Un comportement à caractère sexuel inadapté au contexte se produit.", troubles: ["Comportements sexuels inadaptés"] },
   { id: "reveils-nuit", titre: "Réveils répétés la nuit", contexte: "La personne se réveille plusieurs fois pendant la nuit.", troubles: ["Troubles nocturnes", "Sommeil perturbé"] },
-  { id: "deambulation-nocturne", titre: "Déambulations nocturnes dans les couloirs", contexte: "La personne marche dans les couloirs pendant la nuit.", troubles: ["Déambulation", "Troubles nocturnes"] },
+  { id: "deambulation-nocturne", titre: "Déambulations nocturnes dans les couloirs", contexte: "La personne marche dans les couloirs pendant la nuit.", troubles: ["Déambulation", "Troubles nocturnes"], exclure: ["Participer à l'arrosage de quelques plantes"] },
   { id: "anxiete-marquee", titre: "Anxiété marquée, inquiétude envahissante", contexte: "Une inquiétude forte et persistante prend le dessus.", troubles: ["Anxiété"] },
   { id: "retrait-tristesse", titre: "Personne triste, en retrait, qui ne fait plus rien", contexte: "La personne se retire, ne participe plus aux activités habituelles.", troubles: ["Symptômes dépressifs", "Apathie"] },
   { id: "confusion-lieu-temps", titre: "Confusion sur le lieu ou le moment", contexte: "La personne ne sait plus où elle se trouve ou quel moment de la journée c'est.", troubles: ["Désorientation"] },
