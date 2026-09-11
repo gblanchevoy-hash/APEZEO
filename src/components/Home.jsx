@@ -17,7 +17,7 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
           </span>
         </button>
       )}
-      <div className={`mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 text-white rounded-[28px] bg-gradient-to-br ${modeExpert ? "from-[#142842] to-[#2c5282]" : "from-emerald-950 to-emerald-700"}`}>
+      <div className={`mx-4 mt-4 lg:mx-8 lg:mt-6 relative overflow-hidden px-6 pt-7 pb-10 lg:px-10 lg:pt-10 lg:pb-14 text-white rounded-[28px] bg-gradient-to-br ${modeExpert ? "from-[#062339] to-[#0c4a6e]" : "from-emerald-950 to-emerald-700"}`}>
         {/* Motif de vague — plusieurs profondeurs, très discret, jamais agité */}
         <svg className="absolute inset-x-0 bottom-0 w-full h-24 lg:h-32 pointer-events-none" viewBox="0 0 400 100" preserveAspectRatio="none">
           <path d="M0,55 C80,80 140,30 220,50 C290,68 340,40 400,58 L400,100 L0,100 Z" fill="rgba(255,255,255,0.05)" />

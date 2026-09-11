@@ -1,5 +1,5 @@
 /* ============================================================
-   THÈME ARDOISE — Bibliothèque Expert
+   THÈME COBALT SOMBRE — Bibliothèque Expert
    Toute classe Tailwind "emerald-XXX" (bg-, text-, border-, from-,
    to-, ring-, outline-, accent-...) est résolue via ces variables
    (voir tailwind.config.js), pas des couleurs figées. Basculer les
@@ -9,7 +9,7 @@
 
    Valeurs "vert" (par défaut, bibliothèque Standard) : identiques
    à la palette emerald de tailwind.config.js.
-   Valeurs "ardoise" (sous .theme-expert, bibliothèque Expert) :
+   Valeurs "cobalt sombre" (sous .theme-expert, bibliothèque Expert) :
    identiques à la palette sky de tailwind.config.js.
    Les deux fichiers doivent rester synchronisés si la palette
    change un jour.
@@ -30,15 +30,15 @@
 }
 
 .theme-expert {
-  --emerald-50: 240 244 248;
-  --emerald-100: 219 230 240;
-  --emerald-200: 183 203 224;
-  --emerald-300: 127 160 196;
-  --emerald-400: 44 82 130;
-  --emerald-500: 38 75 116;
-  --emerald-600: 32 64 100;
-  --emerald-700: 28 58 90;
-  --emerald-800: 26 54 93;
-  --emerald-900: 20 40 66;
-  --emerald-950: 11 26 44;
+  --emerald-50: 238 246 250;
+  --emerald-100: 207 227 239;
+  --emerald-200: 168 206 225;
+  --emerald-300: 116 175 201;
+  --emerald-400: 12 74 110;
+  --emerald-500: 10 63 95;
+  --emerald-600: 9 54 83;
+  --emerald-700: 8 48 72;
+  --emerald-800: 8 47 73;
+  --emerald-900: 6 35 57;
+  --emerald-950: 4 21 38;
 }
