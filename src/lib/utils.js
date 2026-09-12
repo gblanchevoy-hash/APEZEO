@@ -52,12 +52,33 @@ export const scoreFiche = (f, q, favoris) => {
   if (q.troubleIds && q.troubleIds.length > 0 && !q.troubleIds.every((t) => f.troubles.includes(t))) return null;
   if (q.besoin && f.categorie !== q.besoin) return null;
   if (q.tempsDispo != null && f.dureeMinutes > 0 && f.dureeMinutes > q.tempsDispo) return null;
+  // Mobilisation limitée (douleur signalée ou non mobilisable) : on
+  // écarte complètement l'activité physique plutôt que de la
+  // dépriorité -- c'est une question de sécurité, pas de préférence.
+  if (q.mobilisationLimitee && f.categorie === "Activité physique") return null;
   let score = 0;
   score += (q.troubleIds?.length || 0) * 20;
   if (q.besoin) score += 25;
   if (q.stade && f.stades.includes(q.stade)) score += 15;
   if (q.contexte && (f.contextes || []).includes(q.contexte)) score += 10;
   if (q.moment && f.momentJournee === q.moment) score += 10;
+  // Accès au langage verbal réduit ou absent : les approches non
+  // verbales prennent le pas sur la communication verbale.
+  if (q.langageVerbal === "non" || q.langageVerbal === "difficile") {
+    if (["Stimulation sensorielle", "Toucher / Massage", "Validation émotionnelle"].includes(f.categorie)) score += 12;
+    if (f.categorie === "Communication") score -= 12;
+  }
+  // Toucher non accessible : dépriorité sans exclure (certaines fiches
+  // "Toucher / Massage" ne supposent pas forcément un contact direct).
+  if (q.toucherAccessible === false && f.categorie === "Toucher / Massage") score -= 20;
+  // Symptômes dépressifs signalés en plus du motif principal de
+  // recherche : les fiches déjà taguées pour ce trouble remontent,
+  // même si ce n'est pas le trouble sélectionné en premier lieu.
+  if (q.symptomesDepressifs && f.troubles.includes("Symptômes dépressifs")) score += 15;
+  // Récurrence du trouble (option 2 : pas de nouveau tag sur les
+  // fiches, on repondère seulement les catégories déjà en place).
+  if (q.recurrence === "frequent" && ["Routine", "Environnement"].includes(f.categorie)) score += 8;
+  if (q.recurrence === "isole" && ["Communication", "Gestion des besoins"].includes(f.categorie)) score += 8;
   if (q.materielDispo === false && (f.materiel || []).length === 0) score += 10;
   if (q.materielDispo === true) score += 3;
   score += (f.niveauPreuve || 0) * 2;

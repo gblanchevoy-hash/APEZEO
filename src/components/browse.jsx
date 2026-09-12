@@ -10,20 +10,36 @@ import { TopBar, Badge } from "./ui.jsx";
 import { FicheCard } from "./FicheCard.jsx";
 
 export function SituationsView({ onBack, onOpenSituation }) {
+  const [pending, setPending] = useState(null); // situation en attente de la question de récurrence
+  const proceed = (recurrence) => { onOpenSituation(pending, recurrence); setPending(null); };
   return (
     <div className="pb-10">
       <TopBar title="Situations fréquentes" onBack={onBack} />
       <div className="px-5 lg:px-9 pt-3 pb-1">
         <p className="text-sm text-stone-500">Des situations de terrain courantes, avec quelques pistes à adapter selon la personne — pas une marche à suivre.</p>
       </div>
-      <div className="p-5 lg:px-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {SITUATIONS_TYPES.map((s) => (
-          <button key={s.id} onClick={() => onOpenSituation(s)} className="bg-white rounded-2xl p-4 text-left border-l-[3px] border-[#c8a04d] shadow-[0_2px_10px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_18px_-6px_rgba(6,78,59,0.15)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
-            <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight mb-1.5">{s.titre}</div>
-            <div className="text-xs text-stone-500 leading-relaxed">{s.contexte}</div>
-          </button>
-        ))}
-      </div>
+      {pending ? (
+        <div className="px-5 lg:px-9 pt-3">
+          <div className="bg-white rounded-2xl p-4 border-l-[3px] border-[#c8a04d] shadow-sm">
+            <div className="font-semibold text-emerald-950 text-sm mb-3">{pending.titre}</div>
+            <p className="text-xs text-stone-500 mb-2">Ce comportement se manifeste-t-il... ?</p>
+            <div className="flex flex-col gap-2">
+              <button onClick={() => proceed("frequent")} className="text-left text-sm bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-medium rounded-xl px-3.5 py-2.5 transition-colors">Plusieurs fois par jour, ou de façon très régulière</button>
+              <button onClick={() => proceed("isole")} className="text-left text-sm bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-medium rounded-xl px-3.5 py-2.5 transition-colors">De façon ponctuelle ou rare</button>
+              <button onClick={() => proceed(null)} className="text-left text-xs text-stone-400 underline px-3.5 py-1">Je ne sais pas / passer cette question</button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="p-5 lg:px-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {SITUATIONS_TYPES.map((s) => (
+            <button key={s.id} onClick={() => setPending(s)} className="bg-white rounded-2xl p-4 text-left border-l-[3px] border-[#c8a04d] shadow-[0_2px_10px_-4px_rgba(6,78,59,0.08)] hover:shadow-[0_6px_18px_-6px_rgba(6,78,59,0.15)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200">
+              <div className="font-semibold text-emerald-950 text-sm leading-snug tracking-tight mb-1.5">{s.titre}</div>
+              <div className="text-xs text-stone-500 leading-relaxed">{s.contexte}</div>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

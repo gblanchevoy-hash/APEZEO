@@ -1,13 +1,14 @@
 // Formulaire "Trouver la meilleure technique" et sa page de résultats.
 // Partagé entre les vues Pro et Aidant.
 import { useState, useMemo } from "react";
-import { Search, ChevronRight, AlertTriangle, Heart } from "lucide-react";
+import { Search, ChevronRight, ChevronDown, AlertTriangle, Heart } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES, MOMENTS } from "../data/constants.js";
 import { TopBar, Badge, CheckGroup, ScoreRing, inputCls, Stars } from "./ui.jsx";
 import { scoreFiche } from "../lib/utils.js";
 
 export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
   const [q, setQ] = useState({ troubleIds: [], besoin: "", stade: "", contexte: "", materielDispo: true, typeVoulu: "tous" });
+  const [affiner, setAffiner] = useState(false);
   const toggleTrouble = (t) => setQ((s) => ({ ...s, troubleIds: s.troubleIds.includes(t) ? s.troubleIds.filter((x) => x !== t) : [...s.troubleIds, t] }));
   const resultCount = useMemo(
     () => fichesDisponibles.filter((f) => scoreFiche(f, q, null) !== null).length,
@@ -95,6 +96,54 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
             <CheckGroup options={STADES} selected={q.stade ? [q.stade] : []} onToggle={(v) => setQ({ ...q, stade: q.stade === v ? "" : v })} />
             <CheckGroup options={CONTEXTES} selected={q.contexte ? [q.contexte] : []} onToggle={(v) => setQ({ ...q, contexte: q.contexte === v ? "" : v })} />
             <CheckGroup options={MOMENTS} selected={q.moment ? [q.moment] : []} onToggle={(v) => setQ({ ...q, moment: q.moment === v ? "" : v })} />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">5</div>
+            <span className="font-semibold text-emerald-950">Repères cliniques</span>
+          </div>
+          <div className="ml-9 flex flex-col gap-3">
+            <div>
+              <p className="text-xs text-stone-500 mb-1.5">Accès au langage verbal</p>
+              <CheckGroup options={["Préservé", "Difficile", "Absent"]}
+                selected={q.langageVerbal ? [{ oui: "Préservé", difficile: "Difficile", non: "Absent" }[q.langageVerbal]] : []}
+                onToggle={(v) => { const map = { "Préservé": "oui", "Difficile": "difficile", "Absent": "non" }; setQ({ ...q, langageVerbal: q.langageVerbal === map[v] ? "" : map[v] }); }} />
+            </div>
+            <div>
+              <p className="text-xs text-stone-500 mb-1.5">Mobilisation</p>
+              <CheckGroup options={["Mobilisable", "Douleur / limitation signalée"]}
+                selected={[q.mobilisationLimitee ? "Douleur / limitation signalée" : "Mobilisable"]}
+                onToggle={(v) => setQ({ ...q, mobilisationLimitee: v === "Douleur / limitation signalée" ? !q.mobilisationLimitee : q.mobilisationLimitee })} />
+              {q.mobilisationLimitee && (
+                <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1.5 mt-1.5 flex items-start gap-1.5">
+                  <AlertTriangle size={13} className="shrink-0 mt-0.5" />
+                  Les techniques nécessitant un effort physique sont écartées des résultats. Avis médical recommandé si ce n'est pas déjà fait.
+                </p>
+              )}
+            </div>
+
+            <button type="button" onClick={() => setAffiner(!affiner)} className="flex items-center gap-1 text-xs font-semibold text-emerald-700 self-start">
+              {affiner ? <ChevronDown size={14} /> : <ChevronRight size={14} />} Affiner (toucher, symptômes dépressifs)
+            </button>
+            {affiner && (
+              <div className="flex flex-col gap-3 bg-stone-50 rounded-xl p-3">
+                <div>
+                  <p className="text-xs text-stone-500 mb-1.5">Accessible au toucher</p>
+                  <CheckGroup options={["Oui", "Non"]}
+                    selected={q.toucherAccessible == null ? [] : [q.toucherAccessible ? "Oui" : "Non"]}
+                    onToggle={(v) => setQ({ ...q, toucherAccessible: q.toucherAccessible === (v === "Oui") ? null : v === "Oui" })} />
+                </div>
+                <div>
+                  <p className="text-xs text-stone-500 mb-1">Présente-t-elle des symptômes dépressifs ?</p>
+                  <p className="text-[11px] text-stone-400 mb-1.5">Tristesse exprimée, pleurs, dévalorisation — à distinguer de l'apathie (absence d'initiative sans souffrance exprimée) et d'un trait de caractère habituel de la personne.</p>
+                  <CheckGroup options={["Oui", "Non"]}
+                    selected={q.symptomesDepressifs == null ? [] : [q.symptomesDepressifs ? "Oui" : "Non"]}
+                    onToggle={(v) => setQ({ ...q, symptomesDepressifs: q.symptomesDepressifs === (v === "Oui") ? null : v === "Oui" })} />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

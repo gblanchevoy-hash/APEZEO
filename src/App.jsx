@@ -386,11 +386,20 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
 
       {current.view === "situations" && (
-        <SituationsView onBack={pop} onOpenSituation={(s) => {
+        <SituationsView onBack={pop} onOpenSituation={(s, recurrence) => {
           const matched = fichesRecherchables
             .filter((f) => !(s.exclure || []).includes(f.titre))
             .map((f) => ({ f, n: (f.troubles || []).filter((t) => s.troubles.includes(t)).length }))
             .filter((x) => x.n > 0);
+
+          // Récurrence du trouble (option 2 validée avec l'utilisateur :
+          // pas de nouveau tag sur les fiches, juste une repondération
+          // des catégories déjà en place selon la réponse donnée).
+          const bonusRecurrence = (categorie) => {
+            if (recurrence === "frequent" && ["Routine", "Environnement"].includes(categorie)) return 1;
+            if (recurrence === "isole" && ["Communication", "Gestion des besoins"].includes(categorie)) return 1;
+            return 0;
+          };
 
           // Diversification par catégorie de pratique (communication,
           // relaxation, activité physique...) : sans ça, une situation
@@ -406,7 +415,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           }
           const groupes = [...parCategorie.values()]
             .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
-            .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
+            .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || bonusRecurrence(b[0].f.categorie) - bonusRecurrence(a[0].f.categorie) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
           const diversifie = [];
           let restant = true;
           while (restant) {
