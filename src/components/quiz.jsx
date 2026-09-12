@@ -2,7 +2,7 @@
 // Partagé entre les vues Pro et Aidant.
 import { useState, useMemo } from "react";
 import { Search, ChevronRight, AlertTriangle, Heart } from "lucide-react";
-import { TROUBLES, FAMILLES, STADES, CONTEXTES } from "../data/constants.js";
+import { TROUBLES, FAMILLES, STADES, CONTEXTES, MOMENTS } from "../data/constants.js";
 import { TopBar, Badge, CheckGroup, ScoreRing, inputCls, Stars } from "./ui.jsx";
 import { scoreFiche } from "../lib/utils.js";
 
@@ -94,6 +94,7 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
           <div className="ml-9 flex flex-col gap-3">
             <CheckGroup options={STADES} selected={q.stade ? [q.stade] : []} onToggle={(v) => setQ({ ...q, stade: q.stade === v ? "" : v })} />
             <CheckGroup options={CONTEXTES} selected={q.contexte ? [q.contexte] : []} onToggle={(v) => setQ({ ...q, contexte: q.contexte === v ? "" : v })} />
+            <CheckGroup options={MOMENTS} selected={q.moment ? [q.moment] : []} onToggle={(v) => setQ({ ...q, moment: q.moment === v ? "" : v })} />
           </div>
         </div>
 
@@ -106,11 +107,20 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
   );
 }
 
-export function RecommandationsView({ title, results, suggestions, situationContexte, favoris, onBack, onOpenFiche }) {
+export function RecommandationsView({ title, results, suggestions, situationContexte, favoris, onBack, onOpenFiche, resultOffset, onAdvance }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   const [showAll, setShowAll] = useState(false);
-  const [offset, setOffset] = useState(0);
   const PAGE = 8;
+  // L'offset vit normalement dans la pile de navigation (resultOffset/
+  // onAdvance, passés par App.jsx) pour survivre à un aller-retour vers
+  // une fiche. Si absent (ex. app Aidant, qui n'a pas ce mécanisme), on
+  // retombe sur un état local classique.
+  const [localOffset, setLocalOffset] = useState(0);
+  const offset = resultOffset ?? localOffset;
+  const avancer = () => {
+    if (onAdvance) onAdvance(); else setLocalOffset(offset + PAGE);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   // Pour une situation fréquente, "Proposer un autre choix" avance dans le
   // classement déjà diversifié (communication/compréhension/action) plutôt
   // que d'accumuler. On ne propose ce bouton que s'il reste assez de fiches
@@ -177,7 +187,7 @@ export function RecommandationsView({ title, results, suggestions, situationCont
           </button>
         )}
         {peutProposerNouveauMix && (
-          <button onClick={() => setOffset(offset + PAGE)} className="text-sm font-semibold text-amber-700 text-center py-3 rounded-xl border border-amber-700/20 hover:bg-amber-50 transition-colors">
+          <button onClick={avancer} className="text-sm font-semibold text-amber-700 text-center py-3 rounded-xl border border-amber-700/20 hover:bg-amber-50 transition-colors">
             Proposer un autre choix de fiches
           </button>
         )}

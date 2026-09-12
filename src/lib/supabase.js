@@ -50,6 +50,7 @@ export function rowToFiche(row) {
     croquisSvg: row.croquis_svg || "",
     croquisUrl: row.croquis_url || "",
     alerteOutil: row.alerte_outil || "",
+    momentJournee: row.moment_journee || "Jour",
     techniqueId: row.technique_id || null,
     techniquesLiees: row.techniques_liees || [],
     objectifsObservables: row.objectifs_observables || [],

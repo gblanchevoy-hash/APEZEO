@@ -4,6 +4,14 @@
 
 export const uid = () => `local-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
 
+// Certains outils portent une alerte de sécurité/réglementaire
+// (alerteOutil non vide -- ex. un vêtement à fermeture dos, proche
+// d'une contention physique passive). Règle absolue : ils ne doivent
+// jamais remonter parmi les premières propositions. Ce rang se place
+// TOUJOURS en tout premier critère de tri, avant la pertinence,
+// partout où des fiches sont classées (situations, quiz, troubles...).
+export const rangDernierRecours = (f) => (f?.alerteOutil ? 1 : 0);
+
 export const linesToArray = (s) => (s || "").split("\n").map((x) => x.trim()).filter(Boolean);
 
 export const arrayToLines = (a) => (a || []).join("\n");
@@ -49,6 +57,7 @@ export const scoreFiche = (f, q, favoris) => {
   if (q.besoin) score += 25;
   if (q.stade && f.stades.includes(q.stade)) score += 15;
   if (q.contexte && (f.contextes || []).includes(q.contexte)) score += 10;
+  if (q.moment && f.momentJournee === q.moment) score += 10;
   if (q.materielDispo === false && (f.materiel || []).length === 0) score += 10;
   if (q.materielDispo === true) score += 3;
   score += (f.niveauPreuve || 0) * 2;

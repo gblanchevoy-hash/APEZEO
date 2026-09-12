@@ -1,7 +1,7 @@
 // Écran de création et gestion des structures (clients B2B),
 // réservé au super-admin.
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Trash2, AlertTriangle, Copy } from "lucide-react";
+import { Plus, Trash2, AlertTriangle, Copy, ChevronDown, ChevronRight, Mail, Users } from "lucide-react";
 import { supabase } from "../lib/supabase.js";
 import { Field, TopBar, inputCls } from "./ui.jsx";
 import { generateCode, StructureStatusBadge } from "./adminShared.jsx";
@@ -28,11 +28,25 @@ export function CreateStructureView({ onBack }) {
   const [editEssaiValue, setEditEssaiValue] = useState("");
   const [editAdminEmail, setEditAdminEmail] = useState("");
   const [savingParams, setSavingParams] = useState(false);
+  const [profilsParStructure, setProfilsParStructure] = useState(new Map());
+  const [structuresDepliees, setStructuresDepliees] = useState(new Set());
 
   const loadStructures = useCallback(async () => {
     setLoadingList(true);
-    const { data } = await supabase.from("structures").select("*").order("created_at", { ascending: false });
+    const [{ data }, { data: profils }] = await Promise.all([
+      supabase.from("structures").select("*").order("created_at", { ascending: false }),
+      // Le super-admin a un accès complet à profiles (voir schema.sql,
+      // policy "Voir son profil, son équipe si admin, ou tout si
+      // super-admin") -- pas besoin de RPC dédiée.
+      supabase.from("profiles").select("id, email, role, structure_id, actif, created_at").not("structure_id", "is", null),
+    ]);
     setStructures(data || []);
+    const parStructure = new Map();
+    for (const p of profils || []) {
+      if (!parStructure.has(p.structure_id)) parStructure.set(p.structure_id, []);
+      parStructure.get(p.structure_id).push(p);
+    }
+    setProfilsParStructure(parStructure);
     setLoadingList(false);
   }, []);
 
@@ -121,6 +135,12 @@ export function CreateStructureView({ onBack }) {
     setEditQuotaId(null);
     loadStructures();
   };
+
+  const toggleDeplier = (id) => setStructuresDepliees((prev) => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
 
   const openEditParams = (s) => {
     setEditParamsId(editParamsId === s.id ? null : s.id);
@@ -268,6 +288,62 @@ export function CreateStructureView({ onBack }) {
                     </button>
                   )}
                 </div>
+
+                {(() => {
+                  const membres = profilsParStructure.get(s.id) || [];
+                  const admins = membres.filter((m) => m.role === "admin");
+                  const utilises = membres.length;
+                  const plein = utilises >= s.quota;
+                  const proche = !plein && utilises >= s.quota * 0.8;
+                  return (
+                    <div className="bg-stone-50 rounded-lg p-2.5 mb-2">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-1.5 text-xs">
+                          <Users size={13} className={plein ? "text-rose-600" : proche ? "text-amber-600" : "text-emerald-600"} />
+                          <span className={`font-semibold ${plein ? "text-rose-700" : proche ? "text-amber-700" : "text-emerald-700"}`}>
+                            {utilises} / {s.quota}
+                          </span>
+                          <span className="text-stone-500">comptes utilisés</span>
+                        </div>
+                        {membres.length > 0 && (
+                          <button onClick={() => toggleDeplier(s.id)} className="flex items-center gap-1 text-xs text-emerald-700 font-medium">
+                            {structuresDepliees.has(s.id) ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                            {structuresDepliees.has(s.id) ? "Masquer" : "Voir les comptes"}
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex items-start gap-1.5 text-xs text-stone-600">
+                        <Mail size={13} className="shrink-0 mt-0.5 text-stone-400" />
+                        {admins.length > 0 ? (
+                          <span className="break-all">{admins.map((a) => a.email).join(", ")}</span>
+                        ) : (
+                          <span className="text-amber-600 italic">Aucun admin promu pour l'instant</span>
+                        )}
+                      </div>
+
+                      {structuresDepliees.has(s.id) && (
+                        <div className="mt-2 pt-2 border-t border-stone-200 flex flex-col gap-1">
+                          {membres
+                            .slice()
+                            .sort((a, b) => (a.role === b.role ? 0 : a.role === "admin" ? -1 : 1))
+                            .map((m) => (
+                              <div key={m.id} className="flex items-center justify-between gap-2 text-xs py-0.5">
+                                <span className="break-all text-stone-700">{m.email}</span>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  {m.role === "admin" && (
+                                    <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 font-medium">admin</span>
+                                  )}
+                                  {m.actif === false && (
+                                    <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-medium">suspendu</span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {confirmDeleteId === s.id ? (
                   <div className="bg-rose-50 border border-rose-200 rounded-lg p-2.5">

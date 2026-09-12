@@ -29,6 +29,7 @@ export const OUTILS_TYPES = [
 
 export const STADES = ["Léger", "Modéré", "Sévère"];
 export const CONTEXTES = ["Domicile", "EHPAD", "Hôpital"];
+export const MOMENTS = ["Jour", "Soir", "Nuit"];
 
 export const PROFESSIONS = [
   "Aide-soignant(e)",

@@ -21,7 +21,7 @@ import { AuthView } from "./components/AuthView.jsx";
 import { GateV2 } from "./components/GateV2.jsx";
 import { AidantApp } from "./AidantApp.jsx";
 import { Home_ } from "./components/Home.jsx";
-import { scoreFiche, fetchAllRows } from "./lib/utils.js";
+import { scoreFiche, fetchAllRows, rangDernierRecours } from "./lib/utils.js";
 
 const emptyLocalFiche = () => ({
   id: null, isLocal: true, titre: "", categorie: FAMILLES[0], sousCategorie: "",
@@ -63,6 +63,15 @@ function AuthenticatedApp({ session, onChangeMode }) {
   });
   const goHome = () => setStack([{ view: "home" }]);
   const pop = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
+  // Met à jour la vue courante SANS empiler une nouvelle entrée -- pour
+  // que des états comme l'offset des résultats affichés survivent à un
+  // aller-retour vers une fiche (push/pop), au lieu de repartir de zéro
+  // à chaque retour comme le ferait un useState local dans la vue.
+  const updateCurrent = (patch) => setStack((s) => {
+    const updated = [...s];
+    updated[updated.length - 1] = { ...updated[updated.length - 1], ...patch };
+    return updated;
+  });
 
   // Compte "gratuit" (sans structure) : accès à un échantillon seulement —
   // une fiche par famille, pour donner un vrai aperçu sans donner accès
@@ -396,8 +405,8 @@ function AuthenticatedApp({ session, onChangeMode }) {
             parCategorie.get(cat).push(x);
           }
           const groupes = [...parCategorie.values()]
-            .map((g) => g.sort((a, b) => b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
-            .sort((a, b) => (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
+            .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
+            .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
           const diversifie = [];
           let restant = true;
           while (restant) {
@@ -417,7 +426,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
       {current.view === "trouble-detail" && (
         <FicheListView title={current.trouble} onBack={pop} favoris={favoris} scrollY={current.scrollY}
-          items={fichesRecherchables.filter((f) => f.troubles.includes(current.trouble)).sort((a, b) => b.niveauPreuve - a.niveauPreuve)}
+          items={fichesRecherchables.filter((f) => f.troubles.includes(current.trouble)).sort((a, b) => rangDernierRecours(a) - rangDernierRecours(b) || b.niveauPreuve - a.niveauPreuve)}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f })} emptyLabel="Aucune fiche pour ce trouble pour l'instant." />
       )}
       {current.view === "besoins" && (
@@ -450,7 +459,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
       {current.view === "quiz" && (
         <QuizView onBack={pop} fichesDisponibles={[...fiches, ...outilsFiches]} onSubmit={(q) => {
-          const scored = [...fiches, ...outilsFiches].map((f) => ({ f, s: scoreFiche(f, q, favoris) })).filter((x) => x.s !== null).sort((a, b) => b.s - a.s);
+          const scored = [...fiches, ...outilsFiches].map((f) => ({ f, s: scoreFiche(f, q, favoris) })).filter((x) => x.s !== null).sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || b.s - a.s);
           const max = Math.max(1, ...scored.map((x) => x.s));
           const results = scored.map((x) => ({ ...x, pct: Math.max(20, Math.round((x.s / max) * 100)) }));
           const label = [q.troubleIds.join(", "), q.besoin, q.stade, q.contexte].filter(Boolean).join(" · ");
@@ -458,13 +467,15 @@ function AuthenticatedApp({ session, onChangeMode }) {
           if (results.length === 0 && q.troubleIds.length > 0) {
             suggestions = [...fiches, ...outilsFiches]
               .map((f) => ({ f, n: (f.troubles || []).filter((t) => q.troubleIds.includes(t)).length }))
-              .filter((x) => x.n > 0).sort((a, b) => b.n - a.n).slice(0, 4).map((x) => x.f);
+              .filter((x) => x.n > 0).sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || b.n - a.n).slice(0, 4).map((x) => x.f);
           }
           push({ view: "recommandations", results, trouble: label, suggestions });
         }} />
       )}
       {current.view === "recommandations" && (
-        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} situationContexte={current.situationContexte} favoris={favoris} onBack={pop} onOpenFiche={(f) => push({ view: "fiche", fiche: f, rechercheLabel: current.trouble })} />
+        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} situationContexte={current.situationContexte} favoris={favoris} onBack={pop}
+          resultOffset={current.resultOffset || 0} onAdvance={() => updateCurrent({ resultOffset: (current.resultOffset || 0) + 8 })}
+          onOpenFiche={(f) => push({ view: "fiche", fiche: f, rechercheLabel: current.trouble })} />
       )}
       {current.view === "fiche" && (
         <FicheDetailView
