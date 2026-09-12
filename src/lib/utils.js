@@ -70,6 +70,17 @@ export const scoreFiche = (f, q, favoris) => {
   // Toucher non accessible : exclusion, comme la mobilisation -- une
   // seule catégorie concernée, pas de risque de vider les résultats.
   if (q.toucherAccessible === false && f.categorie === "Toucher / Massage") return null;
+  // Langage verbal absent : les fiches reposant sur une communication
+  // verbale ne peuvent réellement pas s'appliquer -- exclusion, comme
+  // pour la mobilisation et le toucher. "Difficile" reste un bonus/
+  // malus de classement seulement, la communication verbale restant
+  // possible, juste plus délicate.
+  if (q.langageVerbal === "non" && f.categorie === "Communication") return null;
+  // Langage verbal absent : les techniques de communication verbale ne
+  // s'appliquent plus telles quelles, on les exclut (comme toucher et
+  // mobilisation) plutôt que de simplement les dépriorité. "Difficile"
+  // reste un cas plus nuancé, traité en bonus plus bas.
+  if (q.langageVerbal === "non" && f.categorie === "Communication") return null;
   let score = 0;
   score += (q.troubleIds?.length || 0) * 20;
   if (q.besoin) score += 25;

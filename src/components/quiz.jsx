@@ -94,15 +94,15 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
           </div>
           <div className="ml-9 flex flex-col gap-3">
             <div>
-              <p className="text-xs text-stone-500 mb-1.5">Stade : Léger - Modéré - Sévère</p>
+              <p className="text-xs text-stone-500 mb-1.5">Stade</p>
               <CheckGroup options={STADES} selected={q.stade ? [q.stade] : []} onToggle={(v) => setQ({ ...q, stade: q.stade === v ? "" : v })} />
             </div>
             <div>
-              <p className="text-xs text-stone-500 mb-1.5">Environnement : Domicile - EHPAD - Hôpital</p>
+              <p className="text-xs text-stone-500 mb-1.5">Environnement</p>
               <CheckGroup options={CONTEXTES} selected={q.contexte ? [q.contexte] : []} onToggle={(v) => setQ({ ...q, contexte: q.contexte === v ? "" : v })} />
             </div>
             <div>
-              <p className="text-xs text-stone-500 mb-1.5">Moment de la journée : Jour - Soir - Nuit</p>
+              <p className="text-xs text-stone-500 mb-1.5">Moment de la journée</p>
               <CheckGroup options={MOMENTS} selected={q.moment ? [q.moment] : []} onToggle={(v) => setQ({ ...q, moment: q.moment === v ? "" : v })} />
             </div>
           </div>
@@ -125,7 +125,7 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
               <p className="text-xs text-stone-500 mb-1.5">Mobilisation</p>
               <CheckGroup options={["Mobilisable", "Douleur / limitation signalée"]}
                 selected={[q.mobilisationLimitee ? "Douleur / limitation signalée" : "Mobilisable"]}
-                onToggle={(v) => setQ({ ...q, mobilisationLimitee: v === "Douleur / limitation signalée" ? !q.mobilisationLimitee : q.mobilisationLimitee })} />
+                onToggle={(v) => setQ({ ...q, mobilisationLimitee: v === "Douleur / limitation signalée" })} />
               {q.mobilisationLimitee && (
                 <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1.5 mt-1.5 flex items-start gap-1.5">
                   <AlertTriangle size={13} className="shrink-0 mt-0.5" />
