@@ -52,10 +52,24 @@ export const scoreFiche = (f, q, favoris) => {
   if (q.troubleIds && q.troubleIds.length > 0 && !q.troubleIds.every((t) => f.troubles.includes(t))) return null;
   if (q.besoin && f.categorie !== q.besoin) return null;
   if (q.tempsDispo != null && f.dureeMinutes > 0 && f.dureeMinutes > q.tempsDispo) return null;
+  // Moment de la journée : chaque fiche a toujours une valeur renseignée
+  // (par défaut "Jour"), donc c'est un vrai filtre, sans risque de vider
+  // les résultats.
+  if (q.moment && f.momentJournee !== q.moment) return null;
+  // Stade et contexte : on n'exclut que si la fiche déclare explicitement
+  // une liste ET que la valeur choisie n'y figure pas. Une fiche qui n'a
+  // encore aucun stade/contexte renseigné reste incluse -- le tag n'est
+  // pas encore assez complet sur l'ensemble de la bibliothèque pour en
+  // faire un filtre strict partout.
+  if (q.stade && (f.stades || []).length > 0 && !f.stades.includes(q.stade)) return null;
+  if (q.contexte && (f.contextes || []).length > 0 && !f.contextes.includes(q.contexte)) return null;
   // Mobilisation limitée (douleur signalée ou non mobilisable) : on
   // écarte complètement l'activité physique plutôt que de la
   // dépriorité -- c'est une question de sécurité, pas de préférence.
   if (q.mobilisationLimitee && f.categorie === "Activité physique") return null;
+  // Toucher non accessible : exclusion, comme la mobilisation -- une
+  // seule catégorie concernée, pas de risque de vider les résultats.
+  if (q.toucherAccessible === false && f.categorie === "Toucher / Massage") return null;
   let score = 0;
   score += (q.troubleIds?.length || 0) * 20;
   if (q.besoin) score += 25;
@@ -68,9 +82,6 @@ export const scoreFiche = (f, q, favoris) => {
     if (["Stimulation sensorielle", "Toucher / Massage", "Validation émotionnelle"].includes(f.categorie)) score += 12;
     if (f.categorie === "Communication") score -= 12;
   }
-  // Toucher non accessible : dépriorité sans exclure (certaines fiches
-  // "Toucher / Massage" ne supposent pas forcément un contact direct).
-  if (q.toucherAccessible === false && f.categorie === "Toucher / Massage") score -= 20;
   // Symptômes dépressifs signalés en plus du motif principal de
   // recherche : les fiches déjà taguées pour ce trouble remontent,
   // même si ce n'est pas le trouble sélectionné en premier lieu.

@@ -93,16 +93,26 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
             <span className="text-xs text-stone-400">(optionnel)</span>
           </div>
           <div className="ml-9 flex flex-col gap-3">
-            <CheckGroup options={STADES} selected={q.stade ? [q.stade] : []} onToggle={(v) => setQ({ ...q, stade: q.stade === v ? "" : v })} />
-            <CheckGroup options={CONTEXTES} selected={q.contexte ? [q.contexte] : []} onToggle={(v) => setQ({ ...q, contexte: q.contexte === v ? "" : v })} />
-            <CheckGroup options={MOMENTS} selected={q.moment ? [q.moment] : []} onToggle={(v) => setQ({ ...q, moment: q.moment === v ? "" : v })} />
+            <div>
+              <p className="text-xs text-stone-500 mb-1.5">Stade : Léger - Modéré - Sévère</p>
+              <CheckGroup options={STADES} selected={q.stade ? [q.stade] : []} onToggle={(v) => setQ({ ...q, stade: q.stade === v ? "" : v })} />
+            </div>
+            <div>
+              <p className="text-xs text-stone-500 mb-1.5">Environnement : Domicile - EHPAD - Hôpital</p>
+              <CheckGroup options={CONTEXTES} selected={q.contexte ? [q.contexte] : []} onToggle={(v) => setQ({ ...q, contexte: q.contexte === v ? "" : v })} />
+            </div>
+            <div>
+              <p className="text-xs text-stone-500 mb-1.5">Moment de la journée : Jour - Soir - Nuit</p>
+              <CheckGroup options={MOMENTS} selected={q.moment ? [q.moment] : []} onToggle={(v) => setQ({ ...q, moment: q.moment === v ? "" : v })} />
+            </div>
           </div>
         </div>
 
-        <div>
-          <div className="flex items-center gap-2 mb-2">
+        <div className="bg-white rounded-3xl shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] p-5">
+          <div className="flex items-center gap-2.5 mb-3">
             <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center shrink-0">5</div>
             <span className="font-semibold text-emerald-950">Repères cliniques</span>
+            <span className="text-xs text-stone-400">(optionnel)</span>
           </div>
           <div className="ml-9 flex flex-col gap-3">
             <div>
