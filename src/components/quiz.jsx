@@ -206,7 +206,7 @@ export function RecommandationsView({ title, results, suggestions, situationCont
             )}
           </div>
         )}
-        {results.length > 0 && <LegendeMacarons />}
+        {results.length > 0 && <LegendeMacarons avecRouge={isSituation} />}
         {results.length > 0 && (
           <div className="text-xs text-stone-400 mb-1">{results.length} fiche{results.length > 1 ? "s" : ""} correspondante{results.length > 1 ? "s" : ""}, classées par pertinence</div>
         )}

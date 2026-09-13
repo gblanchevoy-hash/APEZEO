@@ -280,6 +280,61 @@ function AuthenticatedApp({ session, onChangeMode }) {
 
   const ficheById = (id) => fichesRecherchables.find((f) => f.id === id);
 
+  const openSituation = useCallback((s, recurrence) => {
+    const matched = fichesRecherchables
+      .filter((f) => !(s.exclure || []).includes(f.titre))
+      .map((f) => ({ f, n: (f.troubles || []).filter((t) => s.troubles.includes(t)).length }))
+      .filter((x) => x.n > 0);
+
+    const bonusRecurrence = (categorie) => {
+      if (recurrence === "frequent" && ["Routine", "Environnement"].includes(categorie)) return 1;
+      if (recurrence === "isole" && ["Communication", "Gestion des besoins"].includes(categorie)) return 1;
+      return 0;
+    };
+
+    const parCategorie = new Map();
+    for (const x of matched) {
+      const cat = x.f.categorie || "Autres";
+      if (!parCategorie.has(cat)) parCategorie.set(cat, []);
+      parCategorie.get(cat).push(x);
+    }
+    const groupes = [...parCategorie.values()]
+      .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || (s.prioriser || []).includes(b.f.techniqueId) - (s.prioriser || []).includes(a.f.techniqueId) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
+      .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || bonusRecurrence(b[0].f.categorie) - bonusRecurrence(a[0].f.categorie) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
+    const diversifie = [];
+    let restant = true;
+    while (restant) {
+      restant = false;
+      for (const g of groupes) {
+        if (g.length) { diversifie.push(g.shift()); restant = true; }
+      }
+    }
+
+    const max = Math.max(1, ...matched.map((x) => x.n));
+    const results = diversifie.map((x) => ({
+      f: x.f,
+      pct: (s.prioriser || []).includes(x.f.techniqueId) ? 100 : Math.max(20, Math.round((x.n / max) * 100)),
+    }));
+    push({ view: "recommandations", results, trouble: s.titre, situationContexte: s.contexte, situationId: s.id });
+  }, [fichesRecherchables, push]);
+
+  // Lien direct depuis un mémo PDF (QR code) : ?situation=<id> ouvre
+  // directement les résultats de cette situation au chargement.
+  // IMPORTANT : ces deux hooks doivent rester ici, AVANT tout retour
+  // conditionnel (chargement, session remplacée, compte désactivé) --
+  // sinon leur nombre change d'un rendu à l'autre selon ces états, ce
+  // qui casse les Rules of Hooks ("Rendered more hooks than during the
+  // previous render").
+  useEffect(() => {
+    if (fichesRecherchables.length === 0) return;
+    const id = new URLSearchParams(window.location.search).get("situation");
+    if (!id) return;
+    const s = SITUATIONS_TYPES.find((x) => x.id === id);
+    if (s) openSituation(s, null);
+    window.history.replaceState({}, "", window.location.pathname);
+  }, [fichesRecherchables, openSituation]);
+
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F6F2]">
@@ -334,55 +389,6 @@ function AuthenticatedApp({ session, onChangeMode }) {
       </div>
     );
   }
-
-  const openSituation = useCallback((s, recurrence) => {
-    const matched = fichesRecherchables
-      .filter((f) => !(s.exclure || []).includes(f.titre))
-      .map((f) => ({ f, n: (f.troubles || []).filter((t) => s.troubles.includes(t)).length }))
-      .filter((x) => x.n > 0);
-
-    const bonusRecurrence = (categorie) => {
-      if (recurrence === "frequent" && ["Routine", "Environnement"].includes(categorie)) return 1;
-      if (recurrence === "isole" && ["Communication", "Gestion des besoins"].includes(categorie)) return 1;
-      return 0;
-    };
-
-    const parCategorie = new Map();
-    for (const x of matched) {
-      const cat = x.f.categorie || "Autres";
-      if (!parCategorie.has(cat)) parCategorie.set(cat, []);
-      parCategorie.get(cat).push(x);
-    }
-    const groupes = [...parCategorie.values()]
-      .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || (s.prioriser || []).includes(b.f.techniqueId) - (s.prioriser || []).includes(a.f.techniqueId) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
-      .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || bonusRecurrence(b[0].f.categorie) - bonusRecurrence(a[0].f.categorie) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
-    const diversifie = [];
-    let restant = true;
-    while (restant) {
-      restant = false;
-      for (const g of groupes) {
-        if (g.length) { diversifie.push(g.shift()); restant = true; }
-      }
-    }
-
-    const max = Math.max(1, ...matched.map((x) => x.n));
-    const results = diversifie.map((x) => ({
-      f: x.f,
-      pct: (s.prioriser || []).includes(x.f.techniqueId) ? 100 : Math.max(20, Math.round((x.n / max) * 100)),
-    }));
-    push({ view: "recommandations", results, trouble: s.titre, situationContexte: s.contexte, situationId: s.id });
-  }, [fichesRecherchables, push]);
-
-  // Lien direct depuis un mémo PDF (QR code) : ?situation=<id> ouvre
-  // directement les résultats de cette situation au chargement.
-  useEffect(() => {
-    if (fichesRecherchables.length === 0) return;
-    const id = new URLSearchParams(window.location.search).get("situation");
-    if (!id) return;
-    const s = SITUATIONS_TYPES.find((x) => x.id === id);
-    if (s) openSituation(s, null);
-    window.history.replaceState({}, "", window.location.pathname);
-  }, [fichesRecherchables, openSituation]);
 
   return (
     <div className="min-h-screen bg-[#F4F6F2] md:bg-stone-200 md:flex md:justify-center md:py-8 lg:bg-[#F4F6F2] lg:block lg:py-0">
