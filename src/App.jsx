@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import {
   AlertTriangle, Info, DatabaseZap, UserX,
 } from "lucide-react";
-import { FAMILLES } from "./data/constants.js";
+import { FAMILLES, SITUATIONS_TYPES } from "./data/constants.js";
 import { supabase, supabaseReady, rowToFiche, rowToPersonalFiche, ficheToPersonalRow } from "./lib/supabase.js";
 import { getLocal, setLocal } from "./lib/localStore.js";
 
@@ -335,6 +335,55 @@ function AuthenticatedApp({ session, onChangeMode }) {
     );
   }
 
+  const openSituation = useCallback((s, recurrence) => {
+    const matched = fichesRecherchables
+      .filter((f) => !(s.exclure || []).includes(f.titre))
+      .map((f) => ({ f, n: (f.troubles || []).filter((t) => s.troubles.includes(t)).length }))
+      .filter((x) => x.n > 0);
+
+    const bonusRecurrence = (categorie) => {
+      if (recurrence === "frequent" && ["Routine", "Environnement"].includes(categorie)) return 1;
+      if (recurrence === "isole" && ["Communication", "Gestion des besoins"].includes(categorie)) return 1;
+      return 0;
+    };
+
+    const parCategorie = new Map();
+    for (const x of matched) {
+      const cat = x.f.categorie || "Autres";
+      if (!parCategorie.has(cat)) parCategorie.set(cat, []);
+      parCategorie.get(cat).push(x);
+    }
+    const groupes = [...parCategorie.values()]
+      .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || (s.prioriser || []).includes(b.f.techniqueId) - (s.prioriser || []).includes(a.f.techniqueId) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
+      .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || bonusRecurrence(b[0].f.categorie) - bonusRecurrence(a[0].f.categorie) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
+    const diversifie = [];
+    let restant = true;
+    while (restant) {
+      restant = false;
+      for (const g of groupes) {
+        if (g.length) { diversifie.push(g.shift()); restant = true; }
+      }
+    }
+
+    const max = Math.max(1, ...matched.map((x) => x.n));
+    const results = diversifie.map((x) => ({
+      f: x.f,
+      pct: (s.prioriser || []).includes(x.f.techniqueId) ? 100 : Math.max(20, Math.round((x.n / max) * 100)),
+    }));
+    push({ view: "recommandations", results, trouble: s.titre, situationContexte: s.contexte, situationId: s.id });
+  }, [fichesRecherchables, push]);
+
+  // Lien direct depuis un mémo PDF (QR code) : ?situation=<id> ouvre
+  // directement les résultats de cette situation au chargement.
+  useEffect(() => {
+    if (fichesRecherchables.length === 0) return;
+    const id = new URLSearchParams(window.location.search).get("situation");
+    if (!id) return;
+    const s = SITUATIONS_TYPES.find((x) => x.id === id);
+    if (s) openSituation(s, null);
+    window.history.replaceState({}, "", window.location.pathname);
+  }, [fichesRecherchables, openSituation]);
+
   return (
     <div className="min-h-screen bg-[#F4F6F2] md:bg-stone-200 md:flex md:justify-center md:py-8 lg:bg-[#F4F6F2] lg:block lg:py-0">
     <div className="w-full md:max-w-2xl md:bg-[#F4F6F2] md:rounded-3xl md:shadow-2xl md:overflow-hidden md:border md:border-stone-300/60 lg:max-w-none lg:rounded-none lg:shadow-none lg:border-none lg:overflow-visible">
@@ -386,56 +435,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
 
       {current.view === "situations" && (
-        <SituationsView onBack={pop} onOpenSituation={(s, recurrence) => {
-          const matched = fichesRecherchables
-            .filter((f) => !(s.exclure || []).includes(f.titre))
-            .map((f) => ({ f, n: (f.troubles || []).filter((t) => s.troubles.includes(t)).length }))
-            .filter((x) => x.n > 0);
-
-          // Récurrence du trouble (option 2 validée avec l'utilisateur :
-          // pas de nouveau tag sur les fiches, juste une repondération
-          // des catégories déjà en place selon la réponse donnée).
-          const bonusRecurrence = (categorie) => {
-            if (recurrence === "frequent" && ["Routine", "Environnement"].includes(categorie)) return 1;
-            if (recurrence === "isole" && ["Communication", "Gestion des besoins"].includes(categorie)) return 1;
-            return 0;
-          };
-
-          // Diversification par catégorie de pratique (communication,
-          // relaxation, activité physique...) : sans ça, une situation
-          // très représentée dans une seule famille (ex. "communication")
-          // noie les techniques d'action concrète (ex. "relaxation") très
-          // loin dans les résultats. On trie d'abord chaque catégorie par
-          // pertinence, puis on les entrelace à tour de rôle.
-          const parCategorie = new Map();
-          for (const x of matched) {
-            const cat = x.f.categorie || "Autres";
-            if (!parCategorie.has(cat)) parCategorie.set(cat, []);
-            parCategorie.get(cat).push(x);
-          }
-          const groupes = [...parCategorie.values()]
-            .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || (s.prioriser || []).includes(b.f.techniqueId) - (s.prioriser || []).includes(a.f.techniqueId) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
-            .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || bonusRecurrence(b[0].f.categorie) - bonusRecurrence(a[0].f.categorie) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
-          const diversifie = [];
-          let restant = true;
-          while (restant) {
-            restant = false;
-            for (const g of groupes) {
-              if (g.length) { diversifie.push(g.shift()); restant = true; }
-            }
-          }
-
-          const max = Math.max(1, ...matched.map((x) => x.n));
-          const results = diversifie.map((x) => ({
-            f: x.f,
-            // Le pourcentage brut (nombre de tags en commun) sous-évalue
-            // les fiches très ciblées, moins taguées mais plus adaptées.
-            // Une fiche explicitement priorisée pour cette situation
-            // affiche donc 100%, pour ne pas envoyer un signal trompeur.
-            pct: (s.prioriser || []).includes(x.f.techniqueId) ? 100 : Math.max(20, Math.round((x.n / max) * 100)),
-          }));
-          push({ view: "recommandations", results, trouble: s.titre, situationContexte: s.contexte, situationId: s.id });
-        }} />
+        <SituationsView onBack={pop} onOpenSituation={openSituation} />
       )}
       {current.view === "troubles" && (
         <TroublesView fiches={fichesRecherchables} onBack={pop} onOpenTrouble={(t) => push({ view: "trouble-detail", trouble: t })} />

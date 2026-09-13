@@ -97,6 +97,11 @@ export const scoreFiche = (f, q, favoris) => {
   // recherche : les fiches déjà taguées pour ce trouble remontent,
   // même si ce n'est pas le trouble sélectionné en premier lieu.
   if (q.symptomesDepressifs && f.troubles.includes("Symptômes dépressifs")) score += 15;
+  // Comportements sexuels inadaptés : contexte très particulier. Une
+  // fiche qui l'aborde ne doit pas remonter comme "bien adaptée" (vert)
+  // pour une recherche générale sur l'agitation ou l'anxiété -- sauf si
+  // ce trouble précis a été explicitement coché.
+  if (f.troubles.includes("Comportements sexuels inadaptés") && !(q.troubleIds || []).includes("Comportements sexuels inadaptés")) score -= 40;
   // Récurrence du trouble (option 2 : pas de nouveau tag sur les
   // fiches, on repondère seulement les catégories déjà en place).
   if (q.recurrence === "frequent" && ["Routine", "Environnement"].includes(f.categorie)) score += 8;
