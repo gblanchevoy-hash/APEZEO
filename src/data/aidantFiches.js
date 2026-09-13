@@ -1899,7 +1899,7 @@ export const AIDANT_FICHES = [
     "sousCategorie": "Repères du quotidien",
     "description": "Un grand calendrier ou une horloge bien visible, associés à des phrases toutes simples sur le moment de la journée, aident votre proche à mieux se repérer sans qu'il ait à s'en souvenir par lui-même.",
     "pourquoi": "S'appuyer sur ce qui se voit et se vit (le repas, la lumière du jour) demande moins d'effort de mémoire que de se souvenir d'une date ou d'une heure.",
-    "quandUtiliser": "Tout au long de la journée, en particulier le matin au réveil et en fin d'après-midi, quand la confusion est souvent plus forte.",
+    "quandUtiliser": "Tout au long de la journée, en particulier le matin au réveil et en fin d'après-midi, quand la désorientation est souvent plus forte.",
     "quandEviter": "vous êtes tenté(e) de transformer cela en question-test (\"Quel jour sommes-nous ?\") — donnez l'information plutôt que de la demander.",
     "troubles": [
       "Désorientation"
@@ -2779,7 +2779,7 @@ export const AIDANT_FICHES = [
     "categorie": "Compréhension des comportements",
     "sousCategorie": "Comportements sexuels inadaptés",
     "description": "Poser une limite claire et respectueuse face à un geste ou une parole déplacée, sans reproche ni moquerie.",
-    "pourquoi": "Ces comportements ne sont généralement pas intentionnels mais liés à la maladie (désinhibition, confusion). Une réaction humiliante peut blesser la personne sans qu'elle comprenne pourquoi, et n'apporte aucun bénéfice.",
+    "pourquoi": "Ces comportements ne sont généralement pas intentionnels mais liés à la maladie (désinhibition, désorientation). Une réaction humiliante peut blesser la personne sans qu'elle comprenne pourquoi, et n'apporte aucun bénéfice.",
     "quandUtiliser": "Dès qu'un comportement inapproprié se produit.",
     "quandEviter": "jamais à éviter, mais toujours associer une réponse ferme si une autre personne est concernée et doit être protégée.",
     "troubles": [
@@ -2878,7 +2878,7 @@ export const AIDANT_FICHES = [
     "categorie": "Compréhension des comportements",
     "sousCategorie": "Comportements sexuels inadaptés",
     "description": "Identifier les facteurs qui peuvent favoriser un comportement inapproprié, plutôt que de le voir comme un choix délibéré.",
-    "pourquoi": "Confusion, désinhibition, besoin de contact, ennui ou frustration peuvent expliquer ces comportements. Comprendre la cause aide à mieux y répondre.",
+    "pourquoi": "Désorientation, désinhibition, besoin de contact, ennui ou frustration peuvent expliquer ces comportements. Comprendre la cause aide à mieux y répondre.",
     "quandUtiliser": "Après un épisode, pour anticiper les suivants.",
     "quandEviter": "jamais à éviter.",
     "troubles": [
@@ -3380,10 +3380,10 @@ export const AIDANT_FICHES = [
     "titre": "Ne pas corriger systématiquement",
     "categorie": "Validation émotionnelle",
     "sousCategorie": "Désorientation",
-    "description": "Éviter de corriger frontalement une confusion de lieu, de temps ou de personne, sauf si cela s'avère nécessaire.",
+    "description": "Éviter de corriger frontalement une désorientation de lieu, de temps ou de personne, sauf si cela s'avère nécessaire.",
     "pourquoi": "Corriger systématiquement peut renforcer un sentiment d'échec ou d'inquiétude. Il est souvent plus apaisant d'accompagner la personne là où elle se situe mentalement, plutôt que d'insister sur la réalité.",
-    "quandUtiliser": "Face à une confusion sans conséquence pratique importante.",
-    "quandEviter": "la confusion présente un risque concret (vouloir conduire, prendre un mauvais médicament) — une intervention est alors nécessaire.",
+    "quandUtiliser": "Face à une désorientation sans conséquence pratique importante.",
+    "quandEviter": "la désorientation présente un risque concret (vouloir conduire, prendre un mauvais médicament) — une intervention est alors nécessaire.",
     "troubles": [
       "Désorientation",
       "Idées délirantes"
@@ -3401,7 +3401,7 @@ export const AIDANT_FICHES = [
     "dureeLabel": "",
     "materiel": [],
     "etapes": [
-      "Évaluer si la confusion présente un risque réel ou non",
+      "Évaluer si la désorientation présente un risque réel ou non",
       "Si aucun risque, accueillir ce que dit la personne sans la contredire frontalement",
       "Rediriger doucement l'attention si besoin, sans discussion prolongée",
       "Réserver la correction directe aux situations qui l'exigent réellement pour la sécurité"

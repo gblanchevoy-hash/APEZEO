@@ -180,17 +180,27 @@ export function CollapsibleSection({ title, defaultOpen = false, children }) {
   );
 }
 
-export function ScoreRing({ pct, violet }) {
-  const r = 20, c = 2 * Math.PI * r;
-  const color = violet ? "#6d28d9" : "#047857";
-  const textColor = violet ? "#4c1d95" : "#064e3b";
+export function ScoreRing({ pct }) {
+  const niveau = pct >= 75 ? "vert" : pct >= 40 ? "orange" : "rouge";
+  const styles = {
+    vert: { bg: "#dcfce7", text: "#166534", label: "Adaptée" },
+    orange: { bg: "#ffedd5", text: "#9a3412", label: "Selon contexte" },
+    rouge: { bg: "#fee2e2", text: "#991b1b", label: "Peu adapté" },
+  }[niveau];
   return (
-    <svg width="52" height="52" viewBox="0 0 52 52" className="shrink-0">
-      <title>Score de correspondance avec les critères que vous avez indiqués (troubles, besoin, stade, contexte, temps disponible) — plus il est élevé, plus la fiche correspond à ce que vous cherchez.</title>
-      <circle cx="26" cy="26" r={r} stroke="#e7e5e4" strokeWidth="5" fill="none" />
-      <circle cx="26" cy="26" r={r} stroke={color} strokeWidth="5" fill="none"
-        strokeDasharray={c} strokeDashoffset={c - (pct / 100) * c} strokeLinecap="round" transform="rotate(-90 26 26)" />
-      <text x="26" y="30" textAnchor="middle" fontSize="13" fontWeight="600" fill={textColor}>{pct}%</text>
-    </svg>
+    <div className="shrink-0 flex flex-col items-center justify-center w-14 h-14 rounded-2xl" style={{ background: styles.bg }}
+      title="Correspondance avec les critères indiqués : vert = fiche bien adaptée, orange = adaptée selon le contexte, rouge = peu adapté ici.">
+      <span className="text-[10px] font-bold leading-tight text-center px-0.5" style={{ color: styles.text }}>{styles.label}</span>
+    </div>
+  );
+}
+
+export function LegendeMacarons() {
+  return (
+    <div className="flex flex-wrap gap-3 text-xs text-stone-500 px-1 py-2">
+      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#dcfce7", border: "1px solid #166534" }} /> Fiche bien adaptée à la situation</span>
+      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#ffedd5", border: "1px solid #9a3412" }} /> Adaptée, à ajuster selon le contexte</span>
+      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#fee2e2", border: "1px solid #991b1b" }} /> Peu ou pas adapté ici</span>
+    </div>
   );
 }

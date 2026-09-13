@@ -4,6 +4,11 @@
 export const NOUVEAUTES = [
   {
     date: "2026-09",
+    titre: "Mémos téléchargeables par situation",
+    description: "Sur chaque situation fréquente, un mémo d'une page à télécharger : les pistes essentielles condensées, à imprimer ou garder sous la main (brief d'équipe, remplaçant, formation express).",
+  },
+  {
+    date: "2026-09",
     titre: "Situations fréquentes",
     description: "24 situations de terrain (refus de toilette, agitation du soir, cris répétés, vouloir « rentrer chez soi »...) pour retrouver directement les fiches pertinentes, sans chercher trouble par trouble.",
   },

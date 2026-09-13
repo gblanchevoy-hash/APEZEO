@@ -414,7 +414,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
             parCategorie.get(cat).push(x);
           }
           const groupes = [...parCategorie.values()]
-            .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
+            .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || (s.prioriser || []).includes(b.f.techniqueId) - (s.prioriser || []).includes(a.f.techniqueId) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
             .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || bonusRecurrence(b[0].f.categorie) - bonusRecurrence(a[0].f.categorie) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
           const diversifie = [];
           let restant = true;
@@ -426,8 +426,15 @@ function AuthenticatedApp({ session, onChangeMode }) {
           }
 
           const max = Math.max(1, ...matched.map((x) => x.n));
-          const results = diversifie.map((x) => ({ f: x.f, pct: Math.max(20, Math.round((x.n / max) * 100)) }));
-          push({ view: "recommandations", results, trouble: s.titre, situationContexte: s.contexte });
+          const results = diversifie.map((x) => ({
+            f: x.f,
+            // Le pourcentage brut (nombre de tags en commun) sous-évalue
+            // les fiches très ciblées, moins taguées mais plus adaptées.
+            // Une fiche explicitement priorisée pour cette situation
+            // affiche donc 100%, pour ne pas envoyer un signal trompeur.
+            pct: (s.prioriser || []).includes(x.f.techniqueId) ? 100 : Math.max(20, Math.round((x.n / max) * 100)),
+          }));
+          push({ view: "recommandations", results, trouble: s.titre, situationContexte: s.contexte, situationId: s.id });
         }} />
       )}
       {current.view === "troubles" && (
@@ -470,7 +477,13 @@ function AuthenticatedApp({ session, onChangeMode }) {
         <QuizView onBack={pop} fichesDisponibles={[...fiches, ...outilsFiches]} onSubmit={(q) => {
           const scored = [...fiches, ...outilsFiches].map((f) => ({ f, s: scoreFiche(f, q, favoris) })).filter((x) => x.s !== null).sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || b.s - a.s);
           const max = Math.max(1, ...scored.map((x) => x.s));
-          const results = scored.map((x) => ({ ...x, pct: Math.max(20, Math.round((x.s / max) * 100)) }));
+          // Plancher relevé à 60 : toutes ces fiches ont déjà passé les
+          // filtres stricts (troubles, besoin) -- aucune n'est hors sujet.
+          // L'écart restant vient surtout des bonus secondaires (stade,
+          // contexte, moment...), qui avantagent les fiches très taguées
+          // sans que ça reflète une meilleure adéquation clinique. Un
+          // score bas donnerait un signal trompeur de fiche "faible".
+          const results = scored.map((x) => ({ ...x, pct: Math.max(60, Math.round((x.s / max) * 100)) }));
           const label = [q.troubleIds.join(", "), q.besoin, q.stade, q.contexte].filter(Boolean).join(" · ");
           let suggestions = [];
           if (results.length === 0 && q.troubleIds.length > 0) {
@@ -482,7 +495,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
         }} />
       )}
       {current.view === "recommandations" && (
-        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} situationContexte={current.situationContexte} favoris={favoris} onBack={pop}
+        <RecommandationsView title={current.trouble} results={current.results} suggestions={current.suggestions} situationContexte={current.situationContexte} situationId={current.situationId} favoris={favoris} onBack={pop}
           resultOffset={current.resultOffset || 0} onAdvance={() => updateCurrent({ resultOffset: (current.resultOffset || 0) + 8 })}
           onOpenFiche={(f) => push({ view: "fiche", fiche: f, rechercheLabel: current.trouble })} />
       )}

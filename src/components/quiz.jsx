@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { Search, ChevronRight, ChevronDown, AlertTriangle, Heart } from "lucide-react";
 import { TROUBLES, FAMILLES, STADES, CONTEXTES, MOMENTS } from "../data/constants.js";
-import { TopBar, Badge, CheckGroup, ScoreRing, inputCls, Stars } from "./ui.jsx";
+import { TopBar, Badge, CheckGroup, ScoreRing, LegendeMacarons, inputCls, Stars } from "./ui.jsx";
 import { scoreFiche } from "../lib/utils.js";
 
 export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
@@ -166,7 +166,7 @@ export function QuizView({ onBack, onSubmit, fichesDisponibles = [] }) {
   );
 }
 
-export function RecommandationsView({ title, results, suggestions, situationContexte, favoris, onBack, onOpenFiche, resultOffset, onAdvance }) {
+export function RecommandationsView({ title, results, suggestions, situationContexte, situationId, favoris, onBack, onOpenFiche, resultOffset, onAdvance }) {
   const favState = (id) => (favoris.liked.includes(id) ? "liked" : favoris.disliked.includes(id) ? "disliked" : null);
   const [showAll, setShowAll] = useState(false);
   const PAGE = 8;
@@ -198,8 +198,15 @@ export function RecommandationsView({ title, results, suggestions, situationCont
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 mb-1">
             <p className="text-sm text-amber-900">{situationContexte}</p>
             <p className="text-xs text-amber-700 mt-1.5 italic">Quelques pistes à adapter selon la personne, pas une marche à suivre.</p>
+            {situationId && (
+              <a href={`/memos/${situationId}.pdf`} download target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-800 bg-white border border-amber-300 rounded-full px-3 py-1.5 mt-2.5 hover:bg-amber-100 transition-colors">
+                ⬇ Télécharger le mémo (1 page)
+              </a>
+            )}
           </div>
         )}
+        {results.length > 0 && <LegendeMacarons />}
         {results.length > 0 && (
           <div className="text-xs text-stone-400 mb-1">{results.length} fiche{results.length > 1 ? "s" : ""} correspondante{results.length > 1 ? "s" : ""}, classées par pertinence</div>
         )}
@@ -221,7 +228,7 @@ export function RecommandationsView({ title, results, suggestions, situationCont
           const isOutil = f.typeFiche === "outil";
           return (
             <button key={f.id} onClick={() => onOpenFiche(f)} className={`w-full text-left bg-white rounded-xl p-3.5 shadow-sm flex items-center gap-3 active:scale-[0.99] transition ${isOutil ? "border-l-[3px] border-violet-400" : "border border-emerald-900/5"}`}>
-              <ScoreRing pct={pct} violet={isOutil} />
+              <ScoreRing pct={pct} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap mb-1">
                   {isOutil ? <Badge tone="outil">{f.outilType || "Outil spécifique"}</Badge> : <Badge tone="emerald">{f.categorie}</Badge>}
