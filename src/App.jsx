@@ -489,7 +489,12 @@ function AuthenticatedApp({ session, onChangeMode }) {
           // contexte, moment...), qui avantagent les fiches très taguées
           // sans que ça reflète une meilleure adéquation clinique. Un
           // score bas donnerait un signal trompeur de fiche "faible".
-          const results = scored.map((x) => ({ ...x, pct: Math.max(60, Math.round((x.s / max) * 100)) }));
+          // Plancher à 35 (pas 60) : suffisant pour qu'aucune fiche ne
+          // tombe en rouge ici (toutes ont passé les filtres stricts),
+          // mais assez bas pour laisser le malus "comportements sexuels
+          // hors contexte" retomber en orange plutôt que d'être remonté
+          // artificiellement en vert par le plancher.
+          const results = scored.map((x) => ({ ...x, pct: Math.max(35, Math.round((x.s / max) * 100)) }));
           const label = [q.troubleIds.join(", "), q.besoin, q.stade, q.contexte].filter(Boolean).join(" · ");
           let suggestions = [];
           if (results.length === 0 && q.troubleIds.length > 0) {

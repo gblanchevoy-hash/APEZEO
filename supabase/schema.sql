@@ -897,3 +897,19 @@ begin
 end;
 $$;
 grant execute on function public.stats_usage_bibliotheque() to authenticated;
+
+-- Fonction manquante ajoutée pour la fonctionnalité "dernière connexion"
+-- du tableau de bord super-admin (le front-end l'appelait déjà).
+create or replace function public.obtenir_dernieres_connexions()
+returns table (id uuid, derniere_connexion timestamptz)
+language sql
+security definer
+set search_path = public
+as $$
+  select u.id, u.last_sign_in_at
+  from auth.users u
+  where public.is_super_admin(auth.uid());
+$$;
+
+revoke all on function public.obtenir_dernieres_connexions() from public;
+grant execute on function public.obtenir_dernieres_connexions() to authenticated;

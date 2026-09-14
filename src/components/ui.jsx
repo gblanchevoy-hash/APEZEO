@@ -181,7 +181,11 @@ export function CollapsibleSection({ title, defaultOpen = false, children }) {
 }
 
 export function ScoreRing({ pct }) {
-  const niveau = pct >= 75 ? "vert" : pct >= 40 ? "orange" : "rouge";
+  // Seuils recalibrés : le score de base (troubles en commun / meilleur
+  // score du lot) pénalise mécaniquement les fiches généralistes -- une
+  // fiche pertinente mais avec un peu moins de tags que la meilleure du
+  // lot ne doit pas basculer en orange pour autant.
+  const niveau = pct >= 60 ? "vert" : pct >= 35 ? "orange" : "rouge";
   const styles = {
     vert: { bg: "#dcfce7", text: "#166534", label: "Technique appropriée" },
     orange: { bg: "#ffedd5", text: "#9a3412", label: "Selon contexte" },
@@ -198,9 +202,9 @@ export function ScoreRing({ pct }) {
 export function LegendeMacarons({ avecRouge = true }) {
   return (
     <div className="flex flex-wrap gap-3 text-xs text-stone-500 px-1 py-2">
-      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#dcfce7", border: "1px solid #166534" }} /> Fiche bien adaptée à la situation</span>
-      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#ffedd5", border: "1px solid #9a3412" }} /> Adaptée, à ajuster selon le contexte</span>
-      {avecRouge && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#fee2e2", border: "1px solid #991b1b" }} /> Peu ou pas adapté ici</span>}
+      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#dcfce7", border: "1px solid #166534" }} /> Vert : Pratique appropriée</span>
+      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#ffedd5", border: "1px solid #9a3412" }} /> Orange : Pratique appropriée mais à adapter en fonction du contexte</span>
+      {avecRouge && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#fee2e2", border: "1px solid #991b1b" }} /> Rouge : Technique peu ou pas appropriée dans ce cas de figure</span>}
     </div>
   );
 }

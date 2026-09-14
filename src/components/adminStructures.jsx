@@ -33,18 +33,18 @@ export function CreateStructureView({ onBack }) {
 
   const loadStructures = useCallback(async () => {
     setLoadingList(true);
-    const [{ data }, { data: profils }] = await Promise.all([
+    const [{ data }, { data: profils }, { data: connexions }] = await Promise.all([
       supabase.from("structures").select("*").order("created_at", { ascending: false }),
-      // Le super-admin a un accès complet à profiles (voir schema.sql,
-      // policy "Voir son profil, son équipe si admin, ou tout si
-      // super-admin") -- pas besoin de RPC dédiée.
       supabase.from("profiles").select("id, email, role, structure_id, actif, created_at").not("structure_id", "is", null),
+      supabase.rpc("obtenir_dernieres_connexions"),
     ]);
     setStructures(data || []);
+    const connexionsParId = new Map((connexions || []).map((c) => [c.id, c.derniere_connexion]));
     const parStructure = new Map();
     for (const p of profils || []) {
+      const enrichi = { ...p, derniereConnexion: connexionsParId.get(p.id) || null };
       if (!parStructure.has(p.structure_id)) parStructure.set(p.structure_id, []);
-      parStructure.get(p.structure_id).push(p);
+      parStructure.get(p.structure_id).push(enrichi);
     }
     setProfilsParStructure(parStructure);
     setLoadingList(false);
@@ -328,7 +328,14 @@ export function CreateStructureView({ onBack }) {
                             .sort((a, b) => (a.role === b.role ? 0 : a.role === "admin" ? -1 : 1))
                             .map((m) => (
                               <div key={m.id} className="flex items-center justify-between gap-2 text-xs py-0.5">
-                                <span className="break-all text-stone-700">{m.email}</span>
+                                <div className="min-w-0">
+                                  <div className="break-all text-stone-700">{m.email}</div>
+                                  <div className="text-[10px] text-stone-400">
+                                    {m.derniereConnexion
+                                      ? `Dernière connexion : ${new Date(m.derniereConnexion).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}`
+                                      : "Jamais connecté"}
+                                  </div>
+                                </div>
                                 <div className="flex items-center gap-1 shrink-0">
                                   {m.role === "admin" && (
                                     <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 font-medium">admin</span>
