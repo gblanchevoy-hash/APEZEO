@@ -292,6 +292,13 @@ function AuthenticatedApp({ session, onChangeMode }) {
       return 0;
     };
 
+    // Moment de la journée (jour/soir/nuit) : bonus, pas exclusion --
+    // beaucoup de fiches restent encore taguées "Jour" par défaut sans
+    // que ce soit une vraie incompatibilité avec le soir/la nuit (tag
+    // pas encore audité partout). On les fait juste passer après celles
+    // explicitement taguées pour le bon moment, sans jamais les cacher.
+    const bonusMoment = (f) => (s.moment && f.momentJournee === s.moment ? 1 : 0);
+
     const parCategorie = new Map();
     for (const x of matched) {
       const cat = x.f.categorie || "Autres";
@@ -299,7 +306,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
       parCategorie.get(cat).push(x);
     }
     const groupes = [...parCategorie.values()]
-      .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || (s.prioriser || []).includes(b.f.techniqueId) - (s.prioriser || []).includes(a.f.techniqueId) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
+      .map((g) => g.sort((a, b) => rangDernierRecours(a.f) - rangDernierRecours(b.f) || (s.prioriser || []).includes(b.f.techniqueId) - (s.prioriser || []).includes(a.f.techniqueId) || bonusMoment(b.f) - bonusMoment(a.f) || b.n - a.n || b.f.niveauPreuve - a.f.niveauPreuve))
       .sort((a, b) => rangDernierRecours(a[0].f) - rangDernierRecours(b[0].f) || bonusRecurrence(b[0].f.categorie) - bonusRecurrence(a[0].f.categorie) || (b[0].n - a[0].n) || (b[0].f.niveauPreuve - a[0].f.niveauPreuve));
     const diversifie = [];
     let restant = true;
