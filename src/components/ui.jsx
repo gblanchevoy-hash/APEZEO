@@ -186,21 +186,30 @@ export function ScoreRing({ pct }) {
   // fiche pertinente mais avec un peu moins de tags que la meilleure du
   // lot ne doit pas basculer en orange pour autant.
   const niveau = pct >= 60 ? "vert" : pct >= 35 ? "orange" : "rouge";
-  const couleurs = { vert: "#22c55e", orange: "#f59e0b", rouge: "#ef4444" };
+  const styles = {
+    vert: { halo: "#dcfce7", point: "#22c55e" },
+    orange: { halo: "#ffedd5", point: "#f59e0b" },
+    rouge: { halo: "#fee2e2", point: "#ef4444" },
+  }[niveau];
   return (
-    <div className="shrink-0 flex items-center justify-center w-8 h-8"
+    <div className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded-full" style={{ background: styles.halo }}
       title="Correspondance avec les critères indiqués : voir la légende des couleurs.">
-      <span className="w-3.5 h-3.5 rounded-full" style={{ background: couleurs[niveau] }} />
+      <span className="w-2.5 h-2.5 rounded-full" style={{ background: styles.point }} />
     </div>
   );
 }
 
 export function LegendeMacarons({ avecRouge = true }) {
   return (
-    <div className="flex flex-wrap gap-3 text-xs text-stone-500 px-1 py-2">
-      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#dcfce7", border: "1px solid #166534" }} /> Vert : Pratique appropriée</span>
-      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#ffedd5", border: "1px solid #9a3412" }} /> Orange : Pratique appropriée mais à adapter en fonction du contexte</span>
-      {avecRouge && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#fee2e2", border: "1px solid #991b1b" }} /> Rouge : Technique peu ou pas appropriée dans ce cas de figure</span>}
-    </div>
+    <details className="text-xs text-stone-500 px-1 py-1">
+      <summary className="cursor-pointer select-none font-medium text-stone-600 list-none flex items-center gap-1">
+        <span className="text-[10px]">▸</span> Légende des couleurs
+      </summary>
+      <div className="flex flex-wrap gap-3 pt-2">
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#dcfce7", border: "1px solid #166534" }} /> Vert : Pratique appropriée</span>
+        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#ffedd5", border: "1px solid #9a3412" }} /> Orange : Pratique appropriée mais à adapter en fonction du contexte</span>
+        {avecRouge && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#fee2e2", border: "1px solid #991b1b" }} /> Rouge : Technique peu ou pas appropriée dans ce cas de figure</span>}
+      </div>
+    </details>
   );
 }
