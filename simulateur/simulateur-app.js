@@ -36,12 +36,21 @@ const supabase = createClient(
     person: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20c1.2-4.2 4.2-6.4 7.5-6.4s6.3 2.2 7.5 6.4"/></svg>'
   };
 
-  // Dossier des visuels détourés (un PNG fond transparent par personnage,
-  // nommé d'après le `code` du scénario en base : ./personnages/robert.png,
-  // ./personnages/lucienne.png, etc.). À créer et à remplir vous-même à côté
-  // de ce fichier ; si une image manque pour un code, le popup ne s'affiche
-  // simplement pas pour ce personnage (aucune image cassée visible).
+  // Dossier des visuels détourés (un PNG par personnage), à déposer dans
+  // ./personnages/ (un sous-dossier, à côté de simulateur.html/css/js).
+  // Le nom du fichier se base sur le PRÉNOM affiché du résident, pas sur
+  // un identifiant technique : pour "Georgette M.", le fichier attendu est
+  // simplement ./personnages/georgette.png (minuscules, sans accent, sans
+  // espace — voir charSlug ci-dessous). Si l'image manque pour un
+  // personnage, le popup/portrait ne s'affiche simplement pas pour lui
+  // (aucune image cassée visible).
   const CHAR_IMG_BASE = "./personnages/";
+  // charSlug() convertit un prénom affiché ("Georgette", "Robert") en nom
+  // de fichier attendu ("georgette", "robert"). Définie via slug() plus
+  // bas dans ce fichier (function déclarée = disponible partout ici).
+  function charSlug(nomComplet) {
+    return slug(String(nomComplet || "").trim().split(" ")[0]);
+  }
 
   const DIFF_LABELS = { facile: "Facile", intermediaire: "Intermédiaire", expert: "Expert" };
   const MOOD_LABELS = { calme: "calme", apaisee: "apaisée", anxieuse: "anxieuse", agitee: "agitée", confuse: "confuse", opposante: "en opposition", triste: "triste", abattue: "abattue" };
@@ -267,7 +276,7 @@ const supabase = createClient(
       const card = document.createElement("div");
       card.className = "scenario-card " + p.difficulte;
       card.innerHTML =
-        '<button class="scenario-card-btn" type="button" data-code="' + p.code + '" data-char-code="' + esc(p.code) + '">' +
+        '<button class="scenario-card-btn" type="button" data-code="' + p.code + '" data-char-code="' + esc(charSlug(p.nom)) + '">' +
           '<div class="scenario-avatar">' + ICONS.person + "</div>" +
           '<div class="scenario-main">' +
             '<div class="scenario-name">' + esc(p.nom) + "</div>" +
@@ -288,7 +297,7 @@ const supabase = createClient(
     scenarioPreviewCode = null;
     scenarioPreviewImg.classList.remove("visible");
     scenarioPreview.classList.remove("has-image");
-    if (scenarios.length) showScenarioPreview(scenarios[0].code);
+    if (scenarios.length) showScenarioPreview(charSlug(scenarios[0].nom));
   }
 
   // ---------------- session lifecycle ----------------
@@ -344,7 +353,7 @@ const supabase = createClient(
 
     sAvatar.innerHTML = ICONS.person;
     sName.textContent = persona.nom + ", " + persona.age + " ans";
-    sPersona.dataset.charCode = persona.code;
+    sPersona.dataset.charCode = charSlug(persona.nom);
     setMood(persona.humeur_initiale);
     updateScore();
     updateTurnCount();
@@ -382,13 +391,13 @@ const supabase = createClient(
   function addResidentBubble(text) {
     const row = document.createElement("div");
     row.className = "msg-row resident";
-    row.innerHTML = '<div class="msg-label char-hover" data-char-code="' + esc(persona.code) + '">' + esc(persona.nom.split(" ")[0]) + '</div><div class="bubble">' + esc(text) + "</div>";
+    row.innerHTML = '<div class="msg-label char-hover" data-char-code="' + esc(charSlug(persona.nom)) + '">' + esc(persona.nom.split(" ")[0]) + '</div><div class="bubble">' + esc(text) + "</div>";
     chatScroll.appendChild(row); scrollToBottom(); return row;
   }
   function addThinkingBubble() {
     const row = document.createElement("div");
     row.className = "msg-row resident";
-    row.innerHTML = '<div class="msg-label char-hover" data-char-code="' + esc(persona.code) + '">' + esc(persona.nom.split(" ")[0]) + '</div><div class="bubble"><span class="thinking-dots"><span></span><span></span><span></span></span></div>';
+    row.innerHTML = '<div class="msg-label char-hover" data-char-code="' + esc(charSlug(persona.nom)) + '">' + esc(persona.nom.split(" ")[0]) + '</div><div class="bubble"><span class="thinking-dots"><span></span><span></span><span></span></span></div>';
     chatScroll.appendChild(row); scrollToBottom(); return row;
   }
   function addCaregiverBubble(text) {

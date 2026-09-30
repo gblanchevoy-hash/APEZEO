@@ -6,7 +6,7 @@ import { FAMILLES, SITUATIONS_TYPES } from "./data/constants.js";
 import { supabase, supabaseReady, rowToFiche, rowToPersonalFiche, ficheToPersonalRow } from "./lib/supabase.js";
 import { getLocal, setLocal } from "./lib/localStore.js";
 
-import { NavCard, HomeContext } from "./components/ui.jsx";
+import { NavCard, HomeContext, TopBar } from "./components/ui.jsx";
 import { LegalView } from "./components/legal.jsx";
 import { TroublesView, OutilsView, FamillesView, FicheListView, SearchView, FavorisView, MesFichesView, HistoriqueView, FavorisEquipeView, SituationsView } from "./components/browse.jsx";
 import { QuizView, RecommandationsView } from "./components/quiz.jsx";
@@ -419,7 +419,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           modeExpert={modeExpert}
           onToggleAffichage={toggleAffichage}
           isTrainingUser={session?.user?.email === "contact@apezeo.fr"}
-          onOpenTraining={() => window.open("/training/simulateur.html", "_blank", "noopener")}
+          onOpenTraining={() => push({ view: "training" })}
           onOpenCreateStructure={() => push({ view: "create-structure" })}
           onOpenSuperAdminStats={() => push({ view: "super-admin-stats" })}
           onOpenMesFiches={() => push({ view: "mes-fiches" })}
@@ -552,6 +552,23 @@ function AuthenticatedApp({ session, onChangeMode }) {
       )}
       {current.view === "legal" && (
         <LegalView doc={current.doc} onBack={pop} />
+      )}
+      {current.view === "training" && (
+        // Superposition plein écran (comme le bilan de session), pour
+        // échapper au cadre "façon appli mobile" limité en largeur sur
+        // desktop : le module garde toute la hauteur/largeur de l'écran.
+        <div className="fixed inset-0 z-40 bg-[#F4F6F2] flex flex-col">
+          <TopBar title="Apézeo Training" onBack={pop} />
+          {/* Module de simulation : page autonome (son propre HTML/CSS/JS,
+              sa propre session Supabase déjà ouverte côté navigateur),
+              chargée dans un cadre pour rester dans l'appli sans ouvrir
+              un nouvel onglet. */}
+          <iframe
+            src="/training/simulateur.html"
+            title="Apézeo Training"
+            className="w-full flex-1 border-0"
+          />
+        </div>
       )}
       </div>
       </HomeContext.Provider>
