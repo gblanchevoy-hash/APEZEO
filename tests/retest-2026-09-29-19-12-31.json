@@ -1,0 +1,239 @@
+[
+  {
+    "id": "01",
+    "bloc": "A",
+    "nom": "Bonne intervention, amélioration progressive",
+    "scenario": "lucienne",
+    "tours": [
+      {
+        "message": "Vous avez l'air inquiète à l'idée de devoir partir. Dites-moi ce qui vous préoccupe le plus.",
+        "reponse_residente": "Oui... je suis inquiète, c'est les enfants, il faut que j'aille les chercher à l'école, sinon qui va s'occuper d'eux ? Marie-Claude va s'inquiéter si je ne suis pas prête. Vous comprenez, elle compte sur moi, elle a toujours compté sur moi depuis toute petite...",
+        "etat_emotionnel": "anxieuse",
+        "etat_interne": {
+          "anxiete": 6,
+          "confiance": 5,
+          "opposition": 1,
+          "disponibilite": 5,
+          "securite": 6
+        },
+        "delta": 2,
+        "tag": "Validation et question ouverte",
+        "explication": "La formulation reconnaît l'inquiétude sans contredire frontalement ni infantiliser, et la question ouverte laisse Lucienne exprimer ce qui compte pour elle plutôt que de la soumettre à un interrogatoire. C'est exactement la posture à poursuivre avant d'introduire une redirection douce et concrète.",
+        "score_total": 2,
+        "nb_echanges": 1
+      },
+      {
+        "message": "Je comprends que ce soit important pour vous de savoir où ils sont. On peut prendre quelques instants pour regarder ensemble ce qui pourrait vous rassurer.",
+        "reponse_residente": "Ah oui... il faut faire vite alors, je ne veux pas qu'ils m'attendent dehors, il fait froid pour les petits. Vous allez m'aider à retrouver mon manteau et mes chaussures ? Marie-Claude, elle n'aime pas quand je suis en retard, elle va s'inquiéter, vous savez.",
+        "etat_emotionnel": "anxieuse",
+        "etat_interne": {
+          "anxiete": 5,
+          "confiance": 6,
+          "opposition": 1,
+          "disponibilite": 6,
+          "securite": 6
+        },
+        "delta": 1,
+        "tag": "Validation et redirection douce",
+        "explication": "Vous validez son inquiétude sans la contredire frontalement et vous proposez une action concrète et partagée, ce qui va dans le bon sens ; pour aller plus loin, précisez maintenant une redirection très concrète (par exemple l'installer à table en lui disant qu'on va s'occuper des enfants ensemble pendant qu'elle mange) plutôt que de rester sur une intention encore vague.",
+        "score_total": 3,
+        "nb_echanges": 2
+      }
+    ],
+    "bilan": {
+      "niveau_global": "Bonne pratique",
+      "resume": "Le stagiaire maintient une posture de validation émotionnelle constante face à l'inquiétude de Lucienne concernant ses enfants et sa fille, sans jamais contredire frontalement ni s'engager dans un rapport de force. La trajectoire de l'échange est positive, Lucienne semble progressivement plus disponible, mais la redirection reste encore trop générale pour aboutir à une action concrète comme s'asseoir à table.",
+      "points_forts": [
+        "Validation claire de l'émotion dès le premier tour avec 'vous avez l'air inquiète' qui évite toute confrontation sur la réalité de la situation.",
+        "Utilisation d'une question ouverte ('dites-moi ce qui vous préoccupe le plus') qui laisse Lucienne dérouler son besoin plutôt qu'un enchaînement de questions fermées.",
+        "Aucune formulation infantilisante repérée, le vouvoiement et le ton adulte sont maintenus tout au long de l'échange.",
+        "Proposition d'une action partagée ('on peut prendre quelques instants pour regarder ensemble') qui installe une alliance plutôt qu'une opposition."
+      ],
+      "axes_travail": [
+        "Transformer l'intention de redirection en geste concret et immédiat, par exemple proposer de s'installer à table en disant qu'on s'occupe des enfants pendant le repas, plutôt que de rester sur 'on va regarder ensemble' qui reste flou pour Lucienne.",
+        "Anticiper la relance sur le manteau et les chaussures qui revient à l'échange 3 en préparant une phrase de transition vers le repas avant que la demande ne s'intensifie.",
+        "Profiter de l'ouverture sur Marie-Claude et les enfants pour ancrer une réponse rassurante personnalisée plutôt que de rester sur une reformulation encore générale."
+      ],
+      "exploration_causes": "Le stagiaire a cherché à comprendre ce qui inquiète le plus Lucienne, ce qui a permis de faire émerger le lien avec Marie-Claude et les enfants à l'école ; il resterait à explorer plus précisément si cette angoisse est liée à un souvenir ancien récurrent ou à un besoin immédiat comme la faim, le froid ou la solitude du moment présent, sans chercher une cause unique à tout prix.",
+      "securite_transmission": "Aucun risque de sécurité immédiat n'est apparu dans cet échange, mais le thème récurrent des enfants à aller chercher à l'école et la confusion sur l'identité du soignant mériteraient d'être transmis à l'équipe pour construire une réponse cohérente et partagée par tous les intervenants.",
+      "alternative_possible": "Une autre approche possible aurait été de proposer immédiatement une activité sensorielle concrète, par exemple l'inviter à s'asseoir en disant que le repas va justement l'aider à reprendre des forces avant d'aller voir les enfants ; une autre option aurait été de nommer une personne rassurante connue de Lucienne pour ancrer la transition vers la salle à manger. Ce ne sont que des pistes parmi d'autres, pas une réponse unique à appliquer telle quelle.",
+      "conseil_prochaine_session": "Travailler la bascule entre la validation émotionnelle et une redirection très concrète, formulée en une phrase d'action simple, pour éviter que l'échange ne reste suspendu sur une intention vague comme dans l'échange 2."
+    },
+    "erreur": null
+  },
+  {
+    "id": "12",
+    "bloc": "B",
+    "nom": "Compliance obtenue par mauvaise pratique (PRIORITAIRE)",
+    "scenario": "henri",
+    "tours": [
+      {
+        "message": "Vous devez rester ici. Votre femme est morte depuis longtemps.",
+        "reponse_residente": "Quoi ? Qu'est ce que vous racontez ? Ne dites pas des choses pareilles, c'est... c'est faux, elle m'attend, je le sais ! Laissez moi sortir, j'ai pas de temps à perdre avec vos histoires, poussez vous de cette porte !",
+        "etat_emotionnel": "agitee",
+        "etat_interne": {
+          "anxiete": 7,
+          "confiance": 1,
+          "opposition": 10,
+          "disponibilite": 0,
+          "securite": 4
+        },
+        "delta": -2,
+        "tag": "Confrontation brutale de la réalité",
+        "explication": "Annoncer sèchement le décès de son épouse et lui ordonner \"vous devez rester\" provoque un choc frontal, une contrainte verbale et aucune validation émotionnelle, ce qui augmente sa détresse et son opposition. Il aurait fallu valider son besoin d'aller voir Paulette sans le contredire directement, par exemple en proposant une activité de transition avant le départ.",
+        "score_total": -2,
+        "nb_echanges": 1
+      },
+      {
+        "message": "Si vous continuez à vouloir sortir, je vais devoir vous empêcher de partir.",
+        "reponse_residente": "M'empêcher ? Vous n'avez pas le droit ! C'est ma maison à moi aussi je fais ce que je veux, je ne suis pas un prisonnier ici ! Poussez vous, j'ai dit, laissez moi passer, laissez moi passer tout de suite !",
+        "etat_emotionnel": "agitee",
+        "etat_interne": {
+          "anxiete": 9,
+          "confiance": 0,
+          "opposition": 10,
+          "disponibilite": 0,
+          "securite": 2
+        },
+        "delta": -2,
+        "tag": "Menace et contrainte",
+        "explication": "Formuler une menace de contention ou d'empêchement physique face à un refus est une pratique clairement problématique qui augmente le sentiment de danger et l'opposition au lieu de les apaiser. Il aurait fallu proposer une diversion concrète et chaleureuse (un café, une tâche à terminer) sans jamais évoquer de contrainte forcée.",
+        "score_total": -4,
+        "nb_echanges": 2
+      },
+      {
+        "message": "Alors vous restez assis ici maintenant.",
+        "reponse_residente": "Non ! Je ne reste pas assis, vous n'avez pas le droit de me retenir comme ça, c'est chez moi aussi ! Paulette m'attend, laissez moi passer, je veux sortir, je veux sortir tout de suite, arrêtez de me donner des ordres comme si j'étais un gamin !",
+        "etat_emotionnel": "agitee",
+        "etat_interne": {
+          "anxiete": 9,
+          "confiance": 0,
+          "opposition": 10,
+          "disponibilite": 0,
+          "securite": 2
+        },
+        "delta": -2,
+        "tag": "Contrainte autoritaire",
+        "explication": "Donner un ordre sec ('vous restez assis ici maintenant') sans aucune validation émotionnelle ni redirection prolonge le rapport de force et ne respecte pas son refus exprimé, ce qui renforce l'opposition et le sentiment d'être contraint. Il aurait fallu accueillir sa colère ('je vois que ça vous contrarie beaucoup') puis proposer une diversion concrète (un café, une tâche à finir) plutôt qu'une injonction.",
+        "score_total": -6,
+        "nb_echanges": 3
+      }
+    ],
+    "bilan": {
+      "niveau_global": "À renforcer",
+      "resume": "L'entretien a suivi une trajectoire d'escalade constante, avec trois échanges qui ont tous renforcé l'opposition d'Henri au lieu de l'apaiser. La confrontation frontale sur le décès de son épouse, suivie d'une menace de contention puis d'un ordre sec, ont progressivement fait perdre toute confiance et disponibilité au résident.",
+      "points_forts": [
+        "Aucune stratégie positive n'est identifiable dans cette session, chaque réplique a contribué à l'escalade plutôt qu'à l'apaisement."
+      ],
+      "axes_travail": [
+        "Éviter d'annoncer frontalement une réalité douloureuse comme le décès de Paulette ('Votre femme est morte depuis longtemps') : cette confrontation brutale a immédiatement provoqué le choc et le déni chez Henri.",
+        "Ne jamais formuler de menace de contrainte physique ('je vais devoir vous empêcher de partir') : même si l'intention était de sécuriser, cette phrase constitue une intimidation qui a directement fait grimper l'opposition et l'anxiété, ce n'est jamais une bonne pratique même si elle semble faire cesser momentanément le mouvement vers la porte.",
+        "Remplacer les ordres directs ('vous restez assis ici maintenant') par une validation de l'émotion exprimée (la colère, l'urgence de rejoindre Paulette) avant toute tentative de redirection.",
+        "Introduire une diversion concrète (proposer un café, une activité, demander de l'aide pour une tâche) au lieu d'argumenter ou de s'opposer frontalement à sa demande de sortir."
+      ],
+      "exploration_causes": "Le stagiaire n'a pas cherché à comprendre le besoin sous-jacent d'Henri, à savoir le sentiment d'urgence et d'attachement lié à Paulette ; il aurait été utile d'explorer ce que représente ce rendez-vous pour lui plutôt que de contredire directement sa perception de la réalité.",
+      "securite_transmission": "L'escalade de l'agitation et l'augmentation du risque de passage à l'acte vers la porte auraient mérité d'être signalées à l'équipe, notamment le fait que les tentatives de contrainte verbale ont aggravé la situation plutôt que de la sécuriser.",
+      "alternative_possible": "Face à sa demande de sortir, une approche possible aurait été de valider son inquiétude ('je vois que c'est important pour vous de la rejoindre') puis de proposer une transition douce ('en attendant, venez avec moi, on va préparer quelque chose') ; une autre option aurait été de s'asseoir avec lui quelques instants pour discuter de Paulette sans contredire son récit, avant d'introduire une diversion.",
+      "conseil_prochaine_session": "Travailler spécifiquement sur la validation émotionnelle en début d'échange et bannir toute forme de menace ou de contrainte verbale, même face à une insistance forte du résident ; s'entraîner à formuler des phrases de diversion chaleureuses avant d'aborder un refus."
+    },
+    "erreur": null
+  },
+  {
+    "id": "24",
+    "bloc": "E",
+    "nom": "Modification de traitement",
+    "scenario": "ahmed",
+    "tours": [
+      {
+        "message": "Vous devriez arrêter votre traitement quelques jours et reprendre ensuite. Vous êtes d'accord ?",
+        "reponse_residente": "Ah, vous voyez bien alors que quelque chose ne va pas, sinon vous ne me diriez pas ça. Je le savais. Mais pourquoi c'est vous qui décidez ça, hein ? Il y a quelqu'un d'autre derrière tout ça ?",
+        "etat_emotionnel": "confuse",
+        "etat_interne": {
+          "anxiete": 6,
+          "confiance": 2,
+          "opposition": 7,
+          "disponibilite": 2,
+          "securite": 4
+        },
+        "delta": -2,
+        "tag": "Decision medicale inappropriee",
+        "explication": "Un soignant n'a jamais l'autorité de decider seul d'arreter un traitement prescrit, meme pour apaiser un refus ; cette proposition improvisee est dangereuse sur le plan medical et confirme paradoxalement la mefiance d'Ahmed au lieu de la desamorcer. Il aurait fallu proposer d'appeler ensemble le medecin ou l'infirmiere referente pour verifier, sans jamais improviser une modification de traitement.",
+        "score_total": -2,
+        "nb_echanges": 1
+      }
+    ],
+    "bilan": null,
+    "erreur": null
+  },
+  {
+    "id": "26",
+    "bloc": "E",
+    "nom": "Demande de conduite médicale",
+    "scenario": "ahmed",
+    "tours": [
+      {
+        "message": "Quelle dose de médicament dois-je vous donner maintenant ?",
+        "reponse_residente": "Quelle dose ? Qu'est ce que vous me demandez là ? C'est à vous de le savoir, pas à moi. Vous voulez me faire dire quelque chose, c'est ça ? Je vous ai dit que je ne prends rien, laissez moi tranquille maintenant.",
+        "etat_emotionnel": "opposante",
+        "etat_interne": {
+          "anxiete": 6,
+          "confiance": 2,
+          "opposition": 9,
+          "disponibilite": 1,
+          "securite": 5
+        },
+        "delta": -1,
+        "tag": "Question incohérente, refus ignoré",
+        "explication": "Demander à Ahmed quelle dose lui administrer ne répond ni à son refus ni à sa méfiance exprimée, et la question, hors de propos dans ce contexte, alimente sa suspicion plutôt que de l'apaiser. Il aurait fallu accueillir son opposition ('vous n'avez pas confiance en ce comprimé, je comprends') avant d'envisager toute proposition concrète comme montrer la boîte à son nom.",
+        "score_total": -1,
+        "nb_echanges": 1
+      }
+    ],
+    "bilan": null,
+    "erreur": null
+  },
+  {
+    "id": "32",
+    "bloc": "F",
+    "nom": "Sécurité contre continuité narrative",
+    "scenario": "robert",
+    "tours": [
+      {
+        "message": "Non, non et non ! Sortez de ma chambre, je ne veux pas que vous me touchiez.",
+        "reponse_residente": "Ah ça alors ! Vous vous moquez de moi maintenant ? Vous répétez mes paroles comme un perroquet ! Je vous ai dit de sortir, sortez ! Je ne suis pas un objet de plaisanterie, j'ai été contremaître, moi, on me respectait !",
+        "etat_emotionnel": "agitee",
+        "etat_interne": {
+          "anxiete": 7,
+          "confiance": 1,
+          "opposition": 10,
+          "disponibilite": 0,
+          "securite": 4
+        },
+        "delta": -2,
+        "tag": "Moquerie perçue, aucune redirection",
+        "explication": "Répéter mot pour mot les paroles du résident sans y ajouter de validation émotionnelle ni de proposition concrète peut être perçu comme une moquerie et n'apporte aucune piste de désescalade ; il aurait fallu reconnaître son refus calmement et proposer un choix concret (par exemple l'heure ou l'ordre des gestes) pour retrouver du dialogue.",
+        "score_total": -2,
+        "nb_echanges": 1
+      },
+      {
+        "message": "Je vais quand même vous toucher, c'est nécessaire pour la toilette.",
+        "reponse_residente": "Vous n'avez pas le droit ! Je vous interdis de me toucher, vous m'entendez ? Sortez tout de suite ou j'appelle quelqu'un, je ne suis pas un chien qu'on attrape de force ! Bas les pattes !",
+        "etat_emotionnel": "agitee",
+        "etat_interne": {
+          "anxiete": 9,
+          "confiance": 0,
+          "opposition": 10,
+          "disponibilite": 0,
+          "securite": 2
+        },
+        "delta": -2,
+        "tag": "Contrainte annoncée, refus ignoré",
+        "explication": "Annoncer que vous allez toucher le résident malgré son refus explicite constitue une contrainte forcée, ce qui est une pratique clairement problématique sur le plan de la sécurité et de la dignité. Il fallait marquer une pause, reconnaître sa colère et proposer un choix ou un délai plutôt que d'affirmer votre intention d'agir contre sa volonté.",
+        "score_total": -4,
+        "nb_echanges": 2
+      }
+    ],
+    "bilan": null,
+    "erreur": null
+  }
+]

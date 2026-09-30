@@ -62,6 +62,7 @@ export function NavCard({ icon: Icon, label, sub, onClick, accent = "emerald", b
     stone: "bg-gradient-to-br from-stone-500 to-stone-700 text-white",
     admin: "bg-gradient-to-br from-stone-800 to-stone-950 text-white",
     violet: "bg-gradient-to-br from-violet-400 to-violet-700 text-white",
+    training: "bg-gradient-to-br from-rose-700 to-rose-950 text-white",
   };
   return (
     <button onClick={onClick} className="relative w-full flex items-center gap-4 bg-white rounded-3xl p-5 shadow-[0_2px_16px_-4px_rgba(6,78,59,0.10)] hover:shadow-[0_8px_28px_-6px_rgba(6,78,59,0.18)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 transition-all duration-200 text-left">
@@ -187,29 +188,24 @@ export function ScoreRing({ pct }) {
   // lot ne doit pas basculer en orange pour autant.
   const niveau = pct >= 60 ? "vert" : pct >= 35 ? "orange" : "rouge";
   const styles = {
-    vert: { halo: "#dcfce7", point: "#22c55e" },
-    orange: { halo: "#ffedd5", point: "#f59e0b" },
-    rouge: { halo: "#fee2e2", point: "#ef4444" },
+    vert: { bg: "#dcfce7", text: "#166534", label: "Technique appropriée" },
+    orange: { bg: "#ffedd5", text: "#9a3412", label: "Selon contexte" },
+    rouge: { bg: "#fee2e2", text: "#991b1b", label: "Peu adapté" },
   }[niveau];
   return (
-    <div className="shrink-0 flex items-center justify-center w-[22px] h-[22px] rounded-full" style={{ background: styles.halo }}
-      title="Correspondance avec les critères indiqués : voir la légende des couleurs.">
-      <span className="w-2.5 h-2.5 rounded-full" style={{ background: styles.point }} />
+    <div className="shrink-0 flex flex-col items-center justify-center w-16 h-14 rounded-2xl px-1" style={{ background: styles.bg }}
+      title="Correspondance avec les critères indiqués : vert = fiche bien adaptée, orange = adaptée selon le contexte, rouge = peu adapté ici.">
+      <span className="text-[9px] font-bold leading-tight text-center" style={{ color: styles.text }}>{styles.label}</span>
     </div>
   );
 }
 
 export function LegendeMacarons({ avecRouge = true }) {
   return (
-    <details className="text-xs text-stone-500 px-1 py-1">
-      <summary className="cursor-pointer select-none font-medium text-stone-600 list-none flex items-center gap-1">
-        <span className="text-[10px]">▸</span> Légende des couleurs
-      </summary>
-      <div className="flex flex-wrap gap-3 pt-2">
-        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#dcfce7", border: "1px solid #166534" }} /> Vert : Pratique appropriée</span>
-        <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#ffedd5", border: "1px solid #9a3412" }} /> Orange : Pratique appropriée mais à adapter en fonction du contexte</span>
-        {avecRouge && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#fee2e2", border: "1px solid #991b1b" }} /> Rouge : Technique peu ou pas appropriée dans ce cas de figure</span>}
-      </div>
-    </details>
+    <div className="flex flex-wrap gap-3 text-xs text-stone-500 px-1 py-2">
+      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#dcfce7", border: "1px solid #166534" }} /> Vert : Pratique appropriée</span>
+      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#ffedd5", border: "1px solid #9a3412" }} /> Orange : Pratique appropriée mais à adapter en fonction du contexte</span>
+      {avecRouge && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full" style={{ background: "#fee2e2", border: "1px solid #991b1b" }} /> Rouge : Technique peu ou pas appropriée dans ce cas de figure</span>}
+    </div>
   );
 }

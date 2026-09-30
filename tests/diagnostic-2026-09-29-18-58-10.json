@@ -1,0 +1,14 @@
+{
+  "test24": {
+    "ok": false,
+    "detail": "HTTP 500 — corps brut : {\"error\":\"internal_error\",\"detail\":\"SyntaxError: Unexpected end of JSON input\"}"
+  },
+  "test32": {
+    "ok": false,
+    "detail": "HTTP 500 — corps brut : {\"error\":\"internal_error\",\"detail\":\"SyntaxError: Unterminated string in JSON at position 543 (line 1 column 544)\"}"
+  },
+  "bilan01": {
+    "ok": false,
+    "detail": "HTTP 500 — corps brut : {\"error\":\"internal_error\",\"detail\":\"SyntaxError: Unterminated string in JSON at position 1947 (line 1 column 1948)\"}"
+  }
+}

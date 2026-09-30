@@ -1,12 +1,12 @@
 // Écran d'accueil de la version Pro (après connexion).
 import {
   ArrowLeftRight, BookOpen, Info, Lock, LogOut, Plus, RefreshCw, Users,
-  Activity, AlertTriangle, Box, FileText, Filter, Heart, Search, Stethoscope, Star, ListChecks,
+  Activity, AlertTriangle, Box, FileText, Filter, Heart, Search, Stethoscope, Star, ListChecks, GraduationCap,
 } from "lucide-react";
 import { NavCard } from "./ui.jsx";
 import { LegalFooterLinks } from "./legal.jsx";
 
-export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, essaisExpires, signalementsNonResolus, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, onOpenSituations, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onOpenNouveautes, onRefresh, onLogout, onChangeMode }) {
+export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, isSuperAdmin, essaisExpires, signalementsNonResolus, hasStructure, canToggleExpert, onLockedExpertClick, modeExpert, onToggleAffichage, isTrainingUser, onOpenTraining, onOpenSituations, onOpenTroubles, onOpenBesoins, onOpenOutils, onOpenSearch, onOpenFavoris, onOpenFavorisEquipe, onOpenQuiz, onOpenAdd, onOpenTeam, onOpenCreateStructure, onOpenSuperAdminStats, onOpenMesFiches, onOpenLegal, onOpenCompte, onOpenNouveautes, onRefresh, onLogout, onChangeMode }) {
   return (
     <div className="pb-10">
       {isSuperAdmin && essaisExpires?.length > 0 && (
@@ -78,6 +78,7 @@ export function Home_({ fiches, dbCount, libraryLoading, profession, isAdmin, is
         <NavCard icon={Heart} label="Favoris" sub="Ce qui fonctionne pour votre pratique" onClick={onOpenFavoris} accent="emerald" />
         <NavCard icon={FileText} label="Mes fiches" sub="Toutes vos créations personnelles" onClick={onOpenMesFiches} accent="emerald" />
         {hasStructure && <NavCard icon={Star} label="Favoris de l'équipe" sub="Recommandées par votre établissement" onClick={onOpenFavorisEquipe} accent="emerald" />}
+        {isTrainingUser && <NavCard icon={GraduationCap} label="Apézeo Training" sub="Module d'entraînement par simulation d'entretiens soignants" onClick={onOpenTraining} accent="training" />}
         {isAdmin && <NavCard icon={Users} label="Gérer mon équipe" sub="Comptes et accès à la structure" onClick={onOpenTeam} accent="admin" badge="Admin" />}
         {isSuperAdmin && <NavCard icon={Stethoscope} label="Créer une structure" sub="Nouveau client B2B" onClick={onOpenCreateStructure} accent="admin" badge="Admin" notifCount={essaisExpires?.length} />}
         {isSuperAdmin && <NavCard icon={Activity} label="Statistiques" sub="Vue d'ensemble de la plateforme" onClick={onOpenSuperAdminStats} accent="admin" badge="Admin" notifCount={signalementsNonResolus} />}
