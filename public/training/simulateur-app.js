@@ -52,6 +52,23 @@ const supabase = createClient(
     return slug(String(nomComplet || "").trim().split(" ")[0]);
   }
 
+  // Essaie plusieurs extensions à la suite (png, jpg, jpeg, webp) pour le
+  // même code, plutôt que d'exiger un .png précis : beaucoup de photos
+  // (Explorateur Windows, téléphone...) sont en .jpg sans que ça se voie
+  // au premier coup d'œil si les extensions sont masquées. On abandonne
+  // (onFail) seulement une fois toutes les extensions essayées.
+  const IMG_EXTS = ["png", "jpg", "jpeg", "webp"];
+  function loadCharImage(imgEl, code, onSuccess, onFail) {
+    let i = 0;
+    function attempt() {
+      if (i >= IMG_EXTS.length) { onFail && onFail(); return; }
+      imgEl.onload = () => onSuccess && onSuccess();
+      imgEl.onerror = attempt;
+      imgEl.src = CHAR_IMG_BASE + code + "." + IMG_EXTS[i++];
+    }
+    attempt();
+  }
+
   const DIFF_LABELS = { facile: "Facile", intermediaire: "Intermédiaire", expert: "Expert" };
   const MOOD_LABELS = { calme: "calme", apaisee: "apaisée", anxieuse: "anxieuse", agitee: "agitée", confuse: "confuse", opposante: "en opposition", triste: "triste", abattue: "abattue" };
   const MOOD_STYLE = { calme: "blue", apaisee: "green", anxieuse: "orange", agitee: "bad", confuse: "orange", opposante: "bad", triste: "blue", abattue: "bad" };
@@ -125,8 +142,8 @@ const supabase = createClient(
     const code = el.dataset.charCode;
     if (!code) return;
     if (charPreviewCode !== code) {
-      charPreviewImg.src = CHAR_IMG_BASE + code + ".png";
       charPreviewCode = code;
+      loadCharImage(charPreviewImg, code, null, () => { charPreviewFloat.style.display = "none"; });
     }
     charPreviewFloat.style.display = "";
     const rect = el.getBoundingClientRect();
@@ -144,10 +161,8 @@ const supabase = createClient(
   function hideCharPreview() {
     charPreviewFloat.classList.remove("visible");
   }
-  // Si l'image n'existe pas encore pour ce personnage (fichier pas encore
-  // fourni dans ./personnages/), on masque le popup plutôt que de montrer
-  // une icône d'image cassée.
-  charPreviewImg.addEventListener("error", () => { charPreviewFloat.style.display = "none"; });
+  // (le masquage si aucune extension ne fonctionne est géré directement
+  // dans showCharPreview, via loadCharImage ci-dessus)
 
   document.addEventListener("mouseover", (e) => {
     const el = e.target.closest(".char-hover");
@@ -175,16 +190,11 @@ const supabase = createClient(
     scenarioPreviewCode = code;
     scenarioPreview.classList.remove("has-image");
     scenarioPreviewImg.classList.remove("visible");
-    scenarioPreviewImg.src = CHAR_IMG_BASE + code + ".png";
+    loadCharImage(scenarioPreviewImg, code,
+      () => { scenarioPreviewImg.classList.add("visible"); scenarioPreview.classList.add("has-image"); },
+      () => { scenarioPreviewImg.classList.remove("visible"); scenarioPreview.classList.remove("has-image"); }
+    );
   }
-  scenarioPreviewImg.addEventListener("load", () => {
-    scenarioPreviewImg.classList.add("visible");
-    scenarioPreview.classList.add("has-image");
-  });
-  scenarioPreviewImg.addEventListener("error", () => {
-    scenarioPreviewImg.classList.remove("visible");
-    scenarioPreview.classList.remove("has-image");
-  });
   scenarioList.addEventListener("mouseover", (e) => {
     const btn = e.target.closest(".scenario-card-btn");
     if (btn) showScenarioPreview(btn.dataset.charCode);
