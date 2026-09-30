@@ -126,14 +126,14 @@ textarea, input{font-family:inherit;}
   background:radial-gradient(circle, rgba(255,255,255,.07), transparent 62%);
   pointer-events:none;
 }
-.hero-brand{position:relative; display:flex; align-items:center; gap:12px; margin-bottom:20px; padding-bottom:18px; border-bottom:1px solid rgba(255,255,255,.14);}
-.hero-brand .brand-mark{width:44px; height:44px; border-radius:13px; overflow:hidden; flex-shrink:0; box-shadow:0 3px 10px rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.18);}
+.hero-brand{position:relative; display:flex; align-items:center; gap:18px; margin-bottom:22px; padding-bottom:20px; border-bottom:1px solid rgba(255,255,255,.14);}
+.hero-brand .brand-mark{width:68px; height:68px; border-radius:18px; overflow:hidden; flex-shrink:0; box-shadow:0 4px 14px rgba(0,0,0,.38); border:1px solid rgba(255,255,255,.18);}
 .hero-brand .brand-mark img{width:100%; height:100%; object-fit:cover; display:block;}
-.hero-brand .brand-name{font-family:var(--font-display); font-weight:800; font-size:1.16rem; letter-spacing:-.01em; color:#FFFFFF;}
-.hero-brand .brand-sub{font-size:.68rem; color:var(--gold-bright, var(--gold)); text-transform:uppercase; letter-spacing:.1em; margin-top:2px; font-weight:700;}
+.hero-brand .brand-name{font-family:var(--font-display); font-weight:800; font-size:1.85rem; letter-spacing:-.01em; color:#FFFFFF; line-height:1.1;}
+.hero-brand .brand-sub{font-size:.78rem; color:var(--gold-bright, var(--gold)); text-transform:uppercase; letter-spacing:.1em; margin-top:4px; font-weight:700;}
 .intro-panel .eyebrow{position:relative; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--gold-bright, var(--gold)); margin-bottom:8px;}
 .intro-panel h1{position:relative; font-size:1.68rem; font-weight:800; margin-bottom:10px; color:#FFFFFF; letter-spacing:-.01em;}
-.intro-panel p{position:relative; max-width:62ch; color:rgba(240,238,224,.8); line-height:1.55; font-size:.96rem;}
+.intro-panel p{position:relative; max-width:88ch; width:100%; color:rgba(240,238,224,.85); line-height:1.6; font-size:.98rem;}
 
 /* ---------- Theme grid : même traitement visuel que le cadre héros ---------- */
 .theme-grid{display:grid; grid-template-columns:1fr; gap:18px;}
@@ -193,10 +193,31 @@ textarea, input{font-family:inherit;}
 .subhead-text h1{font-size:1.3rem; font-weight:800;}
 .subhead-text p{font-size:.85rem; color:var(--ink-soft); margin-top:2px;}
 
-.scenario-list{display:grid; grid-template-columns:1fr; gap:12px;}
-@media (min-width:760px){
-  .scenario-list{grid-template-columns:repeat(2, 1fr);}
+/* Mise en page à deux colonnes : la liste des scénarios s'empile à
+   gauche (toujours en une seule colonne, plus lisible qu'une grille),
+   et un grand portrait à droite reprend l'image du scénario survolé.
+   En dessous de 860px (mobile/tablette, survol peu pertinent au
+   doigt), le portrait disparaît et la liste reprend toute la largeur. */
+.scenario-layout{display:flex; flex-direction:column; gap:20px; align-items:flex-start;}
+@media (min-width:860px){
+  .scenario-layout{flex-direction:row; gap:28px;}
+  .scenario-layout .scenario-list{flex:1 1 0; min-width:0;}
+  .scenario-preview{flex:0 0 320px;}
 }
+.scenario-list{display:flex; flex-direction:column; gap:12px; width:100%;}
+
+.scenario-preview{
+  position:sticky; top:20px; width:100%; aspect-ratio:3/4; max-height:440px;
+  border-radius:24px; overflow:hidden; background:linear-gradient(165deg, var(--surface-2), var(--surface-3));
+  border:1px solid var(--line); box-shadow:var(--shadow);
+  display:flex; align-items:center; justify-content:center;
+}
+.scenario-preview img{width:100%; height:100%; object-fit:cover; object-position:top center; display:none;}
+.scenario-preview img.visible{display:block;}
+.scenario-preview-empty{font-size:.84rem; color:var(--ink-faint); text-align:center; padding:0 26px; line-height:1.55;}
+.scenario-preview.has-image .scenario-preview-empty{display:none;}
+@media (max-width:859.98px){ .scenario-preview{display:none;} }
+
 .scenario-card{
   background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--line); border-radius:16px; padding:18px 20px;
   display:flex; align-items:center; gap:16px; box-shadow:var(--shadow); text-align:left;

@@ -98,6 +98,8 @@ const supabase = createClient(
   const sPersona = document.getElementById("s-persona");
   const charPreviewFloat = document.getElementById("char-preview-float");
   const charPreviewImg = document.getElementById("char-preview-img");
+  const scenarioPreview = document.getElementById("scenario-preview");
+  const scenarioPreviewImg = document.getElementById("scenario-preview-img");
 
   function esc(str) { const d = document.createElement("div"); d.textContent = String(str); return d.innerHTML; }
 
@@ -152,6 +154,37 @@ const supabase = createClient(
   // au survol (l'élément bouge, le popup non) : on referme proprement
   // plutôt que de laisser un popup mal placé.
   document.addEventListener("scroll", hideCharPreview, true);
+
+  // ---------------- grand portrait de l'écran "scénarios" ----------------
+  // Contrairement au popup flottant ci-dessus (qui suit le curseur), ici
+  // l'image occupe un cadre fixe à droite de la liste et change selon la
+  // carte survolée. Reste affichée tant qu'une autre carte n'est pas
+  // survolée (pas d'effet de clignotement quand la souris quitte la liste).
+  let scenarioPreviewCode = null;
+  function showScenarioPreview(code) {
+    if (!code || code === scenarioPreviewCode) return;
+    scenarioPreviewCode = code;
+    scenarioPreview.classList.remove("has-image");
+    scenarioPreviewImg.classList.remove("visible");
+    scenarioPreviewImg.src = CHAR_IMG_BASE + code + ".png";
+  }
+  scenarioPreviewImg.addEventListener("load", () => {
+    scenarioPreviewImg.classList.add("visible");
+    scenarioPreview.classList.add("has-image");
+  });
+  scenarioPreviewImg.addEventListener("error", () => {
+    scenarioPreviewImg.classList.remove("visible");
+    scenarioPreview.classList.remove("has-image");
+  });
+  scenarioList.addEventListener("mouseover", (e) => {
+    const btn = e.target.closest(".scenario-card-btn");
+    if (btn) showScenarioPreview(btn.dataset.charCode);
+  });
+  scenarioList.addEventListener("focusin", (e) => {
+    const btn = e.target.closest(".scenario-card-btn");
+    if (btn) showScenarioPreview(btn.dataset.charCode);
+  });
+
   function showScreen(el) {
     [screenThemes, screenScenarios, screenSession].forEach((s) => s.classList.remove("active"));
     el.classList.add("active");
@@ -234,7 +267,7 @@ const supabase = createClient(
       const card = document.createElement("div");
       card.className = "scenario-card " + p.difficulte;
       card.innerHTML =
-        '<button class="scenario-card-btn char-hover" type="button" data-code="' + p.code + '" data-char-code="' + esc(p.code) + '">' +
+        '<button class="scenario-card-btn" type="button" data-code="' + p.code + '" data-char-code="' + esc(p.code) + '">' +
           '<div class="scenario-avatar">' + ICONS.person + "</div>" +
           '<div class="scenario-main">' +
             '<div class="scenario-name">' + esc(p.nom) + "</div>" +
@@ -248,6 +281,14 @@ const supabase = createClient(
     scenarioList.querySelectorAll(".scenario-card-btn").forEach((btn) => {
       btn.addEventListener("click", () => startSession(btn.dataset.code));
     });
+
+    // Réinitialise le grand portrait pour cette thématique, et affiche
+    // directement le premier cas plutôt que de laisser le cadre vide
+    // tant qu'on n'a pas encore survolé quoi que ce soit.
+    scenarioPreviewCode = null;
+    scenarioPreviewImg.classList.remove("visible");
+    scenarioPreview.classList.remove("has-image");
+    if (scenarios.length) showScenarioPreview(scenarios[0].code);
   }
 
   // ---------------- session lifecycle ----------------
@@ -535,7 +576,7 @@ const supabase = createClient(
   function buildTranscriptMarkdown() {
     let md = "# Apézeo Présence / Compte-rendu de simulation\n\n";
     md += "**Thématique :** " + currentTheme.nom + "\n\n";
-    md += "**Scénario :** " + persona.nom + ", " + persona.age + " ans ; " + persona.contexte + "\n\n";
+    md += "**Scénario :** " + persona.nom + ", " + persona.age + " ans : " + persona.contexte + "\n\n";
     md += "**Niveau :** " + (DIFF_LABELS[persona.difficulte] || persona.difficulte) + "\n\n";
     md += "**Date :** " + frDate() + "\n\n";
     md += "**Score final de la session :** " + (totalScore > 0 ? "+" : "") + totalScore + "\n\n";
