@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import {
   AlertTriangle, Info, DatabaseZap, UserX,
 } from "lucide-react";
-import { FAMILLES, SITUATIONS_TYPES } from "./data/constants.js";
+import { SITUATIONS_TYPES } from "./data/constants.js";
 import { supabase, supabaseReady, rowToFiche, rowToPersonalFiche, ficheToPersonalRow } from "./lib/supabase.js";
 import { getLocal, setLocal } from "./lib/localStore.js";
 
@@ -21,15 +21,7 @@ import { AuthView } from "./components/AuthView.jsx";
 import { GateV2 } from "./components/GateV2.jsx";
 import { AidantApp } from "./AidantApp.jsx";
 import { Home_ } from "./components/Home.jsx";
-import { scoreFiche, fetchAllRows, rangDernierRecours } from "./lib/utils.js";
-
-const emptyLocalFiche = () => ({
-  id: null, isLocal: true, titre: "", categorie: FAMILLES[0], sousCategorie: "",
-  troubles: [], stades: [], contextes: [], niveauPreuve: 3, description: "",
-  pourquoi: "", quandUtiliser: "", quandEviter: "", dureeMinutes: 5, dureeLabel: "",
-  materiel: [], difficulte: "Facile", etapes: [], conseils: [], erreurs: [],
-  contreIndications: [], motsCles: [], sources: [], dateMaj: "",
-});
+import { scoreFiche, fetchAllRows, rangDernierRecours, emptyLocalFiche } from "./lib/utils.js";
 
 /* ---------- AUTHENTIFICATION ---------- */
 /* ---------- AFFICHAGE DES TEXTES LÉGAUX (markdown-lite, sans dépendance) ---------- */

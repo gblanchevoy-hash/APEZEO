@@ -2,7 +2,21 @@
 // précis — extraits de App.jsx pour réduire ce fichier et éviter la
 // duplication accidentelle entre les vues Pro et Aidant.
 
+import { FAMILLES } from "../data/constants.js";
+
 export const uid = () => `local-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+
+// Fiche locale vide (créée à la main par l'utilisateur, pas issue de
+// Supabase). Partagée par App.jsx (vue Pro) et AidantApp.jsx (vue
+// Aidant) -- les deux proposaient un bouton "Ajouter ma fiche" qui en
+// avait besoin, mais elle n'était définie que dans App.jsx.
+export const emptyLocalFiche = () => ({
+  id: null, isLocal: true, titre: "", categorie: FAMILLES[0], sousCategorie: "",
+  troubles: [], stades: [], contextes: [], niveauPreuve: 3, description: "",
+  pourquoi: "", quandUtiliser: "", quandEviter: "", dureeMinutes: 5, dureeLabel: "",
+  materiel: [], difficulte: "Facile", etapes: [], conseils: [], erreurs: [],
+  contreIndications: [], motsCles: [], sources: [], dateMaj: "",
+});
 
 // Certains outils portent une alerte de sécurité/réglementaire
 // (alerteOutil non vide -- ex. un vêtement à fermeture dos, proche

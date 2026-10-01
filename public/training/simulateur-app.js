@@ -15,6 +15,7 @@
 // ============================================================
 
 import { createClient } from "@supabase/supabase-js";
+import { jsPDF } from "jspdf";
 
 const supabase = createClient(
   "https://ombjclgknizkjwqqbyck.supabase.co",
@@ -428,6 +429,14 @@ const supabase = createClient(
     const div = document.createElement("div"); div.className = "banner"; div.textContent = text;
     chatScroll.appendChild(div); scrollToBottom();
   }
+  // Garde-fou : réplique insultante/irrespectueuse jamais transmise à la
+  // simulation. Volontairement distinct visuellement de .error-row (panne
+  // technique) et de .banner (information neutre) : c'est un rappel au
+  // stagiaire, pas une erreur de l'appli ni un conseil pédagogique.
+  function showGuardrailNotice(text) {
+    const div = document.createElement("div"); div.className = "guardrail-row"; div.textContent = text;
+    chatScroll.appendChild(div); scrollToBottom();
+  }
   function showErrorRow(text, retryLabel, onRetry) {
     const div = document.createElement("div"); div.className = "error-row";
     const span = document.createElement("span"); span.textContent = text; div.appendChild(span);
@@ -465,6 +474,22 @@ const supabase = createClient(
       caregiverTurnCount = Math.max(0, caregiverTurnCount - 1);
       updateTurnCount();
       handleTourError(data && data.error, caregiverRow);
+      awaitingReply = false;
+      return;
+    }
+
+    // Garde-fou : message insultant/irrespectueux envers le/la résident·e,
+    // ou qui ne prend manifestement pas l'exercice au sérieux. Il n'a pas
+    // été transmis à la simulation côté serveur (aucune réplique générée,
+    // rien d'enregistré) : on retire la bulle, on n'avance ni le compteur
+    // d'échanges ni le score, et on invite simplement à reformuler.
+    if (data.hors_cadre) {
+      caregiverRow.remove();
+      caregiverTurnCount = Math.max(0, caregiverTurnCount - 1);
+      updateTurnCount();
+      showGuardrailNotice(data.invitation || "Ce message n'a pas été transmis à la simulation. Merci de reformuler votre réponse dans le respect du cadre professionnel de l'exercice.");
+      setComposerEnabled(true);
+      composerInput.focus();
       awaitingReply = false;
       return;
     }
@@ -565,7 +590,7 @@ const supabase = createClient(
   function debriefActionsHTML(withDownload) {
     let html = "";
     if (withDownload) {
-      html += '<div class="download-row"><button class="btn-gold" id="debrief-download">' + ICONS.download + "<span>Télécharger la transcription</span></button>" +
+      html += '<div class="download-row"><button class="btn-gold" id="debrief-download">' + ICONS.download + "<span>Télécharger le compte-rendu (PDF)</span></button>" +
         '<div class="download-status" id="download-status"></div></div>';
     }
     html += '<div class="debrief-actions">' +
@@ -592,68 +617,88 @@ const supabase = createClient(
     return String(str).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   }
 
-  function buildTranscriptMarkdown() {
-    let md = "# Apézeo Présence / Compte-rendu de simulation\n\n";
-    md += "**Thématique :** " + currentTheme.nom + "\n\n";
-    md += "**Scénario :** " + persona.nom + ", " + persona.age + " ans : " + persona.contexte + "\n\n";
-    md += "**Niveau :** " + (DIFF_LABELS[persona.difficulte] || persona.difficulte) + "\n\n";
-    md += "**Date :** " + frDate() + "\n\n";
-    md += "**Score final de la session :** " + (totalScore > 0 ? "+" : "") + totalScore + "\n\n";
-    md += "---\n\n## Échanges\n\n";
-
-    let annIdx = 0;
-    transcriptForDownload.forEach((t) => {
-      if (t.role === "resident") {
-        md += "**" + persona.nom.split(" ")[0] + "**\n" + t.text + "\n\n";
-      } else {
-        md += "**Vous**\n" + t.text + "\n\n";
-        if (annIdx < annotationsForDownload.length) {
-          const a = annotationsForDownload[annIdx];
-          const deltaStr = a.delta > 0 ? "+" + a.delta : String(a.delta);
-          md += "> **Évaluation (" + deltaStr + " / " + a.tag + ")**\n> " + a.explication + "\n\n";
-          annIdx++;
-        }
-      }
-    });
-
-    md += "---\n\n## Bilan de fin de session\n\n";
-    if (lastDebrief) {
-      md += "**Niveau global :** " + (lastDebrief.niveau_global || "") + "\n\n";
-      md += (lastDebrief.resume || "") + "\n\n";
-      if (Array.isArray(lastDebrief.points_forts) && lastDebrief.points_forts.length) {
-        md += "### Points forts\n";
-        lastDebrief.points_forts.forEach((f) => (md += "- " + f + "\n"));
-        md += "\n";
-      }
-      if (Array.isArray(lastDebrief.axes_travail) && lastDebrief.axes_travail.length) {
-        md += "### Axes de travail\n";
-        lastDebrief.axes_travail.forEach((a) => (md += "- " + a + "\n"));
-        md += "\n";
-      }
-      if (lastDebrief.conseil_prochaine_session) {
-        md += "### Conseil pour la prochaine session\n" + lastDebrief.conseil_prochaine_session + "\n\n";
-      }
-    } else {
-      md += "_Bilan non disponible._\n\n";
-    }
-
-    md += "---\n\n*Document généré par Apézeo Présence, simulation à but pédagogique, personnages entièrement fictifs.*\n";
-    return md;
-  }
-
-  // téléchargement natif du navigateur (remplace `claude.use("downloads")`,
-  // capacité propre à l'environnement Artifact et indisponible ici)
+  // Génère le compte-rendu complet (échanges + bilan) en PDF et le
+  // télécharge directement dans le navigateur. Remplace l'ancien export en
+  // .md : un PDF s'ouvre et s'imprime partout sans logiciel particulier,
+  // contrairement à un fichier markdown.
   function downloadTranscript() {
     const statusEl = document.getElementById("download-status");
     try {
-      const filename = "apezeo-presence_" + slug(persona.nom) + "_" + slug(currentTheme.nom) + ".md";
-      const blob = new Blob([buildTranscriptMarkdown()], { type: "text/markdown;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      if (statusEl) statusEl.textContent = "Transcription téléchargée.";
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+      const marginX = 18, pageWidth = 210;
+      let y = 20;
+
+      const wrap = (text, size, weight = "normal", color = [40, 40, 40], gap = 5) => {
+        doc.setFont("helvetica", weight);
+        doc.setFontSize(size);
+        doc.setTextColor(color[0], color[1], color[2]);
+        const lines = doc.splitTextToSize(String(text), pageWidth - marginX * 2);
+        lines.forEach((line) => {
+          if (y > 280) { doc.addPage(); y = 20; }
+          doc.text(line, marginX, y);
+          y += gap;
+        });
+        y += 2;
+      };
+
+      doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(2, 44, 34);
+      doc.text("Apézeo training", marginX, 12);
+      doc.setDrawColor(220, 220, 220); doc.line(marginX, 17, pageWidth - marginX, 17);
+      y = 26;
+
+      wrap("Compte-rendu de simulation", 16, "bold", [2, 44, 34], 7);
+      wrap("Thématique : " + currentTheme.nom, 10, "normal", [80, 80, 80]);
+      wrap("Scénario : " + persona.nom + ", " + persona.age + " ans : " + persona.contexte, 10, "normal", [80, 80, 80]);
+      wrap("Niveau : " + (DIFF_LABELS[persona.difficulte] || persona.difficulte), 10, "normal", [80, 80, 80]);
+      wrap("Date : " + frDate(), 10, "normal", [80, 80, 80]);
+      wrap("Score final de la session : " + (totalScore > 0 ? "+" : "") + totalScore, 11, "bold", [2, 44, 34]);
+      y += 2;
+
+      wrap("Échanges", 13, "bold", [4, 120, 87], 6);
+      let annIdx = 0;
+      transcriptForDownload.forEach((t) => {
+        if (t.role === "resident") {
+          wrap(persona.nom.split(" ")[0], 10, "bold", [40, 40, 40], 5);
+          wrap(t.text, 10, "normal", [40, 40, 40]);
+        } else {
+          wrap("Vous", 10, "bold", [40, 40, 40], 5);
+          wrap(t.text, 10, "normal", [40, 40, 40]);
+          if (annIdx < annotationsForDownload.length) {
+            const a = annotationsForDownload[annIdx];
+            const deltaStr = a.delta > 0 ? "+" + a.delta : String(a.delta);
+            wrap("Évaluation (" + deltaStr + " / " + a.tag + ") : " + a.explication, 9, "normal", [150, 110, 20]);
+            annIdx++;
+          }
+        }
+      });
+
+      y += 2;
+      wrap("Bilan de fin de session", 13, "bold", [4, 120, 87], 6);
+      if (lastDebrief) {
+        wrap("Niveau global : " + (lastDebrief.niveau_global || ""), 10, "bold", [2, 44, 34]);
+        if (lastDebrief.resume) wrap(lastDebrief.resume, 10);
+        if (Array.isArray(lastDebrief.points_forts) && lastDebrief.points_forts.length) {
+          wrap("Points forts", 11, "bold", [4, 120, 87]);
+          lastDebrief.points_forts.forEach((f) => wrap("- " + f, 10));
+        }
+        if (Array.isArray(lastDebrief.axes_travail) && lastDebrief.axes_travail.length) {
+          wrap("Axes de travail", 11, "bold", [180, 100, 20]);
+          lastDebrief.axes_travail.forEach((a) => wrap("- " + a, 10));
+        }
+        if (lastDebrief.conseil_prochaine_session) {
+          wrap("Conseil pour la prochaine session", 11, "bold", [4, 120, 87]);
+          wrap(lastDebrief.conseil_prochaine_session, 10);
+        }
+      } else {
+        wrap("Bilan non disponible.", 10);
+      }
+
+      y += 4;
+      wrap("Document généré par Apézeo training, simulation à but pédagogique, personnages entièrement fictifs.", 8, "normal", [140, 140, 140]);
+
+      const filename = "apezeo-training_" + slug(persona.nom) + "_" + slug(currentTheme.nom) + ".pdf";
+      doc.save(filename);
+      if (statusEl) statusEl.textContent = "Compte-rendu téléchargé.";
     } catch (err) {
       if (statusEl) { statusEl.classList.add("err"); statusEl.textContent = "Le téléchargement a échoué."; }
     }

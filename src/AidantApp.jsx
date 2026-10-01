@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 import { ArrowLeftRight, Info, PhoneCall, Plus, AlertTriangle, Search, Heart, FileText } from "lucide-react";
 import { AIDANT_FICHES } from "./data/aidantFiches.js";
 import { getLocal, setLocal } from "./lib/localStore.js";
-import { uid, scoreFiche } from "./lib/utils.js";
+import { uid, scoreFiche, emptyLocalFiche } from "./lib/utils.js";
 
 import { NavCard, HomeContext } from "./components/ui.jsx";
 import { LegalView, LegalFooterLinks } from "./components/legal.jsx";

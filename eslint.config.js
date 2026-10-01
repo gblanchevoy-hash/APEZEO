@@ -38,4 +38,12 @@ export default [
     files: ["**/*.test.jsx", "src/test/**"],
     languageOptions: { globals: { ...globals.node } },
   },
+  // Scripts Node exécutés hors navigateur (dossier tests/ et tout
+  // fichier .mjs) : sans ce bloc, ils ne reçoivent les globals d'aucun
+  // des blocs ci-dessus et ESLint signale `console`/`process` comme
+  // non définis alors que c'est du code Node normal.
+  {
+    files: ["tests/**", "**/*.mjs"],
+    languageOptions: { globals: { ...globals.node } },
+  },
 ];
