@@ -180,6 +180,24 @@ const supabase = createClient(
   // plutôt que de laisser un popup mal placé.
   document.addEventListener("scroll", hideCharPreview, true);
 
+  // ---------------- petit portrait fixe de l'en-tête de session ----------------
+  // Contrairement à l'ancien comportement (icône générique, portrait
+  // visible seulement au survol via .char-hover), l'avatar réel du
+  // personnage reste affiché en permanence dans l'en-tête pendant tout
+  // l'entretien. Le hover sur #s-persona continue par ailleurs d'afficher
+  // le grand portrait flottant (showCharPreview ci-dessus), en plus de ce
+  // petit avatar — les deux ne se gênent pas.
+  function setSessionAvatar(code) {
+    sAvatar.innerHTML = ICONS.person;
+    if (!code) return;
+    const img = document.createElement("img");
+    img.alt = "";
+    loadCharImage(img, code,
+      () => { sAvatar.innerHTML = ""; sAvatar.appendChild(img); },
+      () => { /* pas d'image pour ce personnage : on garde l'icône générique déjà posée */ }
+    );
+  }
+
   // ---------------- grand portrait de l'écran "scénarios" ----------------
   // Contrairement au popup flottant ci-dessus (qui suit le curseur), ici
   // l'image occupe un cadre fixe à droite de la liste et change selon la
@@ -362,7 +380,7 @@ const supabase = createClient(
     transcriptForDownload = [];
     annotationsForDownload = [];
 
-    sAvatar.innerHTML = ICONS.person;
+    setSessionAvatar(charSlug(persona.nom));
     sName.textContent = persona.nom + ", " + persona.age + " ans";
     sPersona.dataset.charCode = charSlug(persona.nom);
     setMood(persona.humeur_initiale);
@@ -389,9 +407,24 @@ const supabase = createClient(
     sMood.style.background = bg; sMood.style.color = fg; sMood.style.border = "1px solid " + ln;
   }
 
-  function updateScore() {
+  // deltaJustApplied (optionnel) : la variation qui vient de produire ce
+  // nouveau total (ex. +1, -2). Quand elle est fournie et non nulle, une
+  // pastille s'affiche brièvement au-dessus du score puis s'efface toute
+  // seule, pour attirer l'œil sur le score global sans avoir à remonter
+  // dans la conversation pour voir la note de chaque échange.
+  function updateScore(deltaJustApplied) {
     scoreEl.textContent = (totalScore > 0 ? "+" : "") + totalScore;
     scoreEl.className = "stat-value " + (totalScore > 0 ? "pos" : totalScore < 0 ? "neg" : "zero");
+    if (typeof deltaJustApplied === "number" && deltaJustApplied !== 0) {
+      popScoreDelta(deltaJustApplied);
+    }
+  }
+  function popScoreDelta(delta) {
+    const pop = document.createElement("span");
+    pop.className = "score-pop " + (delta > 0 ? "pos" : "neg");
+    pop.textContent = (delta > 0 ? "+" : "") + delta;
+    scoreEl.parentElement.appendChild(pop);
+    pop.addEventListener("animationend", () => pop.remove());
   }
   function updateTurnCount() {
     turnCountEl.textContent = caregiverTurnCount + (caregiverTurnCount <= 1 ? " échange" : " échanges");
@@ -502,7 +535,7 @@ const supabase = createClient(
     annotationsForDownload.push({ turnIndex: caregiverTurnCount, delta: data.delta, tag: data.tag, explication: data.explication });
 
     totalScore = data.score_total;
-    updateScore();
+    updateScore(data.delta);
     setMood(data.etat_emotionnel);
 
     if (data.nb_echanges >= HARD_LIMIT) {
