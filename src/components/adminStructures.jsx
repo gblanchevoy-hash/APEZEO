@@ -31,6 +31,8 @@ export function CreateStructureView({ onBack }) {
   const [editAdminEmail, setEditAdminEmail] = useState("");
   const [editTrainingAccess, setEditTrainingAccess] = useState("disabled");
   const [editTrainingSeats, setEditTrainingSeats] = useState("0");
+  const [editTrainingEssaiJours, setEditTrainingEssaiJours] = useState("30");
+  const [editTrainingPalier, setEditTrainingPalier] = useState("pro");
   const [savingParams, setSavingParams] = useState(false);
   const [profilsParStructure, setProfilsParStructure] = useState(new Map());
   const [structuresDepliees, setStructuresDepliees] = useState(new Set());
@@ -153,6 +155,32 @@ export function CreateStructureView({ onBack }) {
     setEditAdminEmail("");
     setEditTrainingAccess(s.training_access || "disabled");
     setEditTrainingSeats(String(s.training_seats ?? 0));
+    setEditTrainingEssaiJours("30");
+    setEditTrainingPalier("pro");
+  };
+
+  // Un seul sélecteur "Accès de la structure" pilote DEUX garde-fous
+  // distincts côté base : le flag d'affichage du bouton (public.structures
+  // .training_access, ajouté ici) ET l'activation réelle du simulateur
+  // (simulateur.acces_structure, verrou déjà existant côté base qui
+  // bloque le démarrage d'une session). Sans ce deuxième appel, le
+  // bouton s'affiche mais la session refuse de démarrer.
+  const synchroniserAccesSimulateur = async (s) => {
+    if (editTrainingAccess === "trial") {
+      return supabase.schema("simulateur").rpc("superadmin_activer_essai", {
+        p_structure_id: s.id,
+        p_jours: Number(editTrainingEssaiJours) || 30,
+      });
+    }
+    if (editTrainingAccess === "full") {
+      return supabase.schema("simulateur").rpc("superadmin_activer_payant", {
+        p_structure_id: s.id,
+        p_palier: editTrainingPalier,
+      });
+    }
+    // "disabled" : suspend l'accès réel si une ligne existe déjà pour
+    // cette structure (sans erreur si elle n'a jamais été activée).
+    return supabase.schema("simulateur").rpc("superadmin_suspendre", { p_structure_id: s.id });
   };
 
   const saveStructureParams = async (s) => {
@@ -169,6 +197,12 @@ export function CreateStructureView({ onBack }) {
     if (essaiError) {
       setSavingParams(false);
       setRowMsg({ id: s.id, ok: false, text: essaiError.message });
+      return;
+    }
+    const { error: simError } = await synchroniserAccesSimulateur(s);
+    if (simError) {
+      setSavingParams(false);
+      setRowMsg({ id: s.id, ok: false, text: "Structure mise à jour, mais échec de l'activation du simulateur : " + simError.message });
       return;
     }
     if (editAdminEmail.trim()) {
@@ -304,6 +338,29 @@ export function CreateStructureView({ onBack }) {
                           onChange={(e) => setEditTrainingSeats(e.target.value)}
                         />
                       </Field>
+                      {editTrainingAccess === "trial" && (
+                        <Field label="Durée de l'essai simulateur (jours)">
+                          <input
+                            type="number" min={1} className={inputCls + " !py-1.5 !text-xs"} value={editTrainingEssaiJours}
+                            onChange={(e) => setEditTrainingEssaiJours(e.target.value)}
+                          />
+                        </Field>
+                      )}
+                      {editTrainingAccess === "full" && (
+                        <Field label="Palier (quota mensuel d'échanges)">
+                          <select
+                            className={inputCls + " !py-1.5 !text-xs"} value={editTrainingPalier}
+                            onChange={(e) => setEditTrainingPalier(e.target.value)}
+                          >
+                            <option value="starter">Starter</option>
+                            <option value="pro">Pro</option>
+                            <option value="entreprise">Entreprise</option>
+                          </select>
+                        </Field>
+                      )}
+                      <p className="text-[11px] text-stone-400 -mt-1">
+                        "Enregistrer" active aussi réellement le simulateur côté base (plus besoin de SQL à part).
+                      </p>
                     </div>
                     <div className="flex gap-2">
                       <button onClick={() => saveStructureParams(s)} disabled={savingParams} className="flex-1 bg-emerald-700 disabled:bg-stone-300 text-white text-xs font-semibold rounded-lg py-1.5">
