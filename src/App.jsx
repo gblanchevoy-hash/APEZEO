@@ -41,6 +41,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
   const [toast, setToast] = useState(null);
   const [stack, setStack] = useState([{ view: "home" }]);
   const [profile, setProfile] = useState(null);
+  const [trainingAccessible, setTrainingAccessible] = useState(false);
   const [essaisExpires, setEssaisExpires] = useState([]);
   const [signalementsNonResolus, setSignalementsNonResolus] = useState(0);
   const [essaiTermine, setEssaiTermine] = useState(false);
@@ -172,6 +173,14 @@ function AuthenticatedApp({ session, onChangeMode }) {
           setProfile((prev) => (prev ? { ...prev, actif: false } : prev));
         }
       }
+
+      // Bouton "Apézeo Training" : affiché seulement si la structure y a
+      // accès (trial/full) ET que ce compte précis est désigné comme
+      // référent formation — les deux conditions, et le quota de
+      // référents par structure, sont vérifiés côté base de données
+      // (fonction mon_acces_training, migration 0027).
+      const { data: trainingOk } = await supabase.rpc("mon_acces_training");
+      setTrainingAccessible(!!trainingOk);
       // Verrou de session : écrit un nouveau jeton, ce qui invalide
       // (via l'abonnement temps réel ci-dessous) toute autre session
       // déjà ouverte avec ce compte.
@@ -410,7 +419,7 @@ function AuthenticatedApp({ session, onChangeMode }) {
           onLockedExpertClick={() => showToast("La Bibliothèque Expert est réservée aux comptes Structure — contactez votre établissement pour en bénéficier.")}
           modeExpert={modeExpert}
           onToggleAffichage={toggleAffichage}
-          isTrainingUser={session?.user?.email === "contact@apezeo.fr"}
+          isTrainingUser={trainingAccessible}
           onOpenTraining={() => push({ view: "training" })}
           onOpenCreateStructure={() => push({ view: "create-structure" })}
           onOpenSuperAdminStats={() => push({ view: "super-admin-stats" })}

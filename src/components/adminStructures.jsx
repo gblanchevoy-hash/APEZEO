@@ -1,10 +1,12 @@
 // Écran de création et gestion des structures (clients B2B),
 // réservé au super-admin.
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Trash2, AlertTriangle, Copy, ChevronDown, ChevronRight, Mail, Users } from "lucide-react";
+import { Plus, Trash2, AlertTriangle, Copy, ChevronDown, ChevronRight, Mail, Users, GraduationCap } from "lucide-react";
 import { supabase } from "../lib/supabase.js";
 import { Field, TopBar, inputCls } from "./ui.jsx";
 import { generateCode, StructureStatusBadge } from "./adminShared.jsx";
+
+const TRAINING_ACCESS_LABELS = { disabled: "Désactivé", trial: "Essai", full: "Plein accès" };
 
 export function CreateStructureView({ onBack }) {
   const [nom, setNom] = useState("");
@@ -27,15 +29,18 @@ export function CreateStructureView({ onBack }) {
   const [editParamsId, setEditParamsId] = useState(null);
   const [editEssaiValue, setEditEssaiValue] = useState("");
   const [editAdminEmail, setEditAdminEmail] = useState("");
+  const [editTrainingAccess, setEditTrainingAccess] = useState("disabled");
+  const [editTrainingSeats, setEditTrainingSeats] = useState("0");
   const [savingParams, setSavingParams] = useState(false);
   const [profilsParStructure, setProfilsParStructure] = useState(new Map());
   const [structuresDepliees, setStructuresDepliees] = useState(new Set());
+  const [referentBusyId, setReferentBusyId] = useState(null);
 
   const loadStructures = useCallback(async () => {
     setLoadingList(true);
     const [{ data }, { data: profils }, { data: connexions }] = await Promise.all([
       supabase.from("structures").select("*").order("created_at", { ascending: false }),
-      supabase.from("profiles").select("id, email, role, structure_id, actif, created_at").not("structure_id", "is", null),
+      supabase.from("profiles").select("id, email, role, structure_id, actif, training_referent, created_at").not("structure_id", "is", null),
       supabase.rpc("obtenir_dernieres_connexions"),
     ]);
     setStructures(data || []);
@@ -146,6 +151,8 @@ export function CreateStructureView({ onBack }) {
     setEditParamsId(editParamsId === s.id ? null : s.id);
     setEditEssaiValue(s.essai_duree_semaines != null ? String(s.essai_duree_semaines) : "");
     setEditAdminEmail("");
+    setEditTrainingAccess(s.training_access || "disabled");
+    setEditTrainingSeats(String(s.training_seats ?? 0));
   };
 
   const saveStructureParams = async (s) => {
@@ -153,7 +160,11 @@ export function CreateStructureView({ onBack }) {
     setRowMsg(null);
     const { error: essaiError } = await supabase
       .from("structures")
-      .update({ essai_duree_semaines: editEssaiValue.trim() ? Number(editEssaiValue) : null })
+      .update({
+        essai_duree_semaines: editEssaiValue.trim() ? Number(editEssaiValue) : null,
+        training_access: editTrainingAccess,
+        training_seats: Number(editTrainingSeats) || 0,
+      })
       .eq("id", s.id);
     if (essaiError) {
       setSavingParams(false);
@@ -174,6 +185,23 @@ export function CreateStructureView({ onBack }) {
     setSavingParams(false);
     setRowMsg({ id: s.id, ok: true, text: "Paramètres mis à jour." });
     setEditParamsId(null);
+    loadStructures();
+  };
+
+  // Désigne (ou retire) le compte référent formation d'un membre — le
+  // quota (training_seats) est vérifié côté base de données (fonction
+  // set_training_referent), donc le message d'erreur vient du serveur.
+  const toggleReferent = async (structureId, m) => {
+    setReferentBusyId(m.id);
+    setRowMsg(null);
+    const { data, error } = await supabase.rpc("set_training_referent", { p_user_id: m.id, p_value: !m.training_referent });
+    setReferentBusyId(null);
+    const result = data && data[0];
+    if (error || !result?.success) {
+      setRowMsg({ id: structureId, ok: false, text: error?.message || result?.message || "Échec." });
+      return;
+    }
+    setRowMsg({ id: structureId, ok: true, text: result.message });
     loadStructures();
   };
 
@@ -256,6 +284,27 @@ export function CreateStructureView({ onBack }) {
                         placeholder="doit déjà avoir un compte"
                       />
                     </Field>
+                    <div className="border-t border-emerald-200 pt-2 mt-1">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 mb-1.5">
+                        <GraduationCap size={13} /> Apézeo Training
+                      </div>
+                      <Field label="Accès de la structure">
+                        <select
+                          className={inputCls + " !py-1.5 !text-xs"} value={editTrainingAccess}
+                          onChange={(e) => setEditTrainingAccess(e.target.value)}
+                        >
+                          <option value="disabled">Désactivé — pas de bouton</option>
+                          <option value="trial">Essai</option>
+                          <option value="full">Plein accès</option>
+                        </select>
+                      </Field>
+                      <Field label="Quota de comptes référents (seuls ces comptes voient le bouton)">
+                        <input
+                          type="number" min={0} className={inputCls + " !py-1.5 !text-xs"} value={editTrainingSeats}
+                          onChange={(e) => setEditTrainingSeats(e.target.value)}
+                        />
+                      </Field>
+                    </div>
                     <div className="flex gap-2">
                       <button onClick={() => saveStructureParams(s)} disabled={savingParams} className="flex-1 bg-emerald-700 disabled:bg-stone-300 text-white text-xs font-semibold rounded-lg py-1.5">
                         {savingParams ? "…" : "Enregistrer"}
@@ -264,6 +313,19 @@ export function CreateStructureView({ onBack }) {
                     </div>
                   </div>
                 )}
+                {(() => {
+                  const referents = (profilsParStructure.get(s.id) || []).filter((m) => m.training_referent).length;
+                  const access = s.training_access || "disabled";
+                  return (
+                    <button onClick={() => openEditParams(s)} className="w-full flex items-center justify-between text-xs mb-2 px-0.5">
+                      <span className="flex items-center gap-1 text-stone-500">
+                        <GraduationCap size={12} className={access === "disabled" ? "text-stone-400" : "text-emerald-600"} />
+                        Training : <span className={`font-semibold ${access === "disabled" ? "text-stone-500" : "text-emerald-700"}`}>{TRAINING_ACCESS_LABELS[access]}</span>
+                      </span>
+                      {access !== "disabled" && <span className="text-stone-400">{referents} / {s.training_seats ?? 0} référent(s)</span>}
+                    </button>
+                  );
+                })()}
                 <div className="flex items-center justify-between bg-stone-50 rounded-lg px-2.5 py-1.5 mb-2">
                   <span className="text-xs text-stone-600 font-mono">{s.code_invitation}</span>
                   <button onClick={() => copyRowCode(s)} className="flex items-center gap-1 text-xs text-emerald-700 font-medium shrink-0 ml-2">
@@ -343,6 +405,14 @@ export function CreateStructureView({ onBack }) {
                                   {m.actif === false && (
                                     <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-medium">suspendu</span>
                                   )}
+                                  <button
+                                    onClick={() => toggleReferent(s.id, m)}
+                                    disabled={referentBusyId === m.id}
+                                    title={m.training_referent ? "Retirer ce compte des référents formation" : "Désigner ce compte référent formation"}
+                                    className={`flex items-center gap-1 px-1.5 py-0.5 rounded font-medium border ${m.training_referent ? "bg-rose-50 border-rose-200 text-rose-700" : "bg-white border-stone-300 text-stone-500 hover:text-emerald-700 hover:border-emerald-300"}`}
+                                  >
+                                    <GraduationCap size={11} /> {m.training_referent ? "Référent" : "Désigner"}
+                                  </button>
                                 </div>
                               </div>
                             ))}
